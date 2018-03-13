@@ -30,6 +30,7 @@ ArduinoHandler::~ArduinoHandler(){
 void ArduinoHandler::setExecutableDir(QString s){
     //if no param passed, set the default directory (whis is relative to the app dir)
     if (s == ""){
+        //portable arduino ide MUST be in in ~/res/arduino relative to application path !!
         executableDir=QCoreApplication::applicationDirPath() + "/res/arduino/";
     }else{
         executableDir=s;
