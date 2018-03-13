@@ -1,7 +1,9 @@
-QT += core
+QT += core \
+	serialport
 QT -= gui
 
 CONFIG += c++11
+
 
 TARGET = QSSWeb2Board
 CONFIG += console

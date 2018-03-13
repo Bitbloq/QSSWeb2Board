@@ -12,23 +12,36 @@ public:
     ArduinoHandler();
     virtual ~ArduinoHandler();
 
-    void setExecutableDir(QString s);
-    void setSourceDir(QString s);
+    void setExecutableDir(QString s="");
+    void setFilePath(QString s);
     void setFileName(QString s);
-    void setBoardName(QString s);
-    void setBoardPort(QString s);
+    void setBoardNameID(QString s);
+    bool setBoardPort(QString s="");
 
-    void verify();
-    void load();
+    QString verify();
+    QString load();
 
 private:
     QString executableDir;
-    QString sourdeDir;
+    QString filePath;
     QString fileName;
-    QString boardName;
+    QString boardNameID;
     QString boardPort;
 
+    QString makeLoadCommand();
+    QString makeVerifyCommand();
+
     QProcess *proc;
+
+    struct ArduinoBoards{
+        ArduinoBoards(QString n, qint16 p, qint16 v):nameID(n),productID(p),vendorID(v){}
+        QString nameID;
+        qint16 productID;
+        qint16 vendorID;
+    };
+
+    QList<ArduinoBoards> arduinoBoards;
+    int boardIndexAtList;
 };
 
 #endif // ARDUINOHANDLER_H

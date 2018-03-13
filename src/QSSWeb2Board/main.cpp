@@ -8,12 +8,16 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
     ArduinoHandler arduino;
-    arduino.setBoardName("hola");
-    arduino.setExecutableDir("cara de bola");
-    arduino.setFileName("uyyy");
-    arduino.setSourceDir("Vaya hombre");
-    qDebug() << "Lanzo Arduino";
-    arduino.verify();
-    //arduino.load();
-    return a.exec();
+    arduino.setBoardNameID("ZUMCore");
+    arduino.setExecutableDir();
+
+    arduino.setFilePath("/home/avalero/arduino-1.8.5/examples/01.Basics/Blink/");
+    arduino.setFileName("Blink.ino");
+
+    if(arduino.setBoardPort()){
+        arduino.verify();
+        arduino.load();
+    }
+
+    return 1; //a.exec();
 }
