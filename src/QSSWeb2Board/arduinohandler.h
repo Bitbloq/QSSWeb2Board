@@ -2,6 +2,7 @@
 #define ARDUINOHANDLER_H
 
 #include <QObject>
+#include "knownboards.h"
 
 //forward declararion of classes
 class QProcess;
@@ -18,8 +19,8 @@ public:
     void setBoardNameID(QString s);
     bool setBoardPort(QString s="");
 
-    QString verify();
-    QString load();
+    QString verify(QString _boardNameID);
+    QString load(QString _boardNameID);
 
 private:
     QString executableDir;
@@ -33,15 +34,8 @@ private:
 
     QProcess *proc;
 
-    struct ArduinoBoards{
-        ArduinoBoards(QString n, qint16 p, qint16 v):nameID(n),productID(p),vendorID(v){}
-        QString nameID;
-        qint16 productID;
-        qint16 vendorID;
-    };
+    KnownBoards arduinoBoards;
 
-    QList<ArduinoBoards> arduinoBoards;
-    int boardIndexAtList;
 };
 
 #endif // ARDUINOHANDLER_H
