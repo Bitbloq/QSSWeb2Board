@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
     //if(arduino.setBoardPort()){
         arduino.verify("ZUMJunior");
-        arduino.load("ZUMJunior");
+        arduino.upload("ZUMJunior");
     //}
 
     return 1; //a.exec();
