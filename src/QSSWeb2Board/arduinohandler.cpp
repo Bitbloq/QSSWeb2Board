@@ -14,6 +14,7 @@ ArduinoHandler::ArduinoHandler():proc(NULL)
     arduinoBoards.append(ArduinoBoards("ZUMCore",qint16(24577),qint16(1027)));
     arduinoBoards.append(ArduinoBoards("ZUMJunior",qint16(60000),qint16(4292)));
     arduinoBoards.append(ArduinoBoards("ZUMCore2",qint16(60000),qint16(4292)));
+    arduinoBoards.append(ArduinoBoards("ArduinoUNO",qint16(0x0001),qint16(0x2341)));
     arduinoBoards.append(ArduinoBoards("FreaduinoUNO",qint16(1),qint16(9025)));
 
     proc = new QProcess(); //this is to launch the arduino commands
