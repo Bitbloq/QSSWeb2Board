@@ -1,6 +1,7 @@
 
 #include <QDebug>
 #include <QCoreApplication>
+#include <QJsonArray>
 #include "knownboards.h"
 
 KnownBoards::KnownBoards(QString jsonFileName)
@@ -22,12 +23,16 @@ JsonBoard KnownBoards::operator [](const QString& boardName){
     return JsonBoard(boardsJsonObject.value(boardName));
 }
 
-JsonBoard::JsonBoard(QJsonValue q):QJsonValue(q){;}
+JsonBoard::JsonBoard(const QJsonValue& q):QJsonValue(q){;}
 
-JsonBoardID::JsonBoardID():QJsonValue(){;}
+JsonBoardID::JsonBoardID(const QJsonValue& q):QJsonValue(q){;}
 
-QJsonBoardID JsonBoard::operator [](const int& i){
-    return QJsonBoardID(this->toObject().value("id").toArray().at(i));
+JsonBoardID JsonBoard::operator [](const int& i){
+    return JsonBoardID(this->toObject().value("id").toArray().at(i));
+}
+
+int JsonBoard::size() const{
+    return this->toObject().value("id").toArray().size();
 }
 
 int JsonBoardID::operator [](const QString& id){

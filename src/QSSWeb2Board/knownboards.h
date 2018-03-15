@@ -22,6 +22,7 @@ public:
     virtual ~JsonBoard(){};
 
     JsonBoardID operator[](const int& i);
+    int size() const;
 };
 
 

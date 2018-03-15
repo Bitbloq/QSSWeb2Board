@@ -8,9 +8,6 @@
 
 ArduinoHandler::ArduinoHandler():proc(NULL),arduinoBoards("knownboards.json")
 {
-    //qDebug() << arduinoBoards["ZUMCore"].toObject().value("board").toString();
-    //qDebug() << arduinoBoards["ArduinoUNO"].toObject().value("id");
-
     proc = new QProcess(); //this is to launch the arduino commands
 }
 
@@ -74,22 +71,19 @@ bool ArduinoHandler::setBoardPort(QString s){
     QList<QSerialPortInfo> serialPorts = serialinfo.availablePorts();
     qDebug() << "Available ports";
 
-    //array of vendorID and productID of selected board (if in  the list)
-    QJsonArray idArray = arduinoBoards[boardNameID].toObject().value("id").toArray();
-
     //get all productID and vendorID and check if any is equal to boardNameID
     for(int i=0; i< serialPorts.size(); i++){
         qDebug() << serialPorts.at(i).systemLocation();
-        qDebug() << "Product Id " <<serialPorts.at(i).productIdentifier();
-        qDebug() << "Vendor Id " <<serialPorts.at(i).vendorIdentifier();
+        //qDebug() << "Product Id " <<serialPorts.at(i).productIdentifier();
+        //qDebug() << "Vendor Id " <<serialPorts.at(i).vendorIdentifier();
 
         //loop over all vendorID and productID of selected board to check whether the board is connected (compare con vendor and product of connected serial ports)
-        for (int j=0; j<idArray.size(); j++){
-            qDebug() << idArray.at(j).toObject().value("productID").toInt();
-            qDebug() << idArray.at(j).toObject().value("vendorID").toInt();
+        for (int j=0; j<arduinoBoards[boardNameID].size(); j++){
+            //qDebug() << idArray.at(j).toObject().value("productID").toInt();
+            //qDebug() << idArray.at(j).toObject().value("vendorID").toInt();
 
-            if( (qint16(idArray.at(j).toObject().value("productID").toInt()) == qint16(serialPorts.at(i).productIdentifier())) &&
-                    (qint16(idArray.at(j).toObject().value("vendorID").toInt()) == qint16(serialPorts.at(i).vendorIdentifier())) ){
+            if( (qint16(arduinoBoards[boardNameID][j]["productID"]) == qint16(serialPorts.at(i).productIdentifier())) &&
+                    (qint16(arduinoBoards[boardNameID][j]["vendorID"]) == qint16(serialPorts.at(i).vendorIdentifier())) ){
                 //Yay found, save board port
                 boardPort=serialPorts.at(i).systemLocation();
                 qDebug() << boardNameID << " found at " << boardPort;
@@ -114,7 +108,7 @@ QString ArduinoHandler::verify(QString _boardNameID){
     proc->waitForFinished();
     //return the output of the verification
     QString output(proc->readAllStandardOutput());
-    qDebug() << output;
+    //qDebug() << output;
     return output;
 
 
@@ -130,7 +124,7 @@ QString ArduinoHandler::upload(QString _boardNameID){
     proc->waitForFinished();
     //return the output of the verification
     QString output(proc->readAllStandardOutput());
-    qDebug() << output;
+    //qDebug() << output;
     return output;
 }
 
