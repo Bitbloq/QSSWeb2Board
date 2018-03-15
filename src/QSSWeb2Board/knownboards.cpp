@@ -15,10 +15,22 @@ KnownBoards::KnownBoards(QString jsonFileName)
    // qDebug() << val;
 
     QJsonDocument jsonKnownBoards = QJsonDocument::fromJson(val.toUtf8());
-    jsonObject = jsonKnownBoards.object();
+    boardsJsonObject = jsonKnownBoards.object();
 }
 
-QJsonValue KnownBoards::operator [](const QString& boardName){
-    return jsonObject.value(boardName);
+JsonBoard KnownBoards::operator [](const QString& boardName){
+    return JsonBoard(boardsJsonObject.value(boardName));
+}
+
+JsonBoard::JsonBoard(QJsonValue q):QJsonValue(q){;}
+
+JsonBoardID::JsonBoardID():QJsonValue(){;}
+
+QJsonBoardID JsonBoard::operator [](const int& i){
+    return QJsonBoardID(this->toObject().value("id").toArray().at(i));
+}
+
+int JsonBoardID::operator [](const QString& id){
+    return this->toObject().value(id).toInt();
 }
 

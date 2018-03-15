@@ -36,7 +36,7 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    SslEchoClient client(QUrl(QStringLiteral("wss://localhost:1234")));
+    SslEchoClient client(QUrl(QStringLiteral("wss://web2board.bq.com:1234")));
 
     Q_UNUSED(client);
 

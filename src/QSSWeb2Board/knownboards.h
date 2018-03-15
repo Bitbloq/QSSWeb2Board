@@ -6,17 +6,38 @@
 #include <QJsonObject>
 #include <QFile>
 
+
+class JsonBoardID: public QJsonValue{
+public:
+    JsonBoardID(const QJsonValue& q);
+    virtual ~JsonBoardID(){};
+
+    int operator[](const QString& id);
+};
+
+
+class JsonBoard: public QJsonValue{
+public:
+    JsonBoard(const QJsonValue& q);
+    virtual ~JsonBoard(){};
+
+    JsonBoardID operator[](const int& i);
+};
+
+
 class KnownBoards
 {
 public:
     KnownBoards(QString jsonFileName);
-    QJsonValue operator[](const QString& boardName);
+    JsonBoard operator[](const QString& boardName);
 
 private:
 
-    QJsonObject jsonObject;
+    QJsonObject boardsJsonObject;
 
 };
+
+
 
 
 
