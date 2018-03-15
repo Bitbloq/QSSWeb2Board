@@ -8,12 +8,10 @@
 
 ArduinoHandler::ArduinoHandler():proc(NULL),arduinoBoards("knownboards.json")
 {
-
-    qDebug() << arduinoBoards["ZUMCore"].toObject().value("board").toString();
-    qDebug() << arduinoBoards["ArduinoUNO"].toObject().value("id");
+    //qDebug() << arduinoBoards["ZUMCore"].toObject().value("board").toString();
+    //qDebug() << arduinoBoards["ArduinoUNO"].toObject().value("id");
 
     proc = new QProcess(); //this is to launch the arduino commands
-
 }
 
 ArduinoHandler::~ArduinoHandler(){
@@ -31,6 +29,7 @@ void ArduinoHandler::setExecutableDir(QString s){
     }else{
         executableDir=s;
     }
+
     qDebug() << executableDir;
 }
 
@@ -44,8 +43,15 @@ void ArduinoHandler::setFileName(QString s){
     fileName=s;
 }
 
-void ArduinoHandler::setBoardNameID(QString s){
+bool ArduinoHandler::setBoardNameID(QString s){
     boardNameID=s;
+
+    //check whether we know that board
+    if (arduinoBoards[s].isNull()){
+        return false;
+    }else{
+        return true;
+    }
 }
 
 bool ArduinoHandler::setBoardPort(QString s){
@@ -56,12 +62,15 @@ bool ArduinoHandler::setBoardPort(QString s){
         return true;
     }
 
+    //before going on let's check whether we know the board or not
+    if(arduinoBoards[boardNameID].isNull()) return false;
+
     // if no port introduced check for available serial ports
     // and check whether the desired board is connected to one of them
     // usign vendorID and product ID
     QSerialPortInfo serialinfo;
-    //gets list of all available serial ports
 
+    //gets list of all available serial ports
     QList<QSerialPortInfo> serialPorts = serialinfo.availablePorts();
     qDebug() << "Available ports";
 
@@ -70,11 +79,9 @@ bool ArduinoHandler::setBoardPort(QString s){
 
     //get all productID and vendorID and check if any is equal to boardNameID
     for(int i=0; i< serialPorts.size(); i++){
-
         qDebug() << serialPorts.at(i).systemLocation();
         qDebug() << "Product Id " <<serialPorts.at(i).productIdentifier();
         qDebug() << "Vendor Id " <<serialPorts.at(i).vendorIdentifier();
-        qDebug() << arduinoBoards[boardNameID].toObject().value("id");
 
         //loop over all vendorID and productID of selected board to check whether the board is connected (compare con vendor and product of connected serial ports)
         for (int j=0; j<idArray.size(); j++){
@@ -97,27 +104,30 @@ bool ArduinoHandler::setBoardPort(QString s){
 }
 
 QString ArduinoHandler::verify(QString _boardNameID){
-    setBoardNameID(_boardNameID);
-    setExecutableDir();
-    if(setBoardPort()){
-        proc->start(makeVerifyCommand());
-        proc->waitForFinished();
-        //return the output of the verification
-        QString output(proc->readAllStandardOutput());
-        qDebug() << output;
-        return output;
+    if(!setBoardNameID(_boardNameID)){
+        return QString("Board Name not recognized");
     }
-    return QString("Board not connected");
+
+    setExecutableDir();
+
+    proc->start(makeVerifyCommand());
+    proc->waitForFinished();
+    //return the output of the verification
+    QString output(proc->readAllStandardOutput());
+    qDebug() << output;
+    return output;
+
 
 }
 
-QString ArduinoHandler::load(QString _boardNameID){
+QString ArduinoHandler::upload(QString _boardNameID){
     setBoardNameID(_boardNameID);
+
+    if(!setBoardPort()) return QString("Board ") + boardNameID + QString(" not connected to the computer");
+
     //makeLoadCommand creates the load command to execute
-    proc->start(makeLoadCommand());
-
+    proc->start(makeUploadCommand());
     proc->waitForFinished();
-
     //return the output of the verification
     QString output(proc->readAllStandardOutput());
     qDebug() << output;
@@ -130,7 +140,7 @@ QString ArduinoHandler::makeVerifyCommand(){
     return QString(executableDir + "arduino --verify " + "--board " +boardCommand + " " + filePath + fileName);
 }
 
-QString ArduinoHandler::makeLoadCommand(){
+QString ArduinoHandler::makeUploadCommand(){
     QString boardCommand = arduinoBoards[boardNameID].toObject().value("board").toString();
     qDebug() << executableDir + "arduino --upload " + "--board " +boardCommand + " --port " + boardPort + " " + filePath + fileName;
     return QString(executableDir + "arduino --upload " + "--board " +boardCommand + " --port " + boardPort + " " + filePath + fileName);

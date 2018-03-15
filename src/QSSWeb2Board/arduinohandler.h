@@ -16,20 +16,22 @@ public:
     void setExecutableDir(QString s="");
     void setFilePath(QString s);
     void setFileName(QString s);
-    void setBoardNameID(QString s);
+    bool setBoardNameID(QString s);
     bool setBoardPort(QString s="");
 
     QString verify(QString _boardNameID);
-    QString load(QString _boardNameID);
+    QString upload(QString _boardNameID);
 
 private:
+
+
     QString executableDir;
     QString filePath;
     QString fileName;
     QString boardNameID;
     QString boardPort;
 
-    QString makeLoadCommand();
+    QString makeUploadCommand();
     QString makeVerifyCommand();
 
     QProcess *proc;
