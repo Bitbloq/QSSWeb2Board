@@ -15,10 +15,13 @@ public:
     ArduinoHandler();
     virtual ~ArduinoHandler();
 
-    void setExecutableDir(QString s="");
+    void setArduinoPath(QString s="");
+    void setBuildPath(QString s="");
     void setFilePath(QString s);
     void setFileName(QString s);
+
     void setFileWithFullPath(QString s) throw (FileNotFoundException);
+
     bool setBoardNameID(QString s) throw(BoardNotKnownException);
 
     bool setBoardPort(QString s="") throw(BoardNotKnownException,
@@ -27,14 +30,18 @@ public:
     QString verify(QString _boardNameID) throw(BoardNotKnownException,
                                                BoardNotDetectedException,
                                                VerifyException);
-    QString upload(QString _boardNameID);
+    QString upload(QString _boardNameID)throw(BoardNotKnownException,
+                                                   BoardNotDetectedException,
+                                                   VerifyException,
+                                                   UploadException);
 
-private:
+protected:
 
     QString extractErrorfromOutput(QString s);
     QString extractSingleError(QString s);
 
-    QString executableDir;
+    QString arduinoPath;
+    QString buildPath;
     QString filePath;
     QString fileName;
     QString fileWithPath;
@@ -42,13 +49,37 @@ private:
     QString boardPort;
     QList<QString> verifyErrorsList;
 
-    QString makeUploadCommand();
-    QString makeVerifyCommand();
+    virtual QString makeUploadCommand(){return "";};
+    virtual QString makeVerifyCommand(){return "";};
 
     QProcess *proc;
 
     KnownBoards arduinoBoards;
 
+};
+
+class LinuxArduinoHandler : public ArduinoHandler{
+public:
+    LinuxArduinoHandler():ArduinoHandler(){}
+    virtual ~LinuxArduinoHandler(){};
+    virtual QString makeUploadCommand();
+    virtual QString makeVerifyCommand();
+};
+
+class WindowsArduinoHandler : public ArduinoHandler{
+public:
+    WindowsArduinoHandler():ArduinoHandler(){}
+    virtual ~WindowsArduinoHandler(){};
+    virtual QString makeUploadCommand();
+    virtual QString makeVerifyCommand();
+};
+
+class MacArduinoHandler : public ArduinoHandler{
+public:
+    MacArduinoHandler():ArduinoHandler(){}
+    virtual ~MacArduinoHandler(){};
+    virtual QString makeUploadCommand();
+    virtual QString makeVerifyCommand();
 };
 
 #endif // ARDUINOHANDLER_H

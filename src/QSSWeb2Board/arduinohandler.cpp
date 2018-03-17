@@ -20,16 +20,28 @@ ArduinoHandler::~ArduinoHandler(){
     }
 }
 
-void ArduinoHandler::setExecutableDir(QString s){
+void ArduinoHandler::setArduinoPath(QString s){
     //if no param passed, set the default directory (whis is relative to the app dir)
     if (s == ""){
         //portable arduino ide MUST be in in ~/res/arduino relative to application path !!
-        executableDir=QCoreApplication::applicationDirPath() + "/res/arduino/";
+        arduinoPath=QCoreApplication::applicationDirPath() + "/res/arduino/";
     }else{
-        executableDir=s;
+        arduinoPath=s;
     }
 
-    qDebug() << executableDir;
+    qDebug() << arduinoPath;
+}
+
+void ArduinoHandler::setBuildPath(QString s){
+    //if no param passed, set the default path (which is relative to the app dir)
+    if (s == ""){
+        //build path MUST be in in ~/res/build relative to application path !!
+        buildPath=QCoreApplication::applicationDirPath() + "/res/build/";
+    }else{
+        buildPath=s;
+    }
+
+    qDebug() << buildPath;
 }
 
 void ArduinoHandler::setFilePath(QString s){
@@ -48,6 +60,8 @@ void ArduinoHandler::setFileWithFullPath(QString s) throw (FileNotFoundException
 
     if ( QFile::exists(s)) {
         fileWithPath=s;
+        fileName = fileWithPath.right(fileWithPath.length() - fileWithPath.lastIndexOf("/") - 1);
+        filePath = fileWithPath.left(fileWithPath.lastIndexOf("/") + 1);
     }else{
         throw FileNotFoundException("File "+s+" does not exist");
     }
@@ -132,18 +146,30 @@ QString ArduinoHandler::verify(QString _boardNameID) throw(BoardNotKnownExceptio
     //throws BoardNotKnowException if _boardNameID is not among the known boards
     setBoardNameID(_boardNameID);
 
-    setExecutableDir();
+    setArduinoPath();
+    setBuildPath();
 
     proc->start(makeVerifyCommand());
     proc->waitForFinished();
 
     QString errorOuput = QString(proc->readAllStandardError());
 
-    //Check how compilation has gone
-    if(errorOuput.endsWith("Verifying...\n")){
+    switch(proc->exitCode()){
+    case 0:
         qDebug()<<"Verify OK";
-    }else{
-        throw VerifyException("Verify Error: " + extractErrorfromOutput(errorOuput), verifyErrorsList);
+        break;
+    case 1:
+        throw VerifyException(extractErrorfromOutput(errorOuput), verifyErrorsList);
+        break;
+    case 2:
+        throw VerifyException("Sketch not found");
+        break;
+    case 3:
+        throw VerifyException("Invalid (argument for) commandline option");
+        break;
+    case 4:
+        throw VerifyException("Preference passed to --get-pref does not exist");
+        break;
     }
 
     //return the output of the verification
@@ -154,37 +180,50 @@ QString ArduinoHandler::verify(QString _boardNameID) throw(BoardNotKnownExceptio
 
 }
 
-QString ArduinoHandler::upload(QString _boardNameID){
-    setBoardNameID(_boardNameID);
+QString ArduinoHandler::upload(QString _boardNameID)throw(BoardNotKnownException,
+                                                          BoardNotDetectedException,
+                                                          VerifyException,
+                                                          UploadException)
+{
 
-    if(!setBoardPort()) return QString("Board ") + boardNameID + QString(" not connected to the computer");
+    verify(_boardNameID);
+
+    //throws Exception if board not connect to computer
+    setBoardPort();
 
     //makeLoadCommand creates the load command to execute
     proc->start(makeUploadCommand());
-    proc->waitForFinished();
-    //return the output of the verification
-    QString output(proc->readAllStandardOutput());
-    //qDebug() << output;
-    return output;
+    proc->waitForFinished(-1);
+    QString errorOutput(proc->readAllStandardError());
+
+    switch(proc->exitCode()){
+    case 0:
+        qDebug()<<"Upload OK";
+        break;
+    case 1:
+        throw UploadException(errorOutput);
+        break;
+    case 2:
+        throw UploadException("Sketch not found");
+        break;
+    case 3:
+        throw UploadException("Invalid (argument for) commandline option");
+        break;
+    case 4:
+        throw UploadException("Preference passed to --get-pref does not exist");
+        break;
+    }
+
+    return errorOutput;
 }
 
-QString ArduinoHandler::makeVerifyCommand(){
-    QString boardCommand = arduinoBoards[boardNameID].toObject().value("board").toString();
-    qDebug() << executableDir + "arduino --verify " + "--board " +boardCommand + " " + fileWithPath;
-    return QString(executableDir + "arduino --verify " + "--board " +boardCommand + " " + fileWithPath);
-}
 
-QString ArduinoHandler::makeUploadCommand(){
-    QString boardCommand = arduinoBoards[boardNameID].toObject().value("board").toString();
-    qDebug() << executableDir + "arduino --upload " + "--board " +boardCommand + " --port " + boardPort + " " + fileWithPath;
-    return QString(executableDir + "arduino --upload " + "--board " +boardCommand + " --port " + boardPort + " " + fileWithPath);
-}
 
 
 //This function, called recursively, allows to list the errors removing the local route to the file
 QString ArduinoHandler::extractSingleError(QString s){
 
-    QString match = filePath + fileName +":";
+    QString match = fileWithPath +":";
     int pos = s.indexOf(match);
     if ( pos >= 0 )
     {
@@ -200,9 +239,9 @@ QString ArduinoHandler::extractSingleError(QString s){
 //This function, together with extractSingleError creates a string with all the errors eliminating reference
 //to local routes
 QString ArduinoHandler::extractErrorfromOutput(QString s){
+    qDebug() << s;
     QString errorsLine;
-    QString errorReturn;
-    QString match = filePath + fileName + ":";
+    QString match = fileWithPath + ":";
     int pos = s.indexOf(match);
     if ( pos >= 0 )
     {
@@ -210,4 +249,109 @@ QString ArduinoHandler::extractErrorfromOutput(QString s){
     }
 
     return extractSingleError(errorsLine);
+}
+
+
+QString LinuxArduinoHandler::makeVerifyCommand(){
+
+    if(arduinoPath.isEmpty()) setArduinoPath();
+    if(buildPath.isEmpty()) setBuildPath();
+
+    QString boardCommand = arduinoBoards[boardNameID].toObject().value("board").toString();
+    QString verifyCommand = QString(arduinoPath +
+                                    "arduino "+
+                                    "--verify " +
+                                    "--pref build.path=" + buildPath + " " +
+                                    "--board " +boardCommand + " " +
+                                    fileWithPath);
+
+    qDebug() << verifyCommand;
+    return verifyCommand;
+}
+
+QString MacArduinoHandler::makeVerifyCommand(){
+
+    if(arduinoPath.isEmpty()) setArduinoPath();
+    if(buildPath.isEmpty()) setBuildPath();
+
+    QString boardCommand = arduinoBoards[boardNameID].toObject().value("board").toString();
+    QString verifyCommand = QString(arduinoPath +
+                                    "Arduino.app/Contents/MacOS/Arduino "+
+                                    "--verify " +
+                                    "--pref build.path=" + buildPath + " " +
+                                    "--board " +boardCommand + " " +
+                                    fileWithPath);
+
+    qDebug() << verifyCommand;
+    return verifyCommand;
+}
+
+
+
+QString WindowsArduinoHandler::makeVerifyCommand(){
+
+    if(arduinoPath.isEmpty()) setArduinoPath();
+    if(buildPath.isEmpty()) setBuildPath();
+
+    QString boardCommand = arduinoBoards[boardNameID].toObject().value("board").toString();
+    QString verifyCommand = QString(arduinoPath +
+                                    "arduino_debug.exe "+
+                                    "--verify " +
+                                    "--pref build.path=" + buildPath + " " +
+                                    "--board " +boardCommand + " " +
+                                    fileWithPath);
+
+    qDebug() << verifyCommand;
+    return verifyCommand;
+}
+
+QString LinuxArduinoHandler::makeUploadCommand(){
+
+    if(arduinoPath.isEmpty()) setArduinoPath();
+    if(buildPath.isEmpty()) setBuildPath();
+
+    QString boardCommand = arduinoBoards[boardNameID].toObject().value("board").toString();
+    QString uploadCommand = QString(arduinoPath +
+                                    "arduino "+
+                                    "--upload " +
+                                    "--board " +boardCommand +
+                                    " --port " + boardPort + " " +
+                                    "--pref build.path=" + buildPath + " " +
+                                    fileWithPath);
+    qDebug() << uploadCommand;
+    return uploadCommand;
+}
+
+QString MacArduinoHandler::makeUploadCommand(){
+
+    if(arduinoPath.isEmpty()) setArduinoPath();
+    if(buildPath.isEmpty()) setBuildPath();
+
+    QString boardCommand = arduinoBoards[boardNameID].toObject().value("board").toString();
+    QString uploadCommand = QString(arduinoPath +
+                                    "Arduino.app/Contents/MacOS/Arduino "+
+                                    "--upload " +
+                                    "--board " +boardCommand +
+                                    " --port " + boardPort + " " +
+                                    "--pref build.path=" + buildPath + " " +
+                                    fileWithPath);
+    qDebug() << uploadCommand;
+    return uploadCommand;
+}
+
+QString WindowsArduinoHandler::makeUploadCommand(){
+
+    if(arduinoPath.isEmpty()) setArduinoPath();
+    if(buildPath.isEmpty()) setBuildPath();
+
+    QString boardCommand = arduinoBoards[boardNameID].toObject().value("board").toString();
+    QString uploadCommand = QString(arduinoPath +
+                                    "arduino_debug.exe "+
+                                    "--upload " +
+                                    "--board " +boardCommand +
+                                    " --port " + boardPort + " " +
+                                    "--pref build.path=" + buildPath + " " +
+                                    fileWithPath);
+    qDebug() << uploadCommand;
+    return uploadCommand;
 }

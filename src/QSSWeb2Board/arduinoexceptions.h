@@ -7,7 +7,7 @@
 
 class VerifyException: public QException{
     public:
-        VerifyException(const QString& s, const QList<QString>& l):message(s),errorsList(l){}
+        VerifyException(const QString& s, const QList<QString>& l = QList<QString>()):message(s),errorsList(l){}
         void raise() const { throw *this; }
         VerifyException *clone() const { return new VerifyException(*this); }
         QString getMessage() const{return message;}
@@ -15,6 +15,17 @@ class VerifyException: public QException{
     public:
         const QString message;
         const QList<QString> errorsList;
+};
+
+class UploadException: public QException{
+    public:
+        UploadException(const QString& s):message(s){}
+        void raise() const { throw *this; }
+        UploadException *clone() const { return new UploadException(*this); }
+        QString getMessage() const{return message;}
+
+    public:
+        const QString message;
 };
 
 
