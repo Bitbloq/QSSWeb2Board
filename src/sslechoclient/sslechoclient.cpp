@@ -56,15 +56,16 @@ void SslEchoClient::onConnected()
     qDebug() << "WebSocket connected";
     connect(&m_webSocket, &QWebSocket::textMessageReceived,
             this, &SslEchoClient::onTextMessageReceived);
-    m_webSocket.sendTextMessage(QStringLiteral("Hello, world!"));
+    m_webSocket.sendTextMessage(QStringLiteral("UPLOAD"));
+    m_webSocket.flush();
 }
 //! [onConnected]
 
 //! [onTextMessageReceived]
 void SslEchoClient::onTextMessageReceived(QString message)
 {
-    qDebug() << "Message received:" << message;
-    qApp->quit();
+    qDebug() <<  message;
+    //qApp->quit();
 }
 
 void SslEchoClient::onSslErrors(const QList<QSslError> &errors)

@@ -22,10 +22,6 @@ public:
 
     void setFileWithFullPath(QString s) throw (FileNotFoundException);
 
-    bool setBoardNameID(QString s) throw(BoardNotKnownException);
-
-    bool setBoardPort(QString s="") throw(BoardNotKnownException,
-                                          BoardNotDetectedException);
 
     QString verify(QString _boardNameID) throw(BoardNotKnownException,
                                                BoardNotDetectedException,
@@ -36,6 +32,11 @@ public:
                                                    UploadException);
 
 protected:
+
+    bool setBoardNameID(QString s) throw(BoardNotKnownException);
+    bool setBoardPort(QString s="") throw(BoardNotKnownException,
+                                          BoardNotDetectedException);
+
 
     QString extractErrorfromOutput(QString s);
     QString extractSingleError(QString s);

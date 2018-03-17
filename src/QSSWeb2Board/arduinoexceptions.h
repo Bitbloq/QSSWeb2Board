@@ -22,9 +22,7 @@ class UploadException: public QException{
         UploadException(const QString& s):message(s){}
         void raise() const { throw *this; }
         UploadException *clone() const { return new UploadException(*this); }
-        QString getMessage() const{return message;}
 
-    public:
         const QString message;
 };
 
@@ -34,9 +32,7 @@ class FileNotFoundException: public QException{
         FileNotFoundException(const QString& s):message(s){}
         void raise() const { throw *this; }
         FileNotFoundException *clone() const { return new FileNotFoundException(*this); }
-        QString getMessage() const{return message;}
 
-    public:
         const QString message;
 };
 
@@ -46,10 +42,8 @@ class BoardNotKnownException: public QException{
         BoardNotKnownException(const QString& s):message(s){}
         void raise() const { throw *this; }
         BoardNotKnownException *clone() const { return new BoardNotKnownException(*this); }
-        QString getMessage() const{return message;}
 
-    private:
-        QString message;
+        const QString message;
 };
 
 class BoardNotDetectedException: public QException{
@@ -57,10 +51,8 @@ class BoardNotDetectedException: public QException{
         BoardNotDetectedException(const QString& s):message(s){}
         void raise() const { throw *this; }
         BoardNotDetectedException *clone() const { return new BoardNotDetectedException(*this); }
-        QString getMessage() const{return message;}
 
-    private:
-        QString message;
+        const QString message;
 };
 
 #endif // ARDUINOEXCEPTIONS_H

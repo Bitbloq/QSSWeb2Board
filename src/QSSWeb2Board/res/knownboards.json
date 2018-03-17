@@ -36,7 +36,6 @@
 		
 		},
 
-
 	"ZUMCore":{    
 		"board": "arduino:avr:bt:cpu=atmega328",
 		"id":[

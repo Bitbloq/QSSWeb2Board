@@ -110,21 +110,21 @@ bool ArduinoHandler::setBoardPort(QString s) throw(BoardNotDetectedException, Bo
 
     //gets list of all available serial ports
     QList<QSerialPortInfo> serialPorts = serialinfo.availablePorts();
-    qDebug() << "Available ports";
+    //qDebug() << "Available ports";
 
     //get all productID and vendorID and check if any is equal to boardNameID
     for(int i=0; i< serialPorts.size(); i++){
-        qDebug() << serialPorts.at(i).systemLocation();
+        //qDebug() << serialPorts.at(i).systemLocation();
         //qDebug() << "Product Id " <<serialPorts.at(i).productIdentifier();
         //qDebug() << "Vendor Id " <<serialPorts.at(i).vendorIdentifier();
 
         //loop over all vendorID and productID of selected board to check whether the board is connected (compare con vendor and product of connected serial ports)
         for (int j=0; j<arduinoBoards[boardNameID].size(); j++){
-            //qDebug() << idArray.at(j).toObject().value("productID").toInt();
-            //qDebug() << idArray.at(j).toObject().value("vendorID").toInt();
+            //qDebug() << arduinoBoards[boardNameID][j]["productID"];
+            //qDebug() << arduinoBoards[boardNameID][j]["vendorID"];
 
-            if( (arduinoBoards[boardNameID][j]["productID"] == serialPorts.at(i).productIdentifier()) &&
-                    (arduinoBoards[boardNameID][j]["vendorID"] == serialPorts.at(i).vendorIdentifier()) ){
+            if( (arduinoBoards[boardNameID][j]["productID"] == qint16(serialPorts.at(i).productIdentifier())) &&
+                    (arduinoBoards[boardNameID][j]["vendorID"] == qint16(serialPorts.at(i).vendorIdentifier())) ){
                 //Yay found, save board port
                 boardPort=serialPorts.at(i).systemLocation();
                 qDebug() << boardNameID << " found at " << boardPort;
@@ -185,7 +185,7 @@ QString ArduinoHandler::upload(QString _boardNameID)throw(BoardNotKnownException
                                                           VerifyException,
                                                           UploadException)
 {
-
+    //check whether de boardName is on the known boards list
     verify(_boardNameID);
 
     //throws Exception if board not connect to computer
