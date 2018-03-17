@@ -18,6 +18,7 @@ public:
     void setExecutableDir(QString s="");
     void setFilePath(QString s);
     void setFileName(QString s);
+    void setFileWithFullPath(QString s) throw (FileNotFoundException);
     bool setBoardNameID(QString s) throw(BoardNotKnownException);
 
     bool setBoardPort(QString s="") throw(BoardNotKnownException,
@@ -36,6 +37,7 @@ private:
     QString executableDir;
     QString filePath;
     QString fileName;
+    QString fileWithPath;
     QString boardNameID;
     QString boardPort;
     QList<QString> verifyErrorsList;

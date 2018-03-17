@@ -10,18 +10,14 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
     ArduinoHandler arduino;
 
-    arduino.setFilePath("/home/avalero/arduino-1.8.5/examples/01.Basics/Blink/");
-    arduino.setFileName("Blink.ino");
-
-    arduino.setFilePath("/home/avalero/arduino-1.8.5/examples/error/");
-    arduino.setFileName("error.ino");
-
-
     try{
+        arduino.setFileWithFullPath("/home/avalero/arduino-1.8.5/examples/01.Basics/Blink/Blink.ino");
         arduino.setBoardNameID("ZUMCore");
         arduino.setBoardPort();
         arduino.verify("ZUMCore");
-        arduino.upload("ZUMJunior");
+        arduino.upload("ZUMCore");
+    }catch(FileNotFoundException &e){
+        qDebug() << e.message;
     }catch(BoardNotKnownException &e){
         qDebug() << e.getMessage();
     }catch(BoardNotDetectedException &e){

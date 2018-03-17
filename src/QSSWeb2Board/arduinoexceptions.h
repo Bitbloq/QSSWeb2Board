@@ -18,6 +18,18 @@ class VerifyException: public QException{
 };
 
 
+class FileNotFoundException: public QException{
+    public:
+        FileNotFoundException(const QString& s):message(s){}
+        void raise() const { throw *this; }
+        FileNotFoundException *clone() const { return new FileNotFoundException(*this); }
+        QString getMessage() const{return message;}
+
+    public:
+        const QString message;
+};
+
+
 class BoardNotKnownException: public QException{
     public:
         BoardNotKnownException(const QString& s):message(s){}

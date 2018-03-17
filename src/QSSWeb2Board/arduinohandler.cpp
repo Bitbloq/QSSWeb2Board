@@ -35,11 +35,22 @@ void ArduinoHandler::setExecutableDir(QString s){
 void ArduinoHandler::setFilePath(QString s){
     //absolute path to the .ino file to verify
     filePath=s;
+    fileWithPath = filePath + fileName;
 }
 
 void ArduinoHandler::setFileName(QString s){
     //name of the .ino file
     fileName=s;
+    fileWithPath = filePath + fileName;
+}
+
+void ArduinoHandler::setFileWithFullPath(QString s) throw (FileNotFoundException){
+
+    if ( QFile::exists(s)) {
+        fileWithPath=s;
+    }else{
+        throw FileNotFoundException("File "+s+" does not exist");
+    }
 }
 
 bool ArduinoHandler::setBoardNameID(QString s) throw(BoardNotKnownException){
@@ -159,14 +170,14 @@ QString ArduinoHandler::upload(QString _boardNameID){
 
 QString ArduinoHandler::makeVerifyCommand(){
     QString boardCommand = arduinoBoards[boardNameID].toObject().value("board").toString();
-    qDebug() << executableDir + "arduino --verify " + "--board " +boardCommand + " " + filePath + fileName;
-    return QString(executableDir + "arduino --verify " + "--board " +boardCommand + " " + filePath + fileName);
+    qDebug() << executableDir + "arduino --verify " + "--board " +boardCommand + " " + fileWithPath;
+    return QString(executableDir + "arduino --verify " + "--board " +boardCommand + " " + fileWithPath);
 }
 
 QString ArduinoHandler::makeUploadCommand(){
     QString boardCommand = arduinoBoards[boardNameID].toObject().value("board").toString();
-    qDebug() << executableDir + "arduino --upload " + "--board " +boardCommand + " --port " + boardPort + " " + filePath + fileName;
-    return QString(executableDir + "arduino --upload " + "--board " +boardCommand + " --port " + boardPort + " " + filePath + fileName);
+    qDebug() << executableDir + "arduino --upload " + "--board " +boardCommand + " --port " + boardPort + " " + fileWithPath;
+    return QString(executableDir + "arduino --upload " + "--board " +boardCommand + " --port " + boardPort + " " + fileWithPath);
 }
 
 
@@ -189,8 +200,6 @@ QString ArduinoHandler::extractSingleError(QString s){
 //This function, together with extractSingleError creates a string with all the errors eliminating reference
 //to local routes
 QString ArduinoHandler::extractErrorfromOutput(QString s){
-    qDebug() << s;
-    qDebug() << "-----------------------------------";
     QString errorsLine;
     QString errorReturn;
     QString match = filePath + fileName + ":";
