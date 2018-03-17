@@ -132,7 +132,7 @@ QString ArduinoHandler::verify(QString _boardNameID) throw(BoardNotKnownExceptio
     if(errorOuput.endsWith("Verifying...\n")){
         qDebug()<<"Verify OK";
     }else{
-        throw VerifyException("Verify Error: " + extractErrorfromOutput(errorOuput));
+        throw VerifyException("Verify Error: " + extractErrorfromOutput(errorOuput), verifyErrorsList);
     }
 
     //return the output of the verification
@@ -170,14 +170,35 @@ QString ArduinoHandler::makeUploadCommand(){
 }
 
 
-QString ArduinoHandler::extractErrorfromOutput(QString s){
-    QString errorsLine;
-    QString verifying = QString("Verifying...\n");
-    int pos = s.indexOf(verifying);
+//This function, called recursively, allows to list the errors removing the local route to the file
+QString ArduinoHandler::extractSingleError(QString s){
+
+    QString match = filePath + fileName +":";
+    int pos = s.indexOf(match);
     if ( pos >= 0 )
     {
-        errorsLine = s.mid (pos + verifying.length());
+        QString leftOf = s.left(pos);
+        verifyErrorsList.append(leftOf.simplified());
+        return (leftOf.simplified() + extractSingleError(s.mid (pos + match.length())));
+    }else{
+        verifyErrorsList.append(s.simplified());
+        return s.simplified();
+    }
+}
+
+//This function, together with extractSingleError creates a string with all the errors eliminating reference
+//to local routes
+QString ArduinoHandler::extractErrorfromOutput(QString s){
+    qDebug() << s;
+    qDebug() << "-----------------------------------";
+    QString errorsLine;
+    QString errorReturn;
+    QString match = filePath + fileName + ":";
+    int pos = s.indexOf(match);
+    if ( pos >= 0 )
+    {
+        errorsLine = s.mid (pos + match.length());
     }
 
-    return errorsLine;
+    return extractSingleError(errorsLine);
 }

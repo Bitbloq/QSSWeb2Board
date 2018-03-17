@@ -31,11 +31,14 @@ public:
 private:
 
     QString extractErrorfromOutput(QString s);
+    QString extractSingleError(QString s);
+
     QString executableDir;
     QString filePath;
     QString fileName;
     QString boardNameID;
     QString boardPort;
+    QList<QString> verifyErrorsList;
 
     QString makeUploadCommand();
     QString makeVerifyCommand();

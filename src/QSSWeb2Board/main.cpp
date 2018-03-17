@@ -21,16 +21,17 @@ int main(int argc, char *argv[])
         arduino.setBoardNameID("ZUMCore");
         arduino.setBoardPort();
         arduino.verify("ZUMCore");
+        arduino.upload("ZUMJunior");
     }catch(BoardNotKnownException &e){
         qDebug() << e.getMessage();
     }catch(BoardNotDetectedException &e){
         qDebug() << e.getMessage();
     }catch(VerifyException &e){
-        qDebug() << e.getMessage();
+        qDebug() << "Found " << e.errorsList.size() << " verification errors";
+        for(int i=0;i<e.errorsList.size();i++){
+            qDebug() << i + 1 << ".- " << e.errorsList.at(i);
+        }
     }
-
-
-    //arduino.upload("ZUMJunior");
 
     return 1; //a.exec();
 }

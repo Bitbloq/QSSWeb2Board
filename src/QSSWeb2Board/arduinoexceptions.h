@@ -7,13 +7,14 @@
 
 class VerifyException: public QException{
     public:
-        VerifyException(const QString& s):message(s){}
+        VerifyException(const QString& s, const QList<QString>& l):message(s),errorsList(l){}
         void raise() const { throw *this; }
         VerifyException *clone() const { return new VerifyException(*this); }
         QString getMessage() const{return message;}
 
-    private:
-        QString message;
+    public:
+        const QString message;
+        const QList<QString> errorsList;
 };
 
 
