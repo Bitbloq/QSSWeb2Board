@@ -36,6 +36,6 @@ int JsonBoard::size() const{
 }
 
 int JsonBoardID::operator [](const QString& id){
-    return this->toObject().value(id).toInt();
+    return qint16(this->toObject().value(id).toInt());
 }
 

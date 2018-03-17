@@ -3,7 +3,9 @@
 #include <QDebug>
 #include <QSerialPortInfo>
 #include <QJsonArray>
+#include <QSerialPort>
 
+#include "arduinoexceptions.h"
 #include "arduinohandler.h"
 
 ArduinoHandler::ArduinoHandler():proc(NULL),arduinoBoards("knownboards.json")
@@ -40,27 +42,41 @@ void ArduinoHandler::setFileName(QString s){
     fileName=s;
 }
 
-bool ArduinoHandler::setBoardNameID(QString s){
-    boardNameID=s;
-
+bool ArduinoHandler::setBoardNameID(QString s) throw(BoardNotKnownException){
     //check whether we know that board
-    if (arduinoBoards[s].isNull()){
+    if (arduinoBoards[s].isUndefined()){
+        throw BoardNotKnownException("BOARD NOT KNOWN: " + s);
         return false;
     }else{
+        boardNameID=s;
         return true;
     }
 }
 
-bool ArduinoHandler::setBoardPort(QString s){
+bool ArduinoHandler::setBoardPort(QString s) throw(BoardNotDetectedException, BoardNotKnownException){
 
     //if serial port is passed fix with it.
     if(s!=""){
-        boardPort=s;
-        return true;
+        QSerialPort port(s);
+        QSerialPortInfo serialPort(port);
+        if(serialPort.isNull()){
+            throw BoardNotDetectedException("NO BOARD CONNECTED TO " + s);
+        }else{
+            //We know there is something connected to port s, but we do not know what it is
+            boardPort=s;
+            return true;
+        }
     }
 
+
     //before going on let's check whether we know the board or not
-    if(arduinoBoards[boardNameID].isNull()) return false;
+    // only way boardNameID has a value is that is on the known boards
+    if(boardNameID.isEmpty()){
+        throw BoardNotKnownException("BOARDNAME NOT DEFINED");
+    }
+
+
+    //we are sure the board is in our known boards list
 
     // if no port introduced check for available serial ports
     // and check whether the desired board is connected to one of them
@@ -82,8 +98,8 @@ bool ArduinoHandler::setBoardPort(QString s){
             //qDebug() << idArray.at(j).toObject().value("productID").toInt();
             //qDebug() << idArray.at(j).toObject().value("vendorID").toInt();
 
-            if( (qint16(arduinoBoards[boardNameID][j]["productID"]) == qint16(serialPorts.at(i).productIdentifier())) &&
-                    (qint16(arduinoBoards[boardNameID][j]["vendorID"]) == qint16(serialPorts.at(i).vendorIdentifier())) ){
+            if( (arduinoBoards[boardNameID][j]["productID"] == serialPorts.at(i).productIdentifier()) &&
+                    (arduinoBoards[boardNameID][j]["vendorID"] == serialPorts.at(i).vendorIdentifier()) ){
                 //Yay found, save board port
                 boardPort=serialPorts.at(i).systemLocation();
                 qDebug() << boardNameID << " found at " << boardPort;
@@ -92,20 +108,33 @@ bool ArduinoHandler::setBoardPort(QString s){
         }
     }
 
+    throw BoardNotDetectedException("BOARD NOT DETECTED: " + boardNameID);
     //board name not connected to the computer
     qDebug() << boardNameID << "not connected to the computer";
     return false;
 }
 
-QString ArduinoHandler::verify(QString _boardNameID){
-    if(!setBoardNameID(_boardNameID)){
-        return QString("Board Name not recognized");
-    }
+QString ArduinoHandler::verify(QString _boardNameID) throw(BoardNotKnownException,
+                                                           BoardNotDetectedException,
+                                                           VerifyException){
+
+    //throws BoardNotKnowException if _boardNameID is not among the known boards
+    setBoardNameID(_boardNameID);
 
     setExecutableDir();
 
     proc->start(makeVerifyCommand());
     proc->waitForFinished();
+
+    QString errorOuput = QString(proc->readAllStandardError());
+
+    //Check how compilation has gone
+    if(errorOuput.endsWith("Verifying...\n")){
+        qDebug()<<"Verify OK";
+    }else{
+        throw VerifyException("Verify Error: " + extractErrorfromOutput(errorOuput));
+    }
+
     //return the output of the verification
     QString output(proc->readAllStandardOutput());
     //qDebug() << output;
@@ -140,3 +169,15 @@ QString ArduinoHandler::makeUploadCommand(){
     return QString(executableDir + "arduino --upload " + "--board " +boardCommand + " --port " + boardPort + " " + filePath + fileName);
 }
 
+
+QString ArduinoHandler::extractErrorfromOutput(QString s){
+    QString errorsLine;
+    QString verifying = QString("Verifying...\n");
+    int pos = s.indexOf(verifying);
+    if ( pos >= 0 )
+    {
+        errorsLine = s.mid (pos + verifying.length());
+    }
+
+    return errorsLine;
+}

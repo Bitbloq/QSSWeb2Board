@@ -13,7 +13,8 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     arduinohandler.cpp \
-    knownboards.cpp
+    knownboards.cpp \
+    arduinoexceptions.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -28,6 +29,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 HEADERS += \
     arduinohandler.h \
-    knownboards.h
+    knownboards.h \
+    arduinoexceptions.h
 
 DISTFILES +=

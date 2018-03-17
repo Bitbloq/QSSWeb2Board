@@ -2,7 +2,9 @@
 #define ARDUINOHANDLER_H
 
 #include <QObject>
+
 #include "knownboards.h"
+#include "arduinoexceptions.h"
 
 //forward declararion of classes
 class QProcess;
@@ -16,15 +18,19 @@ public:
     void setExecutableDir(QString s="");
     void setFilePath(QString s);
     void setFileName(QString s);
-    bool setBoardNameID(QString s);
-    bool setBoardPort(QString s="");
+    bool setBoardNameID(QString s) throw(BoardNotKnownException);
 
-    QString verify(QString _boardNameID);
+    bool setBoardPort(QString s="") throw(BoardNotKnownException,
+                                          BoardNotDetectedException);
+
+    QString verify(QString _boardNameID) throw(BoardNotKnownException,
+                                               BoardNotDetectedException,
+                                               VerifyException);
     QString upload(QString _boardNameID);
 
 private:
 
-
+    QString extractErrorfromOutput(QString s);
     QString executableDir;
     QString filePath;
     QString fileName;
