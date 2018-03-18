@@ -1,5 +1,5 @@
 #include "sslserver.h"
-#include "QtWebSockets/QWebSocket"
+#include "QtWebSockets/QWebSocketServer"
 #include <QtCore/QDebug>
 #include <QtCore/QFile>
 #include <QtNetwork/QSslCertificate>
@@ -7,29 +7,31 @@
 
 QT_USE_NAMESPACE
 
-Web2BoardSocketServer::Web2BoardSocketServer(QObject *parent):
-                       QWebSocketServer(QStringLiteral("SSL Echo Server"),
-                                        QWebSocketServer::SecureMode,
-                                        parent),
-                       pWeb2Board(Q_NULLPTR)
+Web2BoardSocket::Web2BoardSocket(QWebSocket* ws):
+                       m_pWeb2Board(Q_NULLPTR),
+                       m_pWebSocket(Q_NULLPTR)
 {
-    pWeb2Board = new Web2Board();
+    m_pWebSocket = ws;
+    m_pWeb2Board = new Web2Board();
+
 }
 
-Web2BoardSocketServer::~Web2BoardSocketServer(){
-    if(pWeb2Board != Q_NULLPTR){
-        delete pWeb2Board;
-    }
+Web2BoardSocket::~Web2BoardSocket(){
+
+    if(m_pWeb2Board) delete m_pWeb2Board;
+    if(m_pWebSocket) delete m_pWebSocket;
 }
 
 
 //! [constructor]
 SSLServer::SSLServer(quint16 port, QObject *parent) :
     QObject(parent),
-    m_pWeb2BoardSocketServer(Q_NULLPTR),
+    m_pWebSocketServer(Q_NULLPTR),
     m_clients()
 {
-    m_pWeb2BoardSocketServer = new Web2BoardSocketServer(this);
+    m_pWebSocketServer = new QWebSocketServer(QStringLiteral("SSL Echo Server"),
+                                              QWebSocketServer::SecureMode,
+                                              parent);
     QSslConfiguration sslConfiguration;
     QFile certFile(QStringLiteral(":/res/localhost.cert"));
     QFile keyFile(QStringLiteral(":/res/localhost.key"));
@@ -44,14 +46,14 @@ SSLServer::SSLServer(quint16 port, QObject *parent) :
     sslConfiguration.setPrivateKey(sslKey);
     sslConfiguration.setProtocol(QSsl::TlsV1SslV3);
 
-    m_pWeb2BoardSocketServer->setSslConfiguration(sslConfiguration);
+    m_pWebSocketServer->setSslConfiguration(sslConfiguration);
 
-    if (m_pWeb2BoardSocketServer->listen(QHostAddress::Any, port))
+    if (m_pWebSocketServer->listen(QHostAddress::Any, port))
     {
         qDebug() << "SSL Echo Server listening on port" << port;
-        connect(m_pWeb2BoardSocketServer, &QWebSocketServer::newConnection,
+        connect(m_pWebSocketServer, &QWebSocketServer::newConnection,
                 this, &SSLServer::onNewConnection);
-        connect(m_pWeb2BoardSocketServer, &QWebSocketServer::sslErrors,
+        connect(m_pWebSocketServer, &QWebSocketServer::sslErrors,
                 this, &SSLServer::onSslErrors);
     }
 }
@@ -59,7 +61,7 @@ SSLServer::SSLServer(quint16 port, QObject *parent) :
 
 SSLServer::~SSLServer()
 {
-    m_pWeb2BoardSocketServer->close();
+    m_pWebSocketServer->close();
     qDeleteAll(m_clients.begin(), m_clients.end());
 }
 
@@ -67,14 +69,14 @@ SSLServer::~SSLServer()
 //! [onNewConnection]
 void SSLServer::onNewConnection()
 {
-    QWebSocket *pSocket = m_pWeb2BoardSocketServer->nextPendingConnection();
+    Web2BoardSocket *pWeb2BoardSocket = new Web2BoardSocket(m_pWebSocketServer->nextPendingConnection());
 
-    qDebug() << "Client connected:" << pSocket->peerName() << pSocket->origin();
+    qDebug() << "Client connected:" << pWeb2BoardSocket->m_pWebSocket->peerName() << pWeb2BoardSocket->m_pWebSocket->origin();
 
-    connect(pSocket, &QWebSocket::textMessageReceived, m_pWeb2BoardSocketServer->pWeb2Board, &Web2Board::processTextMessage);
-    connect(pSocket, &QWebSocket::disconnected, this, &SSLServer::socketDisconnected);
+    connect(pWeb2BoardSocket->m_pWebSocket, &QWebSocket::textMessageReceived, pWeb2BoardSocket->m_pWeb2Board, &Web2Board::processTextMessage);
+    connect(pWeb2BoardSocket->m_pWebSocket, &QWebSocket::disconnected, this, &SSLServer::socketDisconnected);
 
-    m_clients << pSocket;
+    m_clients << pWeb2BoardSocket;
 }
 //! [onNewConnection]
 
@@ -83,12 +85,12 @@ void SSLServer::onNewConnection()
 void SSLServer::socketDisconnected()
 {
     qDebug() << "Client disconnected";
-    QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
+    /*Web2BoardSocket *pClient = qobject_cast<Web2BoardSocket *>(sender());
     if (pClient)
     {
         m_clients.removeAll(pClient);
         pClient->deleteLater();
-    }
+    }*/
 }
 
 void SSLServer::onSslErrors(const QList<QSslError> &)

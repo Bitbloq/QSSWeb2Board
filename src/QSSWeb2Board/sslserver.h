@@ -5,21 +5,30 @@
 #include <QtCore/QList>
 #include <QtCore/QByteArray>
 #include <QtNetwork/QSslError>
-#include "QtWebSockets/QWebSocketServer"
+#include "QtWebSockets/QWebSocket"
 
 #include "web2board.h"
 
-QT_FORWARD_DECLARE_CLASS(QWebSocket)
+QT_FORWARD_DECLARE_CLASS(QWebSocketServer)
 
-class Web2BoardSocketServer : public QWebSocketServer{
+/**
+ * @brief The Web2BoardSocketServer class handles connections from clients.
+ * It is the standard QWebSocketServer with the addtion of Web2Board
+ * Web2Board handles the messages and controls the ArduinoHandler
+ */
+class Web2BoardSocket: public QObject{
     Q_OBJECT
 
 public:
-    explicit Web2BoardSocketServer(QObject *parent = Q_NULLPTR);
-    virtual ~Web2BoardSocketServer();
-    Web2Board* pWeb2Board;
+    explicit Web2BoardSocket(QWebSocket *ws);
+    virtual ~Web2BoardSocket();
+    Web2Board* m_pWeb2Board; //for managing messages
+    QWebSocket* m_pWebSocket;
 };
 
+/**
+ * @brief The SSLServer class is a SSL Server for web secure sockets
+ */
 class SSLServer : public QObject
 {
     Q_OBJECT
@@ -33,8 +42,8 @@ private Q_SLOTS:
     void onSslErrors(const QList<QSslError> &errors);
 
 private:
-    Web2BoardSocketServer *m_pWeb2BoardSocketServer;
-    QList<QWebSocket *> m_clients;
+    QWebSocketServer *m_pWebSocketServer;
+    QList<Web2BoardSocket *> m_clients; //list of connected clients
 };
 
 
