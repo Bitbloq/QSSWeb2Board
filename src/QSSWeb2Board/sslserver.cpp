@@ -94,8 +94,7 @@ void SSLServer::socketDisconnected()
             qDebug() << "client";
             if (i.next()->m_pWebSocket == pClient){
                 qDebug() << "disconnected";
-                i.value()->m_pWeb2Board->deleteLater();
-                i.value()->m_pWebSocket->deleteLater();
+                i.value()->deleteLater();
                 i.remove();
             }
         }

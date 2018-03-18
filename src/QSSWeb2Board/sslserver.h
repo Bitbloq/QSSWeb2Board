@@ -13,7 +13,8 @@ QT_FORWARD_DECLARE_CLASS(QWebSocketServer)
 
 /**
  * @brief The Web2BoardSocketServer class handles connections from clients.
- * It is the standard QWebSocketServer with the addtion of Web2Board
+ * It implents the standard QWebSocket and Web2Board
+ * QWebSocket handles communications
  * Web2Board handles the messages and controls the ArduinoHandler
  */
 class Web2BoardSocket: public QObject{
