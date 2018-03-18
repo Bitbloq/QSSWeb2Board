@@ -27,7 +27,7 @@ Web2BoardSocket::~Web2BoardSocket(){
 SSLServer::SSLServer(quint16 port, QObject *parent) :
     QObject(parent),
     m_pWebSocketServer(Q_NULLPTR),
-    m_clients()
+    m_web2BoardSocketClients()
 {
     m_pWebSocketServer = new QWebSocketServer(QStringLiteral("SSL Echo Server"),
                                               QWebSocketServer::SecureMode,
@@ -62,7 +62,7 @@ SSLServer::SSLServer(quint16 port, QObject *parent) :
 SSLServer::~SSLServer()
 {
     m_pWebSocketServer->close();
-    qDeleteAll(m_clients.begin(), m_clients.end());
+    qDeleteAll(m_web2BoardSocketClients.begin(), m_web2BoardSocketClients.end());
 }
 
 
@@ -76,7 +76,7 @@ void SSLServer::onNewConnection()
     connect(pWeb2BoardSocket->m_pWebSocket, &QWebSocket::textMessageReceived, pWeb2BoardSocket->m_pWeb2Board, &Web2Board::processTextMessage);
     connect(pWeb2BoardSocket->m_pWebSocket, &QWebSocket::disconnected, this, &SSLServer::socketDisconnected);
 
-    m_clients << pWeb2BoardSocket;
+    m_web2BoardSocketClients << pWeb2BoardSocket;
 }
 //! [onNewConnection]
 
@@ -85,12 +85,22 @@ void SSLServer::onNewConnection()
 void SSLServer::socketDisconnected()
 {
     qDebug() << "Client disconnected";
-    /*Web2BoardSocket *pClient = qobject_cast<Web2BoardSocket *>(sender());
+    QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
     if (pClient)
     {
-        m_clients.removeAll(pClient);
-        pClient->deleteLater();
-    }*/
+        //remove clients with that socket client
+        QMutableListIterator<Web2BoardSocket*> i(m_web2BoardSocketClients);
+        while (i.hasNext()) {
+            qDebug() << "client";
+            if (i.next()->m_pWebSocket == pClient){
+                qDebug() << "disconnected";
+                i.value()->m_pWeb2Board->deleteLater();
+                i.value()->m_pWebSocket->deleteLater();
+                i.remove();
+            }
+        }
+
+    }
 }
 
 void SSLServer::onSslErrors(const QList<QSslError> &)

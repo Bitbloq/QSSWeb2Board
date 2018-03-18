@@ -43,7 +43,7 @@ private Q_SLOTS:
 
 private:
     QWebSocketServer *m_pWebSocketServer;
-    QList<Web2BoardSocket *> m_clients; //list of connected clients
+    QList<Web2BoardSocket *> m_web2BoardSocketClients; //list of connected clients
 };
 
 
