@@ -11,8 +11,8 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    Web2Board * web2board = new Web2Board;
-    SSLServer server(1234,web2board);
+    //Web2Board * web2board = new Web2Board;
+    SSLServer server(1234);
 
     Q_UNUSED(server);
 

@@ -5,9 +5,9 @@ Web2Board::Web2Board(QObject *parent):
     QObject(parent)
 {
     try{
-        arduino.setFileWithFullPath("/home/avalero/arduino-1.8.5/examples/01.Basics/Blink/Blink.ino");
+        //arduino.setFileWithFullPath("/home/avalero/arduino-1.8.5/examples/01.Basics/Blink/Blink.ino");
         arduino.setFileWithFullPath("/home/avalero/workspace/QSSWeb2Board/src/build-QSSWeb2Board-Desktop-Debug/res/arduino/hardware/BQ/avr/libraries/BQZUMI2C7SegmentDisplay/examples/7Segment_Characters/7Segment_Characters.ino");
-        arduino.setFileWithFullPath("/home/avalero/arduino-1.8.5/examples/error/error.ino");
+        //arduino.setFileWithFullPath("/home/avalero/arduino-1.8.5/examples/error/error.ino");
     }catch(FileNotFoundException &e){
         qDebug() << e.message;
     }
