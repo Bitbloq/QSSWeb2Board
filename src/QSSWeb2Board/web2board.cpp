@@ -1,12 +1,12 @@
 #include "web2board.h"
 #include <QtWebSockets/QWebSocket>
 
+
 Web2Board::Web2Board(QObject *parent):
     QObject(parent)
-{
-    try{
+{    try{
         //arduino.setFileWithFullPath("/home/avalero/arduino-1.8.5/examples/01.Basics/Blink/Blink.ino");
-        arduino.setFileWithFullPath("/home/avalero/workspace/QSSWeb2Board/src/build-QSSWeb2Board-Desktop-Debug/res/arduino/hardware/BQ/avr/libraries/BQZUMI2C7SegmentDisplay/examples/7Segment_Characters/7Segment_Characters.ino");
+        //arduino.setFileWithFullPath("/home/avalero/workspace/QSSWeb2Board/src/build-QSSWeb2Board-Desktop-Debug/res/arduino/hardware/BQ/avr/libraries/BQZUMI2C7SegmentDisplay/examples/7Segment_Characters/7Segment_Characters.ino");
         //arduino.setFileWithFullPath("/home/avalero/arduino-1.8.5/examples/error/error.ino");
     }catch(FileNotFoundException &e){
         qDebug() << e.message;
@@ -14,6 +14,7 @@ Web2Board::Web2Board(QObject *parent):
 
 }
 
+/*
 void Web2Board::manageVerifyCommand(QWebSocket* pClient){
     if (pClient)
     {
@@ -95,15 +96,33 @@ void Web2Board::manageUploadCommand(QWebSocket* pClient){
         pClient->flush();
     }
 }
+*/
+
+void Web2Board::processCommands(){
+//    arduino.setBoardNameID(data.boardID);
+//    arduino.setSketch(data.sketch);
+}
+
+void Web2Board::verify(){}
+
+void Web2Board::upload(){}
 
 
 
 void Web2Board::processTextMessage(QString message)
 {
-    QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
-    if (pClient)
+    m_pClient = qobject_cast<QWebSocket *>(sender());
+    messageHandler.handle(message);
+    if (messageHandler.action == MessageHandler::Action::VERIFY){
+        verify();
+    }
+}
+
+
+    /*
+    if (m_pClient)
     {
-        pClient->sendTextMessage("Received: " + message);
+        m_pClient->sendTextMessage("Received: " + message);
     }
 
     if(message == "VERIFY"){
@@ -116,5 +135,4 @@ void Web2Board::processTextMessage(QString message)
             pClient->sendTextMessage("UNKNOWN_COMMAND");
         }
         //TODO
-    }
-}
+    }*/

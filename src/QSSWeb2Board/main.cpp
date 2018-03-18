@@ -11,6 +11,17 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
+    QString ms = "<VERIFY><SKETCH>Esto es un sketch</SKETCH><BOARD>Board</BOARD></VERIFY>";
+
+    MessageHandler msHandler;
+    msHandler.handle(ms);
+    if (msHandler.action == MessageHandler::Action::VERIFY)
+        qDebug() << QString("Verify");
+    qDebug() << msHandler.sketch;
+    qDebug() << msHandler.boardID;
+
+    return 1;
+
     //Web2Board * web2board = new Web2Board;
     SSLServer server(1234);
 
