@@ -101,7 +101,13 @@ void Web2Board::manageUploadCommand(QWebSocket* pClient){
 */
 
 void Web2Board::processCommands(){
-//    arduino.setBoardNameID(data.boardID);
+    try{
+        arduino.writeSketch(messageHandler.sketch);
+    }catch(BoardNotKnownException &e){
+        //TODO
+        //Send board now know command to client
+    }
+
 //    arduino.setSketch(data.sketch);
 }
 

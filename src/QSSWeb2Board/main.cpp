@@ -11,7 +11,11 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
+    ArduinoHandler arduino;
+    arduino.writeSketch("Hola, soy un Sketch");
+    return 1;
 
+/*
     QString ms = "<VERIFY><SKETCH>Esto es un sketch</SKETCH><BOARD>Board boardID</BOARD></VERIFY>";
 
     MessageHandler msHandler;
@@ -24,12 +28,13 @@ int main(int argc, char *argv[])
     return 1;
 
     //Web2Board * web2board = new Web2Board;
+
     SSLServer server(1234);
 
     Q_UNUSED(server);
 
     return a.exec();
-
+*/
     /*
 
     try{

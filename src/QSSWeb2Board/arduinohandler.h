@@ -30,6 +30,7 @@ public:
                                                    BoardNotDetectedException,
                                                    VerifyException,
                                                    UploadException);
+    void writeSketch(QString sketch);
 
 protected:
 
@@ -56,6 +57,9 @@ protected:
     QProcess *proc;
 
     KnownBoards arduinoBoards;
+
+    QString createRandomString() const;
+    void eraseExistingSketches() const;
 
 };
 

@@ -4,12 +4,15 @@
 #include <QSerialPortInfo>
 #include <QJsonArray>
 #include <QSerialPort>
+#include <QDir>
+#include <QDateTime>
 
 #include "arduinoexceptions.h"
 #include "arduinohandler.h"
 
 ArduinoHandler::ArduinoHandler():proc(NULL),arduinoBoards("knownboards.json")
 {
+    eraseExistingSketches();
     proc = new QProcess(); //this is to launch the arduino commands
 }
 
@@ -17,6 +20,49 @@ ArduinoHandler::~ArduinoHandler(){
     //free memory from pointers
     if(proc!=NULL){
         delete proc;
+    }
+}
+
+QString ArduinoHandler::createRandomString() const{
+    const QString possibleCharacters("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+    const int randomStringLength = 12; // assuming you want random strings of 12 characters
+    qsrand(QDateTime::currentMSecsSinceEpoch() / 1000);
+    QString randomString;
+    for(int i=0; i<randomStringLength; ++i)
+    {
+       int index = qrand() % possibleCharacters.length();
+       QChar nextChar = possibleCharacters.at(index);
+       randomString.append(nextChar);
+    }
+    return randomString;
+}
+
+
+void ArduinoHandler::eraseExistingSketches() const {
+    QString path = QCoreApplication::applicationDirPath() + "/res/sketches/";
+    QDir dir(path);
+    dir.setNameFilters(QStringList() << "*");
+    dir.setFilter(QDir::Dirs);
+    foreach(QString dirDir, dir.entryList())
+    {
+        dir.remove(dirDir);
+    }
+}
+
+void ArduinoHandler::writeSketch(QString sketch){
+    QString randString = createRandomString();
+
+    fileName = randString + ".ino";
+    filePath=QCoreApplication::applicationDirPath() + "/res/sketches/" + randString + "/";
+    fileWithPath = filePath + fileName;
+
+    QDir().mkdir(filePath);
+
+    QFile file(fileWithPath);
+    if (file.open(QIODevice::ReadWrite)) {
+        QTextStream stream(&file);
+        stream << sketch << endl;
+        file.close();
     }
 }
 
