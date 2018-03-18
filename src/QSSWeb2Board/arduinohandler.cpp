@@ -42,23 +42,28 @@ void ArduinoHandler::eraseExistingSketches() const {
     QString path = QCoreApplication::applicationDirPath() + "/res/sketches/";
     QDir dir(path);
     dir.setNameFilters(QStringList() << "*");
-    dir.setFilter(QDir::Dirs);
-    foreach(QString dirDir, dir.entryList())
+    dir.setFilter(QDir::Files);
+
+    //remove files older than 1 day
+    foreach(QString dirFile, dir.entryList())
     {
-        dir.remove(dirDir);
+        QFileInfo fileInfo(path + dirFile);
+        //if older than one day, remove file
+        if(fileInfo.created().daysTo(QDateTime().currentDateTime()) > 1 )
+            dir.remove(dirFile);
     }
 }
 
 void ArduinoHandler::writeSketch(QString sketch){
     QString randString = createRandomString();
 
-    fileName = randString + ".ino";
-    filePath=QCoreApplication::applicationDirPath() + "/res/sketches/" + randString + "/";
-    fileWithPath = filePath + fileName;
+    sketchName = randString + ".ino";
+    sketchPath=QCoreApplication::applicationDirPath() + "/res/sketches/";
+    sketchWithPath = sketchPath + sketchName;
 
-    QDir().mkdir(filePath);
+    QDir().mkdir(sketchPath);
 
-    QFile file(fileWithPath);
+    QFile file(sketchWithPath);
     if (file.open(QIODevice::ReadWrite)) {
         QTextStream stream(&file);
         stream << sketch << endl;
@@ -90,24 +95,24 @@ void ArduinoHandler::setBuildPath(QString s){
     qDebug() << buildPath;
 }
 
-void ArduinoHandler::setFilePath(QString s){
+void ArduinoHandler::setSketchPath(QString s){
     //absolute path to the .ino file to verify
-    filePath=s;
-    fileWithPath = filePath + fileName;
+    sketchPath=s;
+    sketchWithPath = sketchPath + sketchName;
 }
 
-void ArduinoHandler::setFileName(QString s){
+void ArduinoHandler::setSketchName(QString s){
     //name of the .ino file
-    fileName=s;
-    fileWithPath = filePath + fileName;
+    sketchName=s;
+    sketchWithPath = sketchPath + sketchName;
 }
 
-void ArduinoHandler::setFileWithFullPath(QString s) throw (FileNotFoundException){
+void ArduinoHandler::setSketchWithFullPath(QString s) throw (FileNotFoundException){
 
     if ( QFile::exists(s)) {
-        fileWithPath=s;
-        fileName = fileWithPath.right(fileWithPath.length() - fileWithPath.lastIndexOf("/") - 1);
-        filePath = fileWithPath.left(fileWithPath.lastIndexOf("/") + 1);
+        sketchWithPath=s;
+        sketchName = sketchWithPath.right(sketchWithPath.length() - sketchWithPath.lastIndexOf("/") - 1);
+        sketchPath = sketchWithPath.left(sketchWithPath.lastIndexOf("/") + 1);
     }else{
         throw FileNotFoundException("File "+s+" does not exist");
     }
@@ -269,7 +274,7 @@ QString ArduinoHandler::upload(QString _boardNameID)throw(BoardNotKnownException
 //This function, called recursively, allows to list the errors removing the local route to the file
 QString ArduinoHandler::extractSingleError(QString s){
 
-    QString match = fileWithPath +":";
+    QString match = sketchWithPath +":";
     int pos = s.indexOf(match);
     if ( pos >= 0 )
     {
@@ -287,7 +292,7 @@ QString ArduinoHandler::extractSingleError(QString s){
 QString ArduinoHandler::extractErrorfromOutput(QString s){
     qDebug() << s;
     QString errorsLine;
-    QString match = fileWithPath + ":";
+    QString match = sketchWithPath + ":";
     int pos = s.indexOf(match);
     if ( pos >= 0 )
     {
@@ -309,7 +314,7 @@ QString LinuxArduinoHandler::makeVerifyCommand(){
                                     "--verify " +
                                     "--pref build.path=" + buildPath + " " +
                                     "--board " +boardCommand + " " +
-                                    fileWithPath);
+                                    sketchWithPath);
 
     qDebug() << verifyCommand;
     return verifyCommand;
@@ -326,7 +331,7 @@ QString MacArduinoHandler::makeVerifyCommand(){
                                     "--verify " +
                                     "--pref build.path=" + buildPath + " " +
                                     "--board " +boardCommand + " " +
-                                    fileWithPath);
+                                    sketchWithPath);
 
     qDebug() << verifyCommand;
     return verifyCommand;
@@ -345,7 +350,7 @@ QString WindowsArduinoHandler::makeVerifyCommand(){
                                     "--verify " +
                                     "--pref build.path=" + buildPath + " " +
                                     "--board " +boardCommand + " " +
-                                    fileWithPath);
+                                    sketchWithPath);
 
     qDebug() << verifyCommand;
     return verifyCommand;
@@ -363,7 +368,7 @@ QString LinuxArduinoHandler::makeUploadCommand(){
                                     "--board " +boardCommand +
                                     " --port " + boardPort + " " +
                                     "--pref build.path=" + buildPath + " " +
-                                    fileWithPath);
+                                    sketchWithPath);
     qDebug() << uploadCommand;
     return uploadCommand;
 }
@@ -380,7 +385,7 @@ QString MacArduinoHandler::makeUploadCommand(){
                                     "--board " +boardCommand +
                                     " --port " + boardPort + " " +
                                     "--pref build.path=" + buildPath + " " +
-                                    fileWithPath);
+                                    sketchWithPath);
     qDebug() << uploadCommand;
     return uploadCommand;
 }
@@ -397,7 +402,7 @@ QString WindowsArduinoHandler::makeUploadCommand(){
                                     "--board " +boardCommand +
                                     " --port " + boardPort + " " +
                                     "--pref build.path=" + buildPath + " " +
-                                    fileWithPath);
+                                    sketchWithPath);
     qDebug() << uploadCommand;
     return uploadCommand;
 }

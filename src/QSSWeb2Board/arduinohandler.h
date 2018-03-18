@@ -17,10 +17,10 @@ public:
 
     void setArduinoPath(QString s="");
     void setBuildPath(QString s="");
-    void setFilePath(QString s);
-    void setFileName(QString s);
+    void setSketchPath(QString s);
+    void setSketchName(QString s);
 
-    void setFileWithFullPath(QString s) throw (FileNotFoundException);
+    void setSketchWithFullPath(QString s) throw (FileNotFoundException);
 
 
     QString verify(QString _boardNameID) throw(BoardNotKnownException,
@@ -44,9 +44,9 @@ protected:
 
     QString arduinoPath;
     QString buildPath;
-    QString filePath;
-    QString fileName;
-    QString fileWithPath;
+    QString sketchPath;
+    QString sketchName;
+    QString sketchWithPath;
     QString boardNameID;
     QString boardPort;
     QList<QString> verifyErrorsList;
