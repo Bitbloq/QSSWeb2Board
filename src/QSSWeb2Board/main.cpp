@@ -11,7 +11,8 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    QString ms = "<VERIFY><SKETCH>Esto es un sketch</SKETCH><BOARD>Board</BOARD></VERIFY>";
+
+    QString ms = "<VERIFY><SKETCH>Esto es un sketch</SKETCH><BOARD>Board boardID</BOARD></VERIFY>";
 
     MessageHandler msHandler;
     msHandler.handle(ms);

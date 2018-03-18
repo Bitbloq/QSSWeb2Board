@@ -18,7 +18,8 @@ SOURCES += main.cpp \
     arduinoexceptions.cpp \
     sslserver.cpp \
     web2board.cpp \
-    messagehandler.cpp
+    messagehandler.cpp \
+    commsprotocol.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -37,7 +38,8 @@ HEADERS += \
     arduinoexceptions.h \
     sslserver.h \
     web2board.h \
-    messagehandler.h
+    messagehandler.h \
+    commsprotocol.h
 
 DISTFILES +=
 

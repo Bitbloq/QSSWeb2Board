@@ -5,6 +5,8 @@
 #include <QPair>
 #include <QMap>
 
+#include "commsprotocol.h"
+
 class MessageHandler
 {
 public:
@@ -32,8 +34,7 @@ private:
     void manageBodyMessage();
     void manageFullMessage();
 
-    //received commands dicitionary
-    QMap<QString,QPair<QString,QString> > command;
+
 };
 
 #endif // MESSAGEHANDLER_H

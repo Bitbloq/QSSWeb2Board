@@ -1,6 +1,8 @@
 #include "web2board.h"
 #include <QtWebSockets/QWebSocket>
 
+#include "commsprotocol.h"
+
 
 Web2Board::Web2Board(QObject *parent):
     QObject(parent)
@@ -113,26 +115,12 @@ void Web2Board::processTextMessage(QString message)
 {
     m_pClient = qobject_cast<QWebSocket *>(sender());
     messageHandler.handle(message);
+    processCommands();
     if (messageHandler.action == MessageHandler::Action::VERIFY){
         verify();
+    }else if (messageHandler.action == MessageHandler::Action::UPLOAD){
+        upload();
+    }else{
+        m_pClient->sendTextMessage("UNKNOWN");
     }
 }
-
-
-    /*
-    if (m_pClient)
-    {
-        m_pClient->sendTextMessage("Received: " + message);
-    }
-
-    if(message == "VERIFY"){
-        manageVerifyCommand(pClient);
-    }else if(message == "UPLOAD"){
-        manageUploadCommand(pClient);
-    }else{
-        if (pClient)
-        {
-            pClient->sendTextMessage("UNKNOWN_COMMAND");
-        }
-        //TODO
-    }*/

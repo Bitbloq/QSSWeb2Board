@@ -26,8 +26,8 @@ public Q_SLOTS:
 private:
     void verify();
     void upload();
-    void processCommands();
 
+    void processCommands();
     QWebSocket *m_pClient;
 
     MessageHandler messageHandler;
