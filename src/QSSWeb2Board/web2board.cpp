@@ -103,17 +103,31 @@ void Web2Board::manageUploadCommand(QWebSocket* pClient){
 void Web2Board::processCommands(){
     try{
         arduino.writeSketch(messageHandler.sketch);
-    }catch(BoardNotKnownException &e){
+        if(messageHandler.action == MessageHandler::Action::VERIFY){
+            arduino.verify(messageHandler.boardID);
+        }else if (messageHandler.action == MessageHandler::Action::VERIFY){
+            arduino.upload(messageHandler.boardID);
+        }
+    }catch(FileNotCreatedException &e){
+        qDebug()<<e.message;
         //TODO
-        //Send board now know command to client
+    }catch(BoardNotKnownException &e){
+        qDebug()<<e.message;
+        //TODO
+    }catch(FileNotFoundException &e){
+        qDebug()<<e.message;
+        //TODO
+    }catch(BoardNotDetectedException &e){
+        qDebug()<<e.message;
+        //TODO
+    }catch(UploadException &e){
+        qDebug()<<e.message;
+        //TODO
+    }catch(VerifyException &e){
+        qDebug()<<e.message;
+        //TODO
     }
-
-//    arduino.setSketch(data.sketch);
 }
-
-void Web2Board::verify(){}
-
-void Web2Board::upload(){}
 
 
 
@@ -122,11 +136,4 @@ void Web2Board::processTextMessage(QString message)
     m_pClient = qobject_cast<QWebSocket *>(sender());
     messageHandler.handle(message);
     processCommands();
-    if (messageHandler.action == MessageHandler::Action::VERIFY){
-        verify();
-    }else if (messageHandler.action == MessageHandler::Action::UPLOAD){
-        upload();
-    }else{
-        m_pClient->sendTextMessage("UNKNOWN");
-    }
 }

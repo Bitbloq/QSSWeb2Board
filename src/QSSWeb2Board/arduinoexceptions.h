@@ -55,4 +55,13 @@ class BoardNotDetectedException: public QException{
         const QString message;
 };
 
+class FileNotCreatedException: public QException{
+    public:
+        FileNotCreatedException(const QString& s):message(s){}
+        void raise() const { throw *this; }
+        FileNotCreatedException *clone() const { return new FileNotCreatedException(*this); }
+
+        const QString message;
+};
+
 #endif // ARDUINOEXCEPTIONS_H

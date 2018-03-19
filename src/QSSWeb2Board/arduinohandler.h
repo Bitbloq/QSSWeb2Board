@@ -23,14 +23,14 @@ public:
     void setSketchWithFullPath(QString s) throw (FileNotFoundException);
 
 
-    QString verify(QString _boardNameID) throw(BoardNotKnownException,
+    QString verify(QString _boardNameID="") throw(BoardNotKnownException,
                                                BoardNotDetectedException,
                                                VerifyException);
-    QString upload(QString _boardNameID)throw(BoardNotKnownException,
+    QString upload(QString _boardNameID="")throw(BoardNotKnownException,
                                                    BoardNotDetectedException,
                                                    VerifyException,
                                                    UploadException);
-    void writeSketch(QString sketch);
+    void writeSketch(QString sketch) throw(FileNotCreatedException);
 
 protected:
 

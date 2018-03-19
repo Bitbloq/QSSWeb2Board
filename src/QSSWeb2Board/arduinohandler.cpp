@@ -54,7 +54,7 @@ void ArduinoHandler::eraseExistingSketches() const {
     }
 }
 
-void ArduinoHandler::writeSketch(QString sketch){
+void ArduinoHandler::writeSketch(QString sketch) throw(FileNotCreatedException){
     QString randString = createRandomString();
 
     sketchName = randString + ".ino";
@@ -68,6 +68,8 @@ void ArduinoHandler::writeSketch(QString sketch){
         QTextStream stream(&file);
         stream << sketch << endl;
         file.close();
+    }else{
+        throw FileNotCreatedException("Cannot create sketch file in " +sketchPath + " path");
     }
 }
 
@@ -195,7 +197,7 @@ QString ArduinoHandler::verify(QString _boardNameID) throw(BoardNotKnownExceptio
                                                            VerifyException){
 
     //throws BoardNotKnowException if _boardNameID is not among the known boards
-    setBoardNameID(_boardNameID);
+    if( ! _boardNameID.isEmpty()) setBoardNameID(_boardNameID);
 
     setArduinoPath();
     setBuildPath();

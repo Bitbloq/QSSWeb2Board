@@ -24,9 +24,6 @@ public Q_SLOTS:
     void processTextMessage(QString message);
 
 private:
-    void verify();
-    void upload();
-
     void processCommands();
     QWebSocket *m_pClient;
 
