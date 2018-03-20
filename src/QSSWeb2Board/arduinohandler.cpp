@@ -42,15 +42,17 @@ void ArduinoHandler::eraseExistingSketches() const {
     QString path = QCoreApplication::applicationDirPath() + "/res/sketches/";
     QDir dir(path);
     dir.setNameFilters(QStringList() << "*");
-    dir.setFilter(QDir::Files);
+    dir.setFilter(QDir::Dirs);
 
     //remove files older than 1 day
-    foreach(QString dirFile, dir.entryList())
+    foreach(QString dirToRemove, dir.entryList())
     {
-        QFileInfo fileInfo(path + dirFile);
+
+        QFileInfo fileInfo(path + dirToRemove);
+        qDebug() << fileInfo.absoluteFilePath();
         //if older than one day, remove file
         if(fileInfo.created().daysTo(QDateTime().currentDateTime()) > 1 )
-            dir.remove(dirFile);
+            QDir(dirToRemove).removeRecursively();
     }
 }
 
@@ -215,7 +217,8 @@ QString ArduinoHandler::verify(QString _boardNameID) throw(BoardNotKnownExceptio
     proc->waitForFinished();
 
     QString errorOuput = QString(proc->readAllStandardError());
-
+    int exitCode = proc->exitCode();
+    qDebug() << "exitCode: " << exitCode;
     switch(proc->exitCode()){
     case 0:
         qDebug()<<"Verify OK";

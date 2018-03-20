@@ -9,14 +9,38 @@
 //forward declararion of classes
 class QProcess;
 
+/**
+ * @brief The ArduinoHandler class
+ * It handles all the  actions to be made with Arduino: create sketch, verify, upload, etc.
+ */
 class ArduinoHandler
 {
 public:
+
+    /**
+     * @brief Public default ArduinoHandler Constructor
+     */
     ArduinoHandler();
+    /**
+     * @brief Default virtual ~ArduinoHandler Destructor
+     */
     virtual ~ArduinoHandler();
 
+    /**
+     * @brief Sets the absolute path to the arduino executable.
+     * @param s The path. When left empty it computes it relatively to this application exectuable.
+     */
     void setArduinoPath(QString s="");
+    /**
+     * @brief Sets the absolute path to the result of verifyin a sketch (built files).
+     * @param s The path. When left empty it computes it relatively to this application exectuable.
+     */
     void setBuildPath(QString s="");
+
+    /**
+     * @brief Sets the absolute path to the Arduino sketch file (.ino)
+     * @param s The path.
+     */
     void setSketchPath(QString s);
     void setSketchName(QString s);
 
