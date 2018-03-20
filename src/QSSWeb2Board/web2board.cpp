@@ -16,117 +16,56 @@ Web2Board::Web2Board(QObject *parent):
 
 }
 
-/*
-void Web2Board::manageVerifyCommand(QWebSocket* pClient){
-    if (pClient)
-    {
-        pClient->sendTextMessage("VERIFYING");
-        pClient->flush();
-        try{
-            arduino.verify("ZUMJunior");
-        }catch(FileNotFoundException &e){
-            qDebug() << e.message;
-            pClient->sendTextMessage("SKETCH_NOT_FOUND " + e.message);
-            pClient->flush();
-            return;
-        }catch(BoardNotKnownException &e){
-            qDebug() << e.message;
-            pClient->sendTextMessage("BOARD_NOT_KNOWN " + e.message);
-            pClient->flush();
-            return;
-        }catch(BoardNotDetectedException &e){
-            qDebug() << e.message;
-            pClient->sendTextMessage("BOARD_NOT_DETECTED " + e.message);
-            pClient->flush();
-            return;
-        }catch(VerifyException &e){
-            qDebug() << "Found " << e.errorsList.size() << " verification errors";
-            pClient->sendTextMessage("VERFICATION_ERROR");
-            pClient->sendTextMessage("Found " + QString(e.errorsList.size()) + " verification errors");
-            for(int i=0;i<e.errorsList.size();i++){
-                qDebug() << i + 1 << ".- " << e.errorsList.at(i);
-                pClient->sendTextMessage(QString(i + 1) + ".- " + e.errorsList.at(i));
-            }
-            pClient->flush();
-            return;
-        }
-        pClient->sendTextMessage("VERIFICATION_OK");
-    }
-}
-
-void Web2Board::manageUploadCommand(QWebSocket* pClient){
-    if (pClient)
-    {
-        pClient->sendTextMessage(QStringLiteral("UPLOADING"));
-        pClient->flush();
-        try{
-            arduino.upload("ZUMJunior");
-        }catch(FileNotFoundException &e){
-            qDebug() << e.message;
-            pClient->sendTextMessage(QStringLiteral("SKETCH_NOT_FOUND ") + e.message);
-            pClient->flush();
-            return;
-        }catch(BoardNotKnownException &e){
-            qDebug() << e.message;
-            pClient->sendTextMessage(QStringLiteral("BOARD_NOT_KNOWN ") + e.message);
-            pClient->flush();
-            return;
-        }catch(BoardNotDetectedException &e){
-            qDebug() << e.message;
-            pClient->sendTextMessage(QStringLiteral("BOARD_NOT_DETECTED ") + e.message);
-            pClient->flush();
-            return;
-        }catch(VerifyException &e){
-            qDebug() << "Found " << e.errorsList.size() << " verification errors";
-            pClient->sendTextMessage(QStringLiteral("VERFICATION_ERROR"));
-            pClient->sendTextMessage(QStringLiteral("Found ") + QString(e.errorsList.size()) + QStringLiteral(" verification errors"));
-            for(int i=0;i<e.errorsList.size();i++){
-                qDebug() << i + 1 << ".- " << e.errorsList.at(i);
-                pClient->sendTextMessage(QString(i + 1) + ".- " + e.errorsList.at(i));
-            }
-            pClient->flush();
-            return;
-        }catch(UploadException &e){
-            qDebug() << e.message;
-            pClient->sendTextMessage(QStringLiteral("UPLOAD_ERROR"));
-            pClient->flush();
-            return;
-        }
-
-
-        pClient->sendTextMessage(QStringLiteral("UPLOAD_OK"));
-        pClient->flush();
-    }
-}
-*/
 
 void Web2Board::processCommands(){
     try{
         arduino.writeSketch(messageHandler.sketch);
         if(messageHandler.action == MessageHandler::Action::VERIFY){
+            m_pClient->sendTextMessage("VERIFYNG");
+            m_pClient->flush();
             arduino.verify(messageHandler.boardID);
-        }else if (messageHandler.action == MessageHandler::Action::VERIFY){
+            m_pClient->sendTextMessage("VERIFICATION FINISHED CORRECTLY");
+            m_pClient->flush();
+        }else if (messageHandler.action == MessageHandler::Action::UPLOAD){
+            m_pClient->sendTextMessage("VERIFYNG");
+            m_pClient->flush();
+            arduino.verify(messageHandler.boardID);
+            m_pClient->sendTextMessage("VERIFICATION FINISHED CORRECTLY");
+            m_pClient->flush();
+            m_pClient->sendTextMessage("UPLOADING");
+            m_pClient->flush();
             arduino.upload(messageHandler.boardID);
+            m_pClient->sendTextMessage("SKETCH UPLOADED TO BOARD");
+            m_pClient->flush();
         }
     }catch(FileNotCreatedException &e){
         qDebug()<<e.message;
+        m_pClient->sendTextMessage(e.message);
         //TODO
     }catch(BoardNotKnownException &e){
         qDebug()<<e.message;
+        m_pClient->sendTextMessage(e.message);
         //TODO
     }catch(FileNotFoundException &e){
         qDebug()<<e.message;
+        m_pClient->sendTextMessage(e.message);
         //TODO
     }catch(BoardNotDetectedException &e){
         qDebug()<<e.message;
+        m_pClient->sendTextMessage(e.message);
         //TODO
     }catch(UploadException &e){
         qDebug()<<e.message;
+        m_pClient->sendTextMessage(e.message);
         //TODO
     }catch(VerifyException &e){
         qDebug()<<e.message;
+        m_pClient->sendTextMessage(e.message);
         //TODO
     }
+    m_pClient->flush();
+
+
 }
 
 

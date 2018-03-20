@@ -55,10 +55,14 @@ void ArduinoHandler::eraseExistingSketches() const {
 }
 
 void ArduinoHandler::writeSketch(QString sketch) throw(FileNotCreatedException){
+    //remove tail white spaces and retrun cartridges
+    sketch = sketch.trimmed();
+    sketch = sketch.simplified();
+
     QString randString = createRandomString();
 
     sketchName = randString + ".ino";
-    sketchPath=QCoreApplication::applicationDirPath() + "/res/sketches/";
+    sketchPath=QCoreApplication::applicationDirPath() + "/res/sketches/" + randString + "/";
     sketchWithPath = sketchPath + sketchName;
 
     QDir().mkdir(sketchPath);
@@ -122,6 +126,11 @@ void ArduinoHandler::setSketchWithFullPath(QString s) throw (FileNotFoundExcepti
 
 bool ArduinoHandler::setBoardNameID(QString s) throw(BoardNotKnownException){
     //check whether we know that board
+    qDebug() << "here";
+    //remove tail spaces
+    s = s.trimmed();
+    //remove tail carriadge returns
+    s = s.simplified();
     if (arduinoBoards[s].isUndefined()){
         throw BoardNotKnownException("BOARD NOT KNOWN: " + s);
         return false;
