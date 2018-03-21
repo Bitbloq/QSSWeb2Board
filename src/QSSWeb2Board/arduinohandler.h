@@ -42,51 +42,126 @@ public:
      * @param s The path.
      */
     void setSketchPath(QString s);
+
+    /**
+     * @brief Sets the sketch file name (.ino)
+     * @param s The file name
+     */
     void setSketchName(QString s);
 
+    /**
+     * @brief Sets the absolute path to the Arduino sketch file (.ino) including the file name
+     * @param s The path+filename
+     */
     void setSketchWithFullPath(QString s) throw (FileNotFoundException);
 
-
+    /**
+     * @brief verify. Verifies a sketch in Arduino for the selected board.
+     * @param _boardNameID . The Arduino Board. if left empty it takes the board set on the boardID member.
+     * @throws BoardNotKnownException -> the board is not among the known boards
+     * @throws BoardNotDetectedException -> the board is not connected to the serial port
+     * @throws VerifyException -> Verification (compiling) error
+     * @return The output of the verification process
+     */
     QString verify(QString _boardNameID="") throw(BoardNotKnownException,
                                                BoardNotDetectedException,
                                                VerifyException);
+    /**
+     * @brief Upload. Verifies and uploads a sketch in Arduino for the selected board.
+     * @param _boardNameID . The Arduino Board. if left empty it takes the board set on the boardID member.
+     * @throws BoardNotKnownException -> the board is not among the known boards
+     * @throws BoardNotDetectedException -> the board is not connected to the serial port
+     * @throws VerifyException -> Verification (compiling) error
+     * @throws UploadException -> Compiled Sketch cannot be uploaded to the board
+     * @return The output of the upload process
+     */
     QString upload(QString _boardNameID="")throw(BoardNotKnownException,
                                                    BoardNotDetectedException,
                                                    VerifyException,
                                                    UploadException);
+    /**
+     * @brief writeSketch -> creates a Sketch file (.ino) whith a random name.
+     * @param sketch -> The Arduino code
+     * @throws FileNotCreatedException -> The file cannot be created
+     */
     void writeSketch(QString sketch) throw(FileNotCreatedException);
 
 protected:
 
+    /**
+     * @brief setBoardNameID Sets the board to verify/upload
+     * @param s The id of the board as in KnownBoards.json
+     * @return true if board is known, false otherwise
+     * @throws BoardNotKnownException -> When the board is not among the  know boards
+     */
     bool setBoardNameID(QString s) throw(BoardNotKnownException);
+
+
+    /**
+     * @brief setBoardPort Sets the serial port where the board is connected
+     * @param s The serial port. If left empty it looks for it (using board vendorID and productID)
+     * @return true if port exists and corresponds to the board, false otherwise
+     * @throws BoardNotKnownException -> When the board is not among the  know boards
+     * @throws BoardNotDetectedExcpetion -> When the board is not connected (or not found) to any serial port
+     */
     bool setBoardPort(QString s="") throw(BoardNotKnownException,
                                           BoardNotDetectedException);
 
 
+    /**
+     * @brief extractErrorfromOutput. Analyzes the verify error output and get the full list of erros
+     * @param s The error output of the verify command
+     * @return The list of errors
+     */
     QString extractErrorfromOutput(QString s);
+
+    /**
+     * @brief extractSingleError. Decoposes the full error into single errors
+     * @param s String containing several errors.
+     * @return a single error string.
+     */
     QString extractSingleError(QString s);
 
-    QString arduinoPath;
-    QString buildPath;
-    QString sketchPath;
-    QString sketchName;
-    QString sketchWithPath;
-    QString boardNameID;
-    QString boardPort;
-    QList<QString> verifyErrorsList;
+    QString arduinoPath; /// the absolute path to the arduino executable file
+    QString buildPath; /// the absolute path to the placement of the build process resulting files.
+    QString sketchPath; /// the absolut path to the sketch file.
+    QString sketchName; /// the name of the sketch file (.ino)
+    QString sketchWithPath; /// sketchPath + sketchName
+    QString boardNameID; /// the name of the board as listed on the known boards json file
+    QString boardPort; /// the serial port where the board is connected
+    QList<QString> verifyErrorsList; /// List of Strings containing verification errors
 
+    /**
+     * @brief makeUploadCommand -> makes the upload command. OS dependant. Virtualized
+     * @return upload command
+     */
     virtual QString makeUploadCommand(){return "";};
+    /**
+     * @brief makeVerifyCommand -> makes the verify command. OS dependant. Virtualized
+     * @return verify command
+     */
     virtual QString makeVerifyCommand(){return "";};
 
-    QProcess *proc;
+    QProcess *proc; ///variable to handle command line commands.
 
-    KnownBoards arduinoBoards;
+    KnownBoards arduinoBoards; ///object holding known boards with their vendorID and productID
 
+    /**
+     * @brief createRandomString. Creates a random string of 12 characters
+     * @return A random string of 12 characters.
+     */
     QString createRandomString() const;
+
+    /**
+     * @brief eraseExistingSketches Erases all saved Sketchs with more than one day old
+     */
     void eraseExistingSketches() const;
 
 };
 
+/**
+ * @brief The LinuxArduinoHandler class for specific functions for linux based systems
+ */
 class LinuxArduinoHandler : public ArduinoHandler{
 public:
     LinuxArduinoHandler():ArduinoHandler(){}
@@ -95,6 +170,9 @@ public:
     virtual QString makeVerifyCommand();
 };
 
+/**
+ * @brief The WindowsArduinoHandler class for specific functions for windows based systems
+ */
 class WindowsArduinoHandler : public ArduinoHandler{
 public:
     WindowsArduinoHandler():ArduinoHandler(){}
@@ -103,6 +181,9 @@ public:
     virtual QString makeVerifyCommand();
 };
 
+/**
+ * @brief The MacArduinoHandler class for specific functions for Mac OS/X based systems
+ */
 class MacArduinoHandler : public ArduinoHandler{
 public:
     MacArduinoHandler():ArduinoHandler(){}

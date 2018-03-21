@@ -51,3 +51,45 @@ void MessageHandler::manageFullMessage(){
         action = Action::UNKNOWN;
     }
 }
+
+
+QString ReturnMessage::makeReturnMessage(){
+    QString msg;
+
+    //ACTION
+    if (action == Action::VERIFY){
+        msg = CommsProtocol::VERIFY.first;
+    }else if (action == Action::UPLOAD){
+        msg = CommsProtocol::UPLOAD.first;
+    }else{
+        msg = "<UNKNOWN></UNKNOWN>";
+        return msg;
+    }
+
+    //SUCCESS
+    msg+=CommsProtocol::SUCCESS.first;
+    msg+=success;
+    msg+=CommsProtocol::SUCCESS.second;
+
+    //In case of error
+    if(success == "FALSE"){
+        //ErrorType
+        msg+=CommsProtocol::ERROR_TYPE.first;
+        msg+=errorType;
+        msg+=CommsProtocol::ERROR_TYPE.second;
+
+        //ErrorDescripcion
+        msg+=CommsProtocol::ERROR_DESC.first;
+        msg+=errorDesc;
+        msg+=CommsProtocol::ERROR_DESC.second;
+    }
+
+    //CLOSE ACTION
+    if (action == Action::VERIFY){
+        msg += CommsProtocol::VERIFY.second;
+    }else if (action == Action::UPLOAD){
+        msg += CommsProtocol::UPLOAD.second;
+    }
+
+    return msg;
+}

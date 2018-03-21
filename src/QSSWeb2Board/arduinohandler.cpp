@@ -217,7 +217,6 @@ QString ArduinoHandler::verify(QString _boardNameID) throw(BoardNotKnownExceptio
     proc->waitForFinished();
 
     QString errorOuput = QString(proc->readAllStandardError());
-    int exitCode = proc->exitCode();
     switch(proc->exitCode()){
     case 0:
         qDebug()<<"Verify OK";

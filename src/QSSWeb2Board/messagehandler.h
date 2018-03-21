@@ -37,4 +37,27 @@ private:
 
 };
 
+class ReturnMessage
+{
+
+public:
+
+    ReturnMessage(){};
+
+    enum class Action{
+        NONSET,
+        VERIFY,
+        UPLOAD,
+        UNKNOWN
+    };
+
+    Action action;
+    QString success;
+    QString errorType;
+    QString errorDesc;
+
+    QString makeReturnMessage();
+
+};
+
 #endif // MESSAGEHANDLER_H

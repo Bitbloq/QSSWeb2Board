@@ -15,6 +15,17 @@ public:
     static const QPair<QString,QString>  SKETCH;
     static const QPair<QString,QString>  BOARDID;
 
+
+    static const QPair<QString,QString>  SUCCESS;
+    static const QPair<QString,QString>  ERROR_TYPE;
+    static const QPair<QString,QString>  ERROR_DESC;
+
+    static const QString VERIFY_ERROR;
+    static const QString UPLOAD_ERROR;
+    static const QString FILE_NOT_FOUND_ERROR;
+    static const QString BOARD_NOT_KNOWN_ERROR;
+    static const QString BOARD_NOT_DETECTED_ERROR;
+    static const QString FILE_NOT_CREATED_ERROR;
 };
 
 #endif // COMMSPROTOCOL_H

@@ -2,6 +2,7 @@
 #include <QtWebSockets/QWebSocket>
 
 #include "commsprotocol.h"
+#include "messagehandler.h"
 
 
 Web2Board::Web2Board(QObject *parent):
@@ -18,54 +19,68 @@ Web2Board::Web2Board(QObject *parent):
 
 
 void Web2Board::processCommands(){
+
+    ReturnMessage returnMessage;
+
     try{
         arduino.writeSketch(messageHandler.sketch);
         if(messageHandler.action == MessageHandler::Action::VERIFY){
-            m_pClient->sendTextMessage("VERIFYNG");
-            m_pClient->flush();
+            returnMessage.action = ReturnMessage::Action::VERIFY;
+
             arduino.verify(messageHandler.boardID);
-            m_pClient->sendTextMessage("VERIFICATION FINISHED CORRECTLY");
-            m_pClient->flush();
+
+            returnMessage.success="TRUE";
+
         }else if (messageHandler.action == MessageHandler::Action::UPLOAD){
-            m_pClient->sendTextMessage("VERIFYNG");
-            m_pClient->flush();
+            returnMessage.action = ReturnMessage::Action::UPLOAD;
+
             arduino.verify(messageHandler.boardID);
-            m_pClient->sendTextMessage("VERIFICATION FINISHED CORRECTLY");
-            m_pClient->flush();
-            m_pClient->sendTextMessage("UPLOADING");
-            m_pClient->flush();
+
             arduino.upload(messageHandler.boardID);
-            m_pClient->sendTextMessage("SKETCH UPLOADED TO BOARD");
-            m_pClient->flush();
+
+            returnMessage.success="TRUE";
+            returnMessage.action = ReturnMessage::Action::UPLOAD;
+
         }
     }catch(FileNotCreatedException &e){
         qDebug()<<e.message;
-        m_pClient->sendTextMessage(e.message);
-        //TODO
+        returnMessage.success="FALSE";
+        returnMessage.errorType=CommsProtocol::FILE_NOT_CREATED_ERROR;
+        returnMessage.errorDesc=e.message;
+
     }catch(BoardNotKnownException &e){
         qDebug()<<e.message;
-        m_pClient->sendTextMessage(e.message);
-        //TODO
+        returnMessage.success="FALSE";
+        returnMessage.errorType=CommsProtocol::BOARD_NOT_KNOWN_ERROR;
+        returnMessage.errorDesc=e.message;
+
     }catch(FileNotFoundException &e){
         qDebug()<<e.message;
-        m_pClient->sendTextMessage(e.message);
-        //TODO
+        returnMessage.success="FALSE";
+        returnMessage.errorType=CommsProtocol::FILE_NOT_FOUND_ERROR;
+        returnMessage.errorDesc=e.message;
+
     }catch(BoardNotDetectedException &e){
         qDebug()<<e.message;
-        m_pClient->sendTextMessage(e.message);
-        //TODO
+        returnMessage.success="FALSE";
+        returnMessage.errorType=CommsProtocol::BOARD_NOT_DETECTED_ERROR;
+        returnMessage.errorDesc=e.message;
+
     }catch(UploadException &e){
         qDebug()<<e.message;
-        m_pClient->sendTextMessage(e.message);
-        //TODO
+        returnMessage.success="FALSE";
+        returnMessage.errorType=CommsProtocol::UPLOAD_ERROR;
+        returnMessage.errorDesc=e.message;
+
     }catch(VerifyException &e){
         qDebug()<<e.message;
-        m_pClient->sendTextMessage(e.message);
-        //TODO
+        returnMessage.success="FALSE";
+        returnMessage.errorType=CommsProtocol::VERIFY_ERROR;
+        returnMessage.errorDesc=e.getErrorsLists();
     }
+
+    m_pClient->sendTextMessage(returnMessage.makeReturnMessage());
     m_pClient->flush();
-
-
 }
 
 

@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QException>
 
+#include "commsprotocol.h"
+
 
 /**
  * @brief The VerifyException class
@@ -11,13 +13,15 @@
  */
 class VerifyException: public QException{
     public:
-        VerifyException(const QString& s, const QList<QString>& l = QList<QString>()):message(s),errorsList(l){}
+        VerifyException(const QString& s, const QList<QString>& l = QList<QString>()):
+            message(s),errorType(CommsProtocol::VERIFY_ERROR),errorsList(l){}
         void raise() const { throw *this; }
         VerifyException *clone() const { return new VerifyException(*this); }
-        QString getMessage() const{return message;}
+        QString getErrorsLists();
 
     public:
         const QString message;
+        const QString errorType;
         const QList<QString> errorsList;
 };
 
@@ -27,10 +31,12 @@ class VerifyException: public QException{
  */
 class UploadException: public QException{
     public:
-        UploadException(const QString& s):message(s){}
+        UploadException(const QString& s):
+            errorType(CommsProtocol::UPLOAD_ERROR),message(s){}
         void raise() const { throw *this; }
         UploadException *clone() const { return new UploadException(*this); }
 
+        const QString errorType;
         const QString message;
 };
 
@@ -40,11 +46,13 @@ class UploadException: public QException{
  */
 class FileNotFoundException: public QException{
     public:
-        FileNotFoundException(const QString& s):message(s){}
+        FileNotFoundException(const QString& s):
+            message(s),errorType(CommsProtocol::FILE_NOT_FOUND_ERROR){}
         void raise() const { throw *this; }
         FileNotFoundException *clone() const { return new FileNotFoundException(*this); }
 
         const QString message;
+        const QString errorType;
 };
 
 /**
@@ -53,11 +61,13 @@ class FileNotFoundException: public QException{
  */
 class BoardNotKnownException: public QException{
     public:
-        BoardNotKnownException(const QString& s):message(s){}
+        BoardNotKnownException(const QString& s)
+            :message(s),errorType(CommsProtocol::BOARD_NOT_KNOWN_ERROR){}
         void raise() const { throw *this; }
         BoardNotKnownException *clone() const { return new BoardNotKnownException(*this); }
 
         const QString message;
+        const QString errorType;
 };
 
 /**
@@ -68,11 +78,13 @@ class BoardNotKnownException: public QException{
  */
 class BoardNotDetectedException: public QException{
     public:
-        BoardNotDetectedException(const QString& s):message(s){}
+        BoardNotDetectedException(const QString& s):
+            message(s),errorType(CommsProtocol::BOARD_NOT_DETECTED_ERROR){}
         void raise() const { throw *this; }
         BoardNotDetectedException *clone() const { return new BoardNotDetectedException(*this); }
 
         const QString message;
+        const QString errorType;
 };
 
 /**
@@ -81,11 +93,13 @@ class BoardNotDetectedException: public QException{
  */
 class FileNotCreatedException: public QException{
     public:
-        FileNotCreatedException(const QString& s):message(s){}
+        FileNotCreatedException(const QString& s):
+            message(s),errorType(CommsProtocol::FILE_NOT_CREATED_ERROR){}
         void raise() const { throw *this; }
         FileNotCreatedException *clone() const { return new FileNotCreatedException(*this); }
 
         const QString message;
+        const QString errorType;
 };
 
 #endif // ARDUINOEXCEPTIONS_H
