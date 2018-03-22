@@ -19,7 +19,8 @@ SOURCES += main.cpp \
     sslserver.cpp \
     web2board.cpp \
     messagehandler.cpp \
-    commsprotocol.cpp
+    commsprotocol.cpp \
+    arduinoserialmonitor.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -39,7 +40,8 @@ HEADERS += \
     sslserver.h \
     web2board.h \
     messagehandler.h \
-    commsprotocol.h
+    commsprotocol.h \
+    arduinoserialmonitor.h
 
 DISTFILES +=
 
