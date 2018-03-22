@@ -9,6 +9,7 @@ void MessageHandler::handle(QString _message){
     action = Action::NONSET;
     boardID ="";
     sketch = "";
+    baudrate = 0;
 
     message = _message.trimmed().simplified();
 
@@ -25,6 +26,13 @@ void MessageHandler::manageBodyMessage(){
         int end = bodyMessage.indexOf(CommsProtocol::SKETCH.second) - begin;
         sketch = bodyMessage.mid(begin,end).trimmed().simplified();
         qDebug() << sketch;
+    }
+
+    if(bodyMessage.contains(CommsProtocol::BAUDRATE.first) && bodyMessage.contains(CommsProtocol::BAUDRATE.second) ){
+        int begin = bodyMessage.indexOf(CommsProtocol::BAUDRATE.first) + CommsProtocol::BAUDRATE.first.length();
+        int end = bodyMessage.indexOf(CommsProtocol::BAUDRATE.second) - begin;
+        baudrate = bodyMessage.mid(begin,end).trimmed().simplified().toInt();
+        qDebug() << baudrate;
     }
 
     if(bodyMessage.contains(CommsProtocol::BOARDID.first) && bodyMessage.contains(CommsProtocol::BOARDID.second) ){
@@ -47,6 +55,12 @@ void MessageHandler::manageFullMessage(){
         bodyMessage = message.mid( CommsProtocol::UPLOAD.first.length(), length);
         qDebug() << bodyMessage;
         action = Action::UPLOAD;
+    }else if( message.startsWith(CommsProtocol::SERIALMONITOR.first) && message.endsWith(CommsProtocol::SERIALMONITOR.second) ){
+        qDebug()<< "Serial Monitor";
+        int length = message.length() - CommsProtocol::SERIALMONITOR.first.length() - CommsProtocol::SERIALMONITOR.second.length();
+        bodyMessage = message.mid( CommsProtocol::SERIALMONITOR.first.length(), length);
+        qDebug() << bodyMessage;
+        action = Action::OPENSERIALMONITOR;
     }else{
         action = Action::UNKNOWN;
     }

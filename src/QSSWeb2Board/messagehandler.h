@@ -18,6 +18,7 @@ public:
         NONSET,
         VERIFY,
         UPLOAD,
+        OPENSERIALMONITOR,
         UNKNOWN
     };
 
@@ -25,6 +26,7 @@ public:
     QString sketch;
     QString boardID;
     Action action;
+    int baudrate;
 
 
 private:
@@ -55,6 +57,7 @@ public:
     QString success;
     QString errorType;
     QString errorDesc;
+
 
     QString makeReturnMessage();
 

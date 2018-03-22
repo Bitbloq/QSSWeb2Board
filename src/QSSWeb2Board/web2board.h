@@ -7,6 +7,7 @@
 
 #include "arduinohandler.h"
 #include "messagehandler.h"
+#include "arduinoserialmonitor.h"
 
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
 
@@ -22,12 +23,14 @@ public:
 
 public Q_SLOTS:
     void processTextMessage(QString message);
+    void sendIncomingSerialToClient(QString message);
 
 private:
     void processCommands();
     QWebSocket *m_pClient;
 
     MessageHandler messageHandler;
+    ArduinoSerialMonitor* serialMonitor;
 
 #if (defined (Q_OS_WIN))
     WindowsArduinoHandler arduino;

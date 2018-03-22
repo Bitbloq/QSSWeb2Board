@@ -86,8 +86,6 @@ public:
      */
     void writeSketch(QString sketch) throw(FileNotCreatedException);
 
-protected:
-
     /**
      * @brief setBoardNameID Sets the board to verify/upload
      * @param s The id of the board as in KnownBoards.json
@@ -106,6 +104,14 @@ protected:
      */
     bool setBoardPort(QString s="") throw(BoardNotKnownException,
                                           BoardNotDetectedException);
+
+
+
+    QString getBoardPort() const;
+
+protected:
+
+
 
 
     /**

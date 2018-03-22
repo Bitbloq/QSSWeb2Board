@@ -6,10 +6,17 @@
 #include "arduinoexceptions.h"
 #include "sslserver.h"
 #include "web2board.h"
+#include "arduinoserialmonitor.h"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+    ArduinoSerialMonitor serialMonitor("/dev/ttyUSB0",9600);
+    QObject::connect(&serialMonitor,SIGNAL(lineReceived(QString)),&serialMonitor,SLOT(writeString(QString)));
+
+    serialMonitor.start();
+
+    return a.exec();
 
 /*    ArduinoHandler arduino;
     arduino.writeSketch("Hola, soy un Sketch");

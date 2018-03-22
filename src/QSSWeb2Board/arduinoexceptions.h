@@ -102,4 +102,19 @@ class FileNotCreatedException: public QException{
         const QString errorType;
 };
 
+/**
+ * @brief The FileNotCreatedException class
+ * Exception thrown when the sketch file cannot be created (ususaly you have no write permissions)
+ */
+class SerialPortOpenException: public QException{
+    public:
+        SerialPortOpenException(const QString& s):
+            message(s),errorType(CommsProtocol::SERIAL_PORT_NOT_OPEN){}
+        void raise() const { throw *this; }
+        SerialPortOpenException *clone() const { return new SerialPortOpenException(*this); }
+
+        const QString message;
+        const QString errorType;
+};
+
 #endif // ARDUINOEXCEPTIONS_H

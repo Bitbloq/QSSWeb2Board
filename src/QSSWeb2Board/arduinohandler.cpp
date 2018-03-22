@@ -300,6 +300,11 @@ QString ArduinoHandler::extractSingleError(QString s){
     }
 }
 
+QString ArduinoHandler::getBoardPort() const
+{
+    return boardPort;
+}
+
 //This function, together with extractSingleError creates a string with all the errors eliminating reference
 //to local routes
 QString ArduinoHandler::extractErrorfromOutput(QString s){

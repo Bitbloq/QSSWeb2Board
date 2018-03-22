@@ -12,8 +12,10 @@ public:
     //commands dicitionary
     static const QPair<QString,QString>  VERIFY;
     static const QPair<QString,QString>  UPLOAD;
+    static const QPair<QString,QString>  SERIALMONITOR;
     static const QPair<QString,QString>  SKETCH;
     static const QPair<QString,QString>  BOARDID;
+    static const QPair<QString,QString>  BAUDRATE;
 
 
     static const QPair<QString,QString>  SUCCESS;
@@ -26,6 +28,8 @@ public:
     static const QString BOARD_NOT_KNOWN_ERROR;
     static const QString BOARD_NOT_DETECTED_ERROR;
     static const QString FILE_NOT_CREATED_ERROR;
+    static const QString SERIAL_PORT_NOT_OPEN;
+
 };
 
 #endif // COMMSPROTOCOL_H

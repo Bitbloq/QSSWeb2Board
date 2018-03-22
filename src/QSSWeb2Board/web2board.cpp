@@ -26,22 +26,28 @@ void Web2Board::processCommands(){
         arduino.writeSketch(messageHandler.sketch);
         if(messageHandler.action == MessageHandler::Action::VERIFY){
             returnMessage.action = ReturnMessage::Action::VERIFY;
-
             arduino.verify(messageHandler.boardID);
-
             returnMessage.success="TRUE";
 
         }else if (messageHandler.action == MessageHandler::Action::UPLOAD){
             returnMessage.action = ReturnMessage::Action::UPLOAD;
-
             arduino.verify(messageHandler.boardID);
-
             arduino.upload(messageHandler.boardID);
-
             returnMessage.success="TRUE";
             returnMessage.action = ReturnMessage::Action::UPLOAD;
-
+        }else if (messageHandler.action == MessageHandler::Action::OPENSERIALMONITOR){
+            arduino.setBoardNameID(messageHandler.boardID);
+            arduino.setBoardPort();
+            serialMonitor = new ArduinoSerialMonitor(arduino.getBoardPort(),messageHandler.baudrate);
+            serialMonitor->start();
         }
+
+    }catch(SerialPortOpenException &e){
+        qDebug()<<e.message;
+        returnMessage.success="FALSE";
+        ReturnMessage=CommsProtocol::SERIAL_PORT_NOT_OPEN;
+        returnMessage.errorDesc=e.message;
+
     }catch(FileNotCreatedException &e){
         qDebug()<<e.message;
         returnMessage.success="FALSE";
