@@ -39,7 +39,7 @@ QString ArduinoHandler::createRandomString() const{
 
 
 void ArduinoHandler::eraseExistingSketches() const {
-    QString path = QCoreApplication::applicationDirPath() + "/res/sketches/";
+/*    QString path = QCoreApplication::applicationDirPath() + "/res/sketches/";
     QDir dir(path);
     dir.setNameFilters(QStringList() << "*");
     dir.setFilter(QDir::Dirs);
@@ -54,6 +54,7 @@ void ArduinoHandler::eraseExistingSketches() const {
         if(fileInfo.created().daysTo(QDateTime().currentDateTime()) > 1 )
             QDir(dirToRemove).removeRecursively();
     }
+    */
 }
 
 void ArduinoHandler::writeSketch(QString sketch) throw(FileNotCreatedException){
