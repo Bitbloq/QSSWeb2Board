@@ -20,7 +20,7 @@ ArduinoSerialMonitor::~ArduinoSerialMonitor(){
     }
 }
 
-void ArduinoSerialMonitor::start() throw(SerialPortOpenException){
+void ArduinoSerialMonitor::start(){
     if (!port.open(QSerialPort::ReadWrite)){
         throw SerialPortOpenException("Cannot Open Serial Port " + port.portName());
     }

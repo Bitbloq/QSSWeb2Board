@@ -14,7 +14,11 @@ public:
     ArduinoSerialMonitor(QString portName, int baudrate, QObject* parent = NULL);
     virtual ~ArduinoSerialMonitor();
 
-    void start() throw(SerialPortOpenException);
+    /**
+     * @brief start
+     * @throws SerialPortOpenException
+     */
+    void start();
     void close();
     void sendToArduino(QString msg);
 

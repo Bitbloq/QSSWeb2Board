@@ -45,7 +45,7 @@ void Web2Board::processCommands(){
     }catch(SerialPortOpenException &e){
         qDebug()<<e.message;
         returnMessage.success="FALSE";
-        ReturnMessage=CommsProtocol::SERIAL_PORT_NOT_OPEN;
+        returnMessage.errorType=CommsProtocol::SERIAL_PORT_NOT_OPEN;
         returnMessage.errorDesc=e.message;
 
     }catch(FileNotCreatedException &e){

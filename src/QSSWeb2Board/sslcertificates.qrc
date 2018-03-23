@@ -2,7 +2,5 @@
     <qresource prefix="/">
         <file>res/localhost.cert</file>
         <file>res/localhost.key</file>
-        <file>res/star_bq_com.crt</file>
-        <file>res/star_bq_com.key</file>
     </qresource>
 </RCC>

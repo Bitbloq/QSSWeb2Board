@@ -53,7 +53,7 @@ public:
      * @brief Sets the absolute path to the Arduino sketch file (.ino) including the file name
      * @param s The path+filename
      */
-    void setSketchWithFullPath(QString s) throw (FileNotFoundException);
+    void setSketchWithFullPath(QString s);
 
     /**
      * @brief verify. Verifies a sketch in Arduino for the selected board.
@@ -63,9 +63,7 @@ public:
      * @throws VerifyException -> Verification (compiling) error
      * @return The output of the verification process
      */
-    QString verify(QString _boardNameID="") throw(BoardNotKnownException,
-                                               BoardNotDetectedException,
-                                               VerifyException);
+    QString verify(QString _boardNameID="");
     /**
      * @brief Upload. Verifies and uploads a sketch in Arduino for the selected board.
      * @param _boardNameID . The Arduino Board. if left empty it takes the board set on the boardID member.
@@ -75,16 +73,13 @@ public:
      * @throws UploadException -> Compiled Sketch cannot be uploaded to the board
      * @return The output of the upload process
      */
-    QString upload(QString _boardNameID="")throw(BoardNotKnownException,
-                                                   BoardNotDetectedException,
-                                                   VerifyException,
-                                                   UploadException);
+    QString upload(QString _boardNameID="");
     /**
      * @brief writeSketch -> creates a Sketch file (.ino) whith a random name.
      * @param sketch -> The Arduino code
      * @throws FileNotCreatedException -> The file cannot be created
      */
-    void writeSketch(QString sketch) throw(FileNotCreatedException);
+    void writeSketch(QString sketch);
 
     /**
      * @brief setBoardNameID Sets the board to verify/upload
@@ -92,7 +87,7 @@ public:
      * @return true if board is known, false otherwise
      * @throws BoardNotKnownException -> When the board is not among the  know boards
      */
-    bool setBoardNameID(QString s) throw(BoardNotKnownException);
+    bool setBoardNameID(QString s);
 
 
     /**
@@ -102,8 +97,7 @@ public:
      * @throws BoardNotKnownException -> When the board is not among the  know boards
      * @throws BoardNotDetectedExcpetion -> When the board is not connected (or not found) to any serial port
      */
-    bool setBoardPort(QString s="") throw(BoardNotKnownException,
-                                          BoardNotDetectedException);
+    bool setBoardPort(QString s="");
 
 
 

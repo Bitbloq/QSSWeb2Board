@@ -57,7 +57,7 @@ void ArduinoHandler::eraseExistingSketches() const {
     */
 }
 
-void ArduinoHandler::writeSketch(QString sketch) throw(FileNotCreatedException){
+void ArduinoHandler::writeSketch(QString sketch){
     //remove tail white spaces and retrun cartridges
     sketch = sketch.trimmed();
     sketch = sketch.simplified();
@@ -116,7 +116,7 @@ void ArduinoHandler::setSketchName(QString s){
     sketchWithPath = sketchPath + sketchName;
 }
 
-void ArduinoHandler::setSketchWithFullPath(QString s) throw (FileNotFoundException){
+void ArduinoHandler::setSketchWithFullPath(QString s){
 
     if ( QFile::exists(s)) {
         sketchWithPath=s;
@@ -127,7 +127,7 @@ void ArduinoHandler::setSketchWithFullPath(QString s) throw (FileNotFoundExcepti
     }
 }
 
-bool ArduinoHandler::setBoardNameID(QString s) throw(BoardNotKnownException){
+bool ArduinoHandler::setBoardNameID(QString s){
     //check whether we know that board
     qDebug() << "here";
     //remove tail spaces
@@ -143,7 +143,7 @@ bool ArduinoHandler::setBoardNameID(QString s) throw(BoardNotKnownException){
     }
 }
 
-bool ArduinoHandler::setBoardPort(QString s) throw(BoardNotDetectedException, BoardNotKnownException){
+bool ArduinoHandler::setBoardPort(QString s){
 
     //if serial port is passed fix with it.
     if(s!=""){
@@ -204,9 +204,7 @@ bool ArduinoHandler::setBoardPort(QString s) throw(BoardNotDetectedException, Bo
     return false;
 }
 
-QString ArduinoHandler::verify(QString _boardNameID) throw(BoardNotKnownException,
-                                                           BoardNotDetectedException,
-                                                           VerifyException){
+QString ArduinoHandler::verify(QString _boardNameID){
 
     //throws BoardNotKnowException if _boardNameID is not among the known boards
     if( ! _boardNameID.isEmpty()) setBoardNameID(_boardNameID);
@@ -244,10 +242,7 @@ QString ArduinoHandler::verify(QString _boardNameID) throw(BoardNotKnownExceptio
 
 }
 
-QString ArduinoHandler::upload(QString _boardNameID)throw(BoardNotKnownException,
-                                                          BoardNotDetectedException,
-                                                          VerifyException,
-                                                          UploadException)
+QString ArduinoHandler::upload(QString _boardNameID)
 {
     //check whether de boardName is on the known boards list
     verify(_boardNameID);
