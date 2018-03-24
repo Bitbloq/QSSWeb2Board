@@ -5,6 +5,7 @@
 
 ArduinoSerialMonitor::ArduinoSerialMonitor(QString portName, int baudrate, QObject* parent): QObject(parent)
 {
+    qDebug() << "Port name: " <<portName;
     port.setPortName(portName);
     port.setBaudRate(baudrate);
     port.setDataBits(QSerialPort::Data8);

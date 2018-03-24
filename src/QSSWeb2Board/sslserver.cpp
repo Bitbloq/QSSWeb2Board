@@ -33,8 +33,8 @@ SSLServer::SSLServer(quint16 port, QObject *parent) :
                                               QWebSocketServer::SecureMode,
                                               parent);
     QSslConfiguration sslConfiguration;
-    QFile certFile(QStringLiteral(":/res/star_bq_com.crt"));
-    QFile keyFile(QStringLiteral(":/res/star_bq_com.key"));
+    QFile certFile(QStringLiteral(":/res/localhost.crt"));
+    QFile keyFile(QStringLiteral(":/res/localhost.key"));
     certFile.open(QIODevice::ReadOnly);
     keyFile.open(QIODevice::ReadOnly);
     QSslCertificate certificate(&certFile, QSsl::Pem);
@@ -55,6 +55,8 @@ SSLServer::SSLServer(quint16 port, QObject *parent) :
                 this, &SSLServer::onNewConnection);
         connect(m_pWebSocketServer, &QWebSocketServer::sslErrors,
                 this, &SSLServer::onSslErrors);
+    }else{
+        qDebug() << "Error opening server";
     }
 }
 //! [constructor]

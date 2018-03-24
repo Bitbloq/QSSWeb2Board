@@ -4,6 +4,7 @@ QT += core \
 QT -= gui
 
 CONFIG += c++11
+CONFIG += console
 
 
 TARGET = QSSWeb2Board

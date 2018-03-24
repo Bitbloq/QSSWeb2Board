@@ -19,12 +19,15 @@ public:
         VERIFY,
         UPLOAD,
         OPENSERIALMONITOR,
+        CLOSESERIALMONITOR,
+        SENDSERIAL,
         UNKNOWN
     };
 
 
     QString sketch;
     QString boardID;
+    QString serialMessage;
     Action action;
     int baudrate;
 
@@ -32,6 +35,7 @@ public:
 private:
     QString message;
     QString bodyMessage;
+
 
     void manageBodyMessage();
     void manageFullMessage();
@@ -50,6 +54,8 @@ public:
         NONSET,
         VERIFY,
         UPLOAD,
+        OPENSERIALMONITOR,
+        CLOSESERIALMONITOR,
         UNKNOWN
     };
 

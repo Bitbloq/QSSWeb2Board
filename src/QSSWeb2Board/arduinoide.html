@@ -6,53 +6,70 @@
     </head>
     <body>
         <h1>Arduino online IDE</h1>
-        <p>
+        <table>
+        <tr>
+        <td><p>
             <button onClick="initWebSocket();">Connect</button>
             <button onClick="stopWebSocket();">Disconnect</button>
             <button onClick="checkSocket();">State</button>
-        </p>
-        <p> 
-			<textarea id="sketchTextArea" style="width:400px;height:200px;"></textarea>
-		</p>
+        </p></td>
+        <td>&nbsp;</td>
+        </tr>
+        <tr>
+        <td>Sketch <br>
+			<textarea id="sketchTextArea" style="width:400px;height:200px;"></textarea></td>
+        <td>Serial Monitor <br>
+			<textarea id="serialMonitorTextArea" style="width:400px;height:200px;"></textarea></td>
         
-        <p>
-            <textarea id="debugTextArea" style="width:400px;height:100px;"></textarea>
-        </p>
-        
-        <p>
+        </tr>
+        <tr valign="top">
+        <td>
 			<select id="board">
 			  <option value="ZUMCore">ZUM Core</option>
 			  <option value="ZUMJunior">ZUM Junior</option>
 			  <option value="ArduinoUno">Arduino UNO</option>
 			  <option value="ArduinoMega">Arduino Mega</option>
 			</select>
-        </p>
         
-        <p>
 			<button onClick="verify()">Verify</button>
 			<button onClick="upload()">Upload</button>
 		</p>
-		
-			
-			
-            <input type="text" id="inputText" onkeydown="if(event.keyCode==13)sendMessage();"/>
-            <button onClick="sendMessage()">Send</button>
-        </p>
+		</td>
+		<td>
+		<button id="openSerial" onClick="openSerial();">Open Serial Monitor</button>&nbsp;
+		<button id="closeSerial" onClick="closeSerial();">Close Serial Monitor</button><br>
+		<input size="40" type="text" id="inputText" onkeydown="if(event.keyCode==13)sendMessage();"/><button onClick="sendMessage()">Send</button>
+		</td>
+		</tr>
+        <tr>
+        <td colspan="2"><textarea id="debugTextArea" style="width:400px;height:100px;"></textarea></td>
+        </tr>
+        </table>
+        
 
         <script type="text/javascript">
             var debugTextArea = document.getElementById("debugTextArea");
+            var serialMonitorTextArea = document.getElementById("serialMonitorTextArea");
             var sketchArea = document.getElementById("sketchTextArea");
-            var board = document.getElementById("board");
+            var board = document.getElementById("board");            
+            
+            document.getElementById("closeSerial").disabled=true;
+            
             
             sketchArea.value="void setup()\n{\n\n}\n void loop()\n{\n\n}";
-            
-            var wsUri = "wss://web2board.bq.com:1234";
-            
+            var wsUri = "wss://localhost:1234";            
             var websocket = null;
 
-            function debug(message) {
-                debugTextArea.value += message + "\n";
-                debugTextArea.scrollTop = debugTextArea.scrollHeight;
+            function parseMessage(message) {
+				
+				if(message.indexOf("<SMESSAGE>") == -1){
+					debugTextArea.value += message + "\n";
+					debugTextArea.scrollTop = debugTextArea.scrollHeight;
+				}else{
+					var smessage = message.substring(10,message.length-11);
+					serialMonitorTextArea.value+=smessage;
+					serialMonitorTextArea.scrollTop = serialMonitorTextArea.scrollHeight;
+				}
             }
             
             
@@ -66,7 +83,33 @@
                 }
 			}
 			
+			function openSerial(){
+				var msg = "<OPENSMONITOR><BOARD>" + board.value.trim() + "</BOARD><BAUDRATE>9600</BAUDRATE></OPENSMONITOR>"
+				if ( websocket != null )
+                {
+                    websocket.send( msg );
+                    debugTextArea.value="";
+                    console.log( "string sent :", '"'+msg+'"' );
+                }
+                document.getElementById("openSerial").disabled=true;
+                document.getElementById("closeSerial").disabled=false;
+                   
+			}
+			function closeSerial(){
+				var msg = "<CLOSESMONITOR></CLOSESMONITOR>"
+				if ( websocket != null )
+                {
+                    websocket.send( msg );
+                    debugTextArea.value="";
+                    console.log( "string sent :", '"'+msg+'"' );
+                }
+                
+                document.getElementById("openSerial").disabled=false;
+                document.getElementById("closeSerial").disabled=true;
+			}
+			
 			function upload(){
+				closeSerial();
 				var msg = "<UPLOAD><SKETCH>" + sketchArea.value.trim() + "</SKETCH><BOARD>" + board.value.trim() + "</BOARD></UPLOAD>"
 				if ( websocket != null )
                 {
@@ -78,7 +121,7 @@
 				
 
             function sendMessage() {
-                var msg = document.getElementById("inputText").value;
+                var msg = "<SMESSAGE>" + document.getElementById("inputText").value + "</SMESSAGE>";
                 if ( websocket != null )
                 {
                     document.getElementById("inputText").value = "";
@@ -95,20 +138,20 @@
                         websocket.close();
                     websocket = new WebSocket( wsUri );
                     websocket.onopen = function (evt) {
-                        debug("CONNECTED");
+                        parseMessage("CONNECTED");
                     };
                     websocket.onclose = function (evt) {
-                        debug("DISCONNECTED");
+                        parseMessage("DISCONNECTED");
                     };
                     websocket.onmessage = function (evt) {
                         console.log( "Message received :", evt.data );
-                        debug( evt.data );
+                        parseMessage( evt.data );
                     };
                     websocket.onerror = function (evt) {
-                        debug('ERROR: ' + evt.data);
+                        parseMessage('ERROR: ' + evt.data);
                     };
                 } catch (exception) {
-                    debug('ERROR: ' + exception);
+                    parseMessage('ERROR: ' + exception);
                 }
             }
 
@@ -142,9 +185,9 @@
                             break;
                         }
                     }
-                    debug("WebSocket state = " + websocket.readyState + " ( " + stateStr + " )");
+                    parseMessage("WebSocket state = " + websocket.readyState + " ( " + stateStr + " )");
                 } else {
-                    debug("WebSocket is null");
+                    parseMessage("WebSocket is null");
                 }
             }
         </script>

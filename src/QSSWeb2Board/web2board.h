@@ -17,6 +17,7 @@ class Web2Board: public QObject
 
 public:
     Web2Board(QObject *parent = Q_NULLPTR);
+    virtual ~Web2Board();
     void processVerify(QString message);
     void processUpload(QString message);
 

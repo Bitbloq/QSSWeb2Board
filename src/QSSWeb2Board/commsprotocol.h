@@ -12,7 +12,10 @@ public:
     //commands dicitionary
     static const QPair<QString,QString>  VERIFY;
     static const QPair<QString,QString>  UPLOAD;
-    static const QPair<QString,QString>  SERIALMONITOR;
+    static const QPair<QString,QString>  OPENSERIALMONITOR;
+    static const QPair<QString,QString>  CLOSESERIALMONITOR;
+
+    static const QPair<QString,QString>  SERIALMESSAGE;
     static const QPair<QString,QString>  SKETCH;
     static const QPair<QString,QString>  BOARDID;
     static const QPair<QString,QString>  BAUDRATE;

@@ -3,7 +3,12 @@
 
 const QPair<QString, QString> CommsProtocol::VERIFY = QPair<QString,QString>(   "<VERIFY>"  ,   "</VERIFY>");
 const QPair<QString, QString> CommsProtocol::UPLOAD = QPair<QString,QString>(   "<UPLOAD>"  ,   "</UPLOAD>");
-const QPair<QString, QString> CommsProtocol::SERIALMONITOR = QPair<QString,QString>(   "<SMONITOR>"  ,   "</SMONITOR>");
+
+const QPair<QString, QString> CommsProtocol::OPENSERIALMONITOR = QPair<QString,QString>(   "<OPENSMONITOR>"  ,   "</OPENSMONITOR>");
+const QPair<QString, QString> CommsProtocol::CLOSESERIALMONITOR = QPair<QString,QString>(   "<CLOSESMONITOR>"  ,   "</CLOSESMONITOR>");
+
+const QPair<QString, QString> CommsProtocol::SERIALMESSAGE = QPair<QString,QString>(   "<SMESSAGE>"  ,   "</SMESSAGE>");
+
 const QPair<QString, QString> CommsProtocol::SKETCH  = QPair<QString,QString>(  "<SKETCH>"  ,   "</SKETCH>");
 const QPair<QString, QString> CommsProtocol::BAUDRATE  = QPair<QString,QString>(  "<BAUDRATE>"  ,   "</BAUDRATE>");
 const QPair<QString, QString> CommsProtocol::BOARDID = QPair<QString,QString>(  "<BOARD>"   ,   "</BOARD>");

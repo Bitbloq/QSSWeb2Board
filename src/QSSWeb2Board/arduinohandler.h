@@ -103,6 +103,7 @@ public:
 
     QString getBoardPort() const;
 
+
 protected:
 
 

@@ -16,7 +16,7 @@ void MessageHandler::handle(QString _message){
     qDebug() << message;
 
     manageFullMessage();
-    manageBodyMessage();
+
 }
 
 void MessageHandler::manageBodyMessage(){
@@ -49,18 +49,34 @@ void MessageHandler::manageFullMessage(){
         int length = message.length() - CommsProtocol::VERIFY.first.length() - CommsProtocol::VERIFY.second.length();
         bodyMessage = message.mid( CommsProtocol::VERIFY.first.length(), length);
         action = Action::VERIFY;
+        manageBodyMessage();
     }else if( message.startsWith(CommsProtocol::UPLOAD.first) && message.endsWith(CommsProtocol::UPLOAD.second) ){
         qDebug()<< "Upload message received";
         int length = message.length() - CommsProtocol::UPLOAD.first.length() - CommsProtocol::UPLOAD.second.length();
         bodyMessage = message.mid( CommsProtocol::UPLOAD.first.length(), length);
         qDebug() << bodyMessage;
         action = Action::UPLOAD;
-    }else if( message.startsWith(CommsProtocol::SERIALMONITOR.first) && message.endsWith(CommsProtocol::SERIALMONITOR.second) ){
-        qDebug()<< "Serial Monitor";
-        int length = message.length() - CommsProtocol::SERIALMONITOR.first.length() - CommsProtocol::SERIALMONITOR.second.length();
-        bodyMessage = message.mid( CommsProtocol::SERIALMONITOR.first.length(), length);
+        manageBodyMessage();
+    }else if( message.startsWith(CommsProtocol::OPENSERIALMONITOR.first) && message.endsWith(CommsProtocol::OPENSERIALMONITOR.second) ){
+        qDebug()<< "Open Serial Monitor";
+        int length = message.length() - CommsProtocol::OPENSERIALMONITOR.first.length() - CommsProtocol::OPENSERIALMONITOR.second.length();
+        bodyMessage = message.mid( CommsProtocol::OPENSERIALMONITOR.first.length(), length);
         qDebug() << bodyMessage;
         action = Action::OPENSERIALMONITOR;
+        manageBodyMessage();
+    }else if( message.startsWith(CommsProtocol::CLOSESERIALMONITOR.first) && message.endsWith(CommsProtocol::CLOSESERIALMONITOR.second) ){
+        qDebug()<< "Close Serial Monitor";
+        int length = message.length() - CommsProtocol::CLOSESERIALMONITOR.first.length() - CommsProtocol::CLOSESERIALMONITOR.second.length();
+        bodyMessage = message.mid( CommsProtocol::CLOSESERIALMONITOR.first.length(), length);
+        qDebug() << bodyMessage;
+        action = Action::CLOSESERIALMONITOR;
+        manageBodyMessage();
+    }else if( message.startsWith(CommsProtocol::SERIALMESSAGE.first) && message.endsWith(CommsProtocol::SERIALMESSAGE.second) ){
+        qDebug()<< "Serial Message Received";
+        int length = message.length() - CommsProtocol::SERIALMESSAGE.first.length() - CommsProtocol::SERIALMESSAGE.second.length();
+        serialMessage = message.mid( CommsProtocol::SERIALMESSAGE.first.length(), length);
+        qDebug() << serialMessage;
+        action = Action::SENDSERIAL;
     }else{
         action = Action::UNKNOWN;
     }
@@ -75,6 +91,10 @@ QString ReturnMessage::makeReturnMessage(){
         msg = CommsProtocol::VERIFY.first;
     }else if (action == Action::UPLOAD){
         msg = CommsProtocol::UPLOAD.first;
+    }else if (action == Action::OPENSERIALMONITOR){
+        msg = CommsProtocol::OPENSERIALMONITOR.first;
+    }else if (action == Action::CLOSESERIALMONITOR){
+        msg = CommsProtocol::CLOSESERIALMONITOR.first;
     }else{
         msg = "<UNKNOWN></UNKNOWN>";
         return msg;
@@ -103,7 +123,12 @@ QString ReturnMessage::makeReturnMessage(){
         msg += CommsProtocol::VERIFY.second;
     }else if (action == Action::UPLOAD){
         msg += CommsProtocol::UPLOAD.second;
+    }else if (action == Action::OPENSERIALMONITOR){
+        msg += CommsProtocol::OPENSERIALMONITOR.second;
+    }else if (action == Action::CLOSESERIALMONITOR){
+        msg += CommsProtocol::CLOSESERIALMONITOR.second;
     }
+
 
     return msg;
 }
