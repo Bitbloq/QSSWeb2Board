@@ -89,6 +89,7 @@ void ArduinoHandler::setArduinoPath(QString s){
         arduinoPath=s;
     }
 
+    qDebug() << "app: " << QCoreApplication::applicationDirPath();
     qDebug() << arduinoPath;
 }
 

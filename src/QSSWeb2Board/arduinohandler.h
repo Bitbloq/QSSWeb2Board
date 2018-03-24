@@ -9,6 +9,8 @@
 //forward declararion of classes
 class QProcess;
 
+QT_FORWARD_DECLARE_CLASS(TestArduinoHandler)
+
 /**
  * @brief The ArduinoHandler class
  * It handles all the  actions to be made with Arduino: create sketch, verify, upload, etc.
@@ -16,6 +18,7 @@ class QProcess;
 class ArduinoHandler
 {
 public:
+    friend TestArduinoHandler;
 
     /**
      * @brief Public default ArduinoHandler Constructor
