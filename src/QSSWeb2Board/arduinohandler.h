@@ -100,14 +100,14 @@ public:
     bool setBoardPort(QString s="");
 
 
-
+    /**
+     * @brief getBoardPort returns board port
+     * @return board port
+     */
     QString getBoardPort() const;
 
 
 protected:
-
-
-
 
     /**
      * @brief extractErrorfromOutput. Analyzes the verify error output and get the full list of erros

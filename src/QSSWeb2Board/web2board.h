@@ -18,11 +18,13 @@ class Web2Board: public QObject
 public:
     Web2Board(QObject *parent = Q_NULLPTR);
     virtual ~Web2Board();
-    void processVerify(QString message);
-    void processUpload(QString message);
 
 
 public Q_SLOTS:
+    /**
+     * @brief processTextMessage. Public slot to process messages received from client thorugh wss
+     * @param message
+     */
     void processTextMessage(QString message);
     void sendIncomingSerialToClient(QString message);
 

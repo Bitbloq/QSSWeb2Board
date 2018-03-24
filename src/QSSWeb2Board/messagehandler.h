@@ -7,6 +7,9 @@
 
 #include "commsprotocol.h"
 
+/**
+ * @brief The MessageHandler class. Utility to parse de messages received/to send from/to client.
+ */
 class MessageHandler
 {
 public:
@@ -14,6 +17,9 @@ public:
 
     void handle(QString _message);
 
+    /**
+     * @brief The Action enum. Type of actions than can be performed.
+     */
     enum class Action{
         NONSET,
         VERIFY,
@@ -25,20 +31,20 @@ public:
     };
 
 
-    QString sketch;
-    QString boardID;
-    QString serialMessage;
-    Action action;
-    int baudrate;
+    QString sketch; ///String to store the sketch to verify/upload
+    QString boardID; ///String to store the boardID (withing the knownboards)
+    QString serialMessage; ///String to store de messageto send through serial port
+    Action action; ///action to perform
+    int baudrate; ///baudrate of the serial communications.
 
 
 private:
-    QString message;
-    QString bodyMessage;
+    QString message; /// Internal. Full received message from client.
+    QString bodyMessage; /// Internal. Body message onche the beginnign and tail actions are interpreted.
 
 
-    void manageBodyMessage();
-    void manageFullMessage();
+    void manageBodyMessage(); ///Parses the body message
+    void manageFullMessage(); ///Parses the full received message
 
 
 };

@@ -47,7 +47,7 @@ void Web2Board::processCommands(){
             arduino.setBoardNameID(messageHandler.boardID);
             arduino.setBoardPort();
             serialMonitor = new ArduinoSerialMonitor(arduino.getBoardPort(),messageHandler.baudrate);
-            serialMonitor->start();
+            serialMonitor->open();
             QObject::connect(serialMonitor,SIGNAL(lineReceived(QString)),this,SLOT(sendIncomingSerialToClient(QString)));
             returnMessage.success="TRUE";
         }else if (messageHandler.action == MessageHandler::Action::SENDSERIAL){
