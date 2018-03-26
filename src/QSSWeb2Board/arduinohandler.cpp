@@ -231,24 +231,26 @@ bool ArduinoHandler::setBoardPort(QString s){
     return false;
 }
 
-QString ArduinoHandler::verify(QString _boardNameID){
+int ArduinoHandler::verify(QString _boardNameID){
 
     //throws BoardNotKnowException if _boardNameID is not among the known boards
     if( ! _boardNameID.isEmpty()) setBoardNameID(_boardNameID);
-
     setArduinoPath();
     setBuildPath();
 
-    proc->start(makeVerifyCommand());
+    QString command = makeVerifyCommand();
+
+    proc->start(command);
     proc->waitForFinished();
 
-    QString errorOuput = QString(proc->readAllStandardError());
-    switch(proc->exitCode()){
+    QString output = QString(proc->readAllStandardError());
+    int exitCode = proc->exitCode();
+    switch(exitCode){
     case 0:
         qDebug()<<"Verify OK";
         break;
     case 1:
-        throw VerifyException(extractErrorfromOutput(errorOuput), verifyErrorsList);
+        throw VerifyException(extractErrorfromOutput(output), verifyErrorsList);
         break;
     case 2:
         throw VerifyException("Sketch not found");
@@ -261,10 +263,7 @@ QString ArduinoHandler::verify(QString _boardNameID){
         break;
     }
 
-    //return the output of the verification
-    QString output(proc->readAllStandardOutput());
-    //qDebug() << output;
-    return output;
+    return exitCode;
 
 
 }

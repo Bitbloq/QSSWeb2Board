@@ -66,11 +66,11 @@ public:
      * @brief verify. Verifies a sketch in Arduino for the selected board.
      * @param _boardNameID . The Arduino Board. if left empty it takes the board set on the boardID member.
      * @throws BoardNotKnownException -> the board is not among the known boards
-     * @throws BoardNotDetectedException -> the board is not connected to the serial port
      * @throws VerifyException -> Verification (compiling) error
-     * @return The output of the verification process
+     * @return The exitCode verification process
      */
-    QString verify(QString _boardNameID="");
+    int verify(QString _boardNameID="");
+
     /**
      * @brief Upload. Verifies and uploads a sketch in Arduino for the selected board.
      * @param _boardNameID . The Arduino Board. if left empty it takes the board set on the boardID member.

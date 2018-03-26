@@ -13,7 +13,13 @@ public:
     TestArduinoHandler();
     ~TestArduinoHandler();
 
-    ArduinoHandler arduino;
+#if (defined (Q_OS_WIN))
+    WindowsArduinoHandler arduino;
+#elif (defined (Q_OS_LINUX))
+    LinuxArduinoHandler arduino;
+#elif (defined (Q_OS_MAC))
+    MacArduinoHandler arduino;
+#endif
 
 
 private:
@@ -33,6 +39,7 @@ private slots:
     void test_setBuildPath();
     void test_setSketchWillFullPath();
     void test_writeSketchInDefaultPath();
+    void test_verify();
 
     void cleanupTestCase();
 
@@ -53,6 +60,18 @@ TestArduinoHandler::~TestArduinoHandler()
 
 }
 
+void TestArduinoHandler::test_verify(){
+    QVERIFY(arduino.writeSketchInDefaultPath(workingSketch));
+    //it should work ok
+    QCOMPARE(arduino.verify("ArduinoUNO"),0);
+
+    QVERIFY(arduino.writeSketchInDefaultPath(oneErrorSketch));
+    //check whether it throwns verify exception (wrong sketch)
+    QVERIFY_EXCEPTION_THROWN(arduino.verify("ArduinoUNO"),VerifyException);
+    //check whether it throwns board not known exception (invented board ID)
+    QVERIFY_EXCEPTION_THROWN(arduino.verify("xxx"),BoardNotKnownException);
+
+}
 
 void TestArduinoHandler::test_writeSketchInDefaultPath(){
     QVERIFY(arduino.writeSketchInDefaultPath(workingSketch));
