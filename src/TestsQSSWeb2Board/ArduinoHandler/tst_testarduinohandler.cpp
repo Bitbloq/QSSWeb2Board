@@ -55,24 +55,24 @@ void TestArduinoHandler::initTestCase(){
 
 void TestArduinoHandler::test_setArduinoPath()
 {
-    QString filePath = "/home/avalero/arduino-1.8.5/";
+    QString dirPath = testingDirPath;
 
-    arduino.setArduinoPath(filePath);
-    QCOMPARE(arduino.arduinoPath,filePath);
+    arduino.setArduinoPath(testingDirPath);
+    QCOMPARE(arduino.arduinoPath,dirPath);
 
     arduino.setArduinoPath();
-    QCOMPARE(arduino.arduinoPath,QCoreApplication::applicationDirPath() + "/res/arduino/");
+    QCOMPARE(arduino.arduinoPath,arduino.arduinoDefaultDir);
 }
 
 void TestArduinoHandler::test_setBuildPath()
 {
-    QString filePath = "/home/avalero/arduino-1.8.5/";
-    arduino.setBuildPath(filePath);
+    QString dirPath = testingDirPath;
+    arduino.setBuildPath(dirPath);
 
-    QCOMPARE(arduino.buildPath,filePath);
+    QCOMPARE(arduino.buildPath,dirPath);
 
     arduino.setBuildPath();
-    QCOMPARE(arduino.buildPath,QCoreApplication::applicationDirPath() + "/res/build/");
+    QCOMPARE(arduino.buildPath,arduino.buildDefaultDir);
 }
 
 void TestArduinoHandler::test_setSketchWillFullPath()

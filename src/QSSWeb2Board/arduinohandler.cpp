@@ -17,8 +17,23 @@ ArduinoHandler::ArduinoHandler():
     proc(NULL),
     arduinoBoards("knownboards.json")
 {
-    eraseExistingSketches();
+
+
     proc = new QProcess(); //this is to launch the arduino commands
+
+    if(!QDir().exists(sketchesDefaultDir)){
+        QDir().mkdir(sketchesDefaultDir);
+    }
+
+    if(!QDir().exists(arduinoDefaultDir)){
+        QDir().mkdir(arduinoDefaultDir);
+    }
+
+    if(!QDir().exists(buildDefaultDir)){
+        QDir().mkdir(buildDefaultDir);
+    }
+
+    eraseExistingSketches();
 }
 
 ArduinoHandler::~ArduinoHandler(){
