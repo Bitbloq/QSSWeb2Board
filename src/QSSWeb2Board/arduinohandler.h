@@ -55,6 +55,7 @@ public:
     /**
      * @brief Sets the absolute path to the Arduino sketch file (.ino) including the file name
      * @param s The path+filename
+     * @throws FileNotFoundException
      */
     void setSketchWithFullPath(QString s);
 
@@ -134,6 +135,10 @@ protected:
     QString boardNameID; /// the name of the board as listed on the known boards json file
     QString boardPort; /// the serial port where the board is connected
     QList<QString> verifyErrorsList; /// List of Strings containing verification errors
+
+    const QString sketchesDefaultDir;
+    const QString arduinoDefaultDir;
+    const QString buildDefaultDir;
 
     /**
      * @brief makeUploadCommand -> makes the upload command. OS dependant. Virtualized

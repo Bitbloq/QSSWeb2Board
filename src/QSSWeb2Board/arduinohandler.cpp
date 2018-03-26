@@ -10,7 +10,12 @@
 #include "arduinoexceptions.h"
 #include "arduinohandler.h"
 
-ArduinoHandler::ArduinoHandler():proc(NULL),arduinoBoards("knownboards.json")
+ArduinoHandler::ArduinoHandler():
+    sketchesDefaultDir(QCoreApplication::applicationDirPath() + "/res/sketches/"),
+    arduinoDefaultDir(QCoreApplication::applicationDirPath() + "/res/arduino/"),
+    buildDefaultDir(QCoreApplication::applicationDirPath() + "/res/build/"),
+    proc(NULL),
+    arduinoBoards("knownboards.json")
 {
     eraseExistingSketches();
     proc = new QProcess(); //this is to launch the arduino commands
@@ -59,13 +64,12 @@ void ArduinoHandler::eraseExistingSketches() const {
 
 void ArduinoHandler::writeSketch(QString sketch){
     //remove tail white spaces and retrun cartridges
-    sketch = sketch.trimmed();
-    sketch = sketch.simplified();
+    sketch = sketch.trimmed().simplified();
 
     QString randString = createRandomString();
 
     sketchName = randString + ".ino";
-    sketchPath=QCoreApplication::applicationDirPath() + "/res/sketches/" + randString + "/";
+    sketchPath= sketchesDefaultDir + randString + "/";
     sketchWithPath = sketchPath + sketchName;
 
     QDir().mkdir(sketchPath);
@@ -84,7 +88,7 @@ void ArduinoHandler::setArduinoPath(QString s){
     //if no param passed, set the default directory (whis is relative to the app dir)
     if (s == ""){
         //portable arduino ide MUST be in in ~/res/arduino relative to application path !!
-        arduinoPath=QCoreApplication::applicationDirPath() + "/res/arduino/";
+        arduinoPath=arduinoDefaultDir;
     }else{
         arduinoPath=s;
     }
@@ -97,7 +101,7 @@ void ArduinoHandler::setBuildPath(QString s){
     //if no param passed, set the default path (which is relative to the app dir)
     if (s == ""){
         //build path MUST be in in ~/res/build relative to application path !!
-        buildPath=QCoreApplication::applicationDirPath() + "/res/build/";
+        buildPath=buildDefaultDir;
     }else{
         buildPath=s;
     }
