@@ -22,25 +22,46 @@ private:
     QString testingFilePath;
     QFile testingFile;
 
+    QString workingSketch;
+    QString oneErrorSketch;
+    QString twoErrorSketch;
+
 private slots:
+    void initTestCase();
+
     void test_setArduinoPath();
     void test_setBuildPath();
     void test_setSketchWillFullPath();
-    void initTestCase();
+    void test_writeSketchInDefaultPath();
+
     void cleanupTestCase();
 
 
 
 };
 
+
 TestArduinoHandler::TestArduinoHandler()
 {
-
+    workingSketch = "void setup(){} void loop(){}";
+    oneErrorSketch = "void setup(){x;} void loop(){}";
+    twoErrorSketch = "void setup(){x;} void loop(){y;}";
 }
 
 TestArduinoHandler::~TestArduinoHandler()
 {
 
+}
+
+
+void TestArduinoHandler::test_writeSketchInDefaultPath(){
+    QVERIFY(arduino.writeSketchInDefaultPath(workingSketch));
+
+    QFile sketchFile(arduino.sketchWithPath);
+    QVERIFY(sketchFile.open(QIODevice::ReadOnly | QFile::Text));
+
+    QString sketch = QString(sketchFile.readAll());
+    QCOMPARE(sketch.simplified().trimmed(),workingSketch.simplified().trimmed());
 }
 
 void TestArduinoHandler::initTestCase(){
@@ -57,21 +78,22 @@ void TestArduinoHandler::test_setArduinoPath()
 {
     QString dirPath = testingDirPath;
 
-    arduino.setArduinoPath(testingDirPath);
+    QVERIFY(arduino.setArduinoPath(testingDirPath));
     QCOMPARE(arduino.arduinoPath,dirPath);
 
-    arduino.setArduinoPath();
+    QVERIFY(arduino.setArduinoPath());
     QCOMPARE(arduino.arduinoPath,arduino.arduinoDefaultDir);
 }
 
 void TestArduinoHandler::test_setBuildPath()
 {
     QString dirPath = testingDirPath;
-    arduino.setBuildPath(dirPath);
+
+    QVERIFY(arduino.setBuildPath(dirPath));
 
     QCOMPARE(arduino.buildPath,dirPath);
 
-    arduino.setBuildPath();
+    QVERIFY(arduino.setBuildPath());
     QCOMPARE(arduino.buildPath,arduino.buildDefaultDir);
 }
 

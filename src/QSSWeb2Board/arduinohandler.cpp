@@ -77,7 +77,7 @@ void ArduinoHandler::eraseExistingSketches() const {
     */
 }
 
-void ArduinoHandler::writeSketch(QString sketch){
+bool ArduinoHandler::writeSketchInDefaultPath(QString sketch){
     //remove tail white spaces and retrun cartridges
     sketch = sketch.trimmed().simplified();
 
@@ -97,9 +97,11 @@ void ArduinoHandler::writeSketch(QString sketch){
     }else{
         throw FileNotCreatedException("Cannot create sketch file in " +sketchPath + " path");
     }
+
+    return true;
 }
 
-void ArduinoHandler::setArduinoPath(QString s){
+bool ArduinoHandler::setArduinoPath(QString s){
     //if no param passed, set the default directory (whis is relative to the app dir)
     if (s == ""){
         //portable arduino ide MUST be in in ~/res/arduino relative to application path !!
@@ -110,9 +112,11 @@ void ArduinoHandler::setArduinoPath(QString s){
 
     qDebug() << "app: " << QCoreApplication::applicationDirPath();
     qDebug() << arduinoPath;
+
+    return true;
 }
 
-void ArduinoHandler::setBuildPath(QString s){
+bool ArduinoHandler::setBuildPath(QString s){
     //if no param passed, set the default path (which is relative to the app dir)
     if (s == ""){
         //build path MUST be in in ~/res/build relative to application path !!
@@ -122,6 +126,7 @@ void ArduinoHandler::setBuildPath(QString s){
     }
 
     qDebug() << buildPath;
+    return true;
 }
 
 void ArduinoHandler::setSketchPath(QString s){
@@ -136,7 +141,7 @@ void ArduinoHandler::setSketchName(QString s){
     sketchWithPath = sketchPath + sketchName;
 }
 
-void ArduinoHandler::setSketchWithFullPath(QString s){
+bool ArduinoHandler::setSketchWithFullPath(QString s){
 
     if ( QFile::exists(s)) {
         sketchWithPath=s;
@@ -145,6 +150,8 @@ void ArduinoHandler::setSketchWithFullPath(QString s){
     }else{
         throw FileNotFoundException("File "+s+" does not exist");
     }
+
+    return true;
 }
 
 bool ArduinoHandler::setBoardNameID(QString s){

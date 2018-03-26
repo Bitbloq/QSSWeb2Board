@@ -30,7 +30,7 @@ void Web2Board::processCommands(){
     ReturnMessage returnMessage;
 
     try{
-        arduino.writeSketch(messageHandler.sketch);
+        arduino.writeSketchInDefaultPath(messageHandler.sketch);
         if(messageHandler.action == MessageHandler::Action::VERIFY){
             returnMessage.action = ReturnMessage::Action::VERIFY;
             arduino.verify(messageHandler.boardID);

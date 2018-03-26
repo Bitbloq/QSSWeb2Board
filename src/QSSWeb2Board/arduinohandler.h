@@ -32,13 +32,15 @@ public:
     /**
      * @brief Sets the absolute path to the arduino executable.
      * @param s The path. When left empty it computes it relatively to this application exectuable.
+     * @returns True if everything has gone OK (for automated tests purpose)
      */
-    void setArduinoPath(QString s="");
+    bool setArduinoPath(QString s="");
     /**
      * @brief Sets the absolute path to the result of verifyin a sketch (built files).
      * @param s The path. When left empty it computes it relatively to this application exectuable.
+     * @returns True if everything has gone OK (for automated tests purpose)
      */
-    void setBuildPath(QString s="");
+    bool setBuildPath(QString s="");
 
     /**
      * @brief Sets the absolute path to the Arduino sketch file (.ino)
@@ -55,9 +57,10 @@ public:
     /**
      * @brief Sets the absolute path to the Arduino sketch file (.ino) including the file name
      * @param s The path+filename
+     * @returns True if everything has gone OK (for automated tests purpose)
      * @throws FileNotFoundException
      */
-    void setSketchWithFullPath(QString s);
+    bool setSketchWithFullPath(QString s);
 
     /**
      * @brief verify. Verifies a sketch in Arduino for the selected board.
@@ -83,7 +86,7 @@ public:
      * @param sketch -> The Arduino code
      * @throws FileNotCreatedException -> The file cannot be created
      */
-    void writeSketch(QString sketch);
+    bool writeSketchInDefaultPath(QString sketch);
 
     /**
      * @brief setBoardNameID Sets the board to verify/upload
