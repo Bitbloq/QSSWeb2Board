@@ -1,5 +1,6 @@
 #include <QtTest>
 #include <QFileInfo>
+#include <QList>
 
 #include "../../QSSWeb2Board/arduinohandler.h"
 
@@ -13,17 +14,22 @@ public:
     TestArduinoHandler();
     ~TestArduinoHandler();
 
-#if (defined (Q_OS_WIN))
-    WindowsArduinoHandler arduino;
-#elif (defined (Q_OS_LINUX))
-    LinuxArduinoHandler arduino;
-#elif (defined (Q_OS_MAC))
-    MacArduinoHandler arduino;
-#endif
+    QList<ArduinoHandler*> arduinoList;
 
+    ArduinoHandler* Arduino(){
+        #if (defined (Q_OS_WIN))
+            WindowsArduinoHandler *arduino = new WindowsArduinoHandler();
+        #elif (defined (Q_OS_LINUX))
+            LinuxArduinoHandler * arduino = new LinuxArduinoHandler();
+        #elif (defined (Q_OS_MAC))
+            MacArduinoHandler *arduino = new MacArduinoHandler();
+        #endif
+        arduinoList.append(arduino);
+        return arduino;
+}
 
 private:
-    QString testingDirPath;
+    QString testingBaseDirPath;
     QString testingFileName;
     QString testingFilePath;
     QFile testingFile;
@@ -37,8 +43,10 @@ private slots:
 
     void test_setArduinoPath();
     void test_setBuildPath();
+    void test_setSketchesBasePath();
     void test_setSketchWillFullPath();
-    void test_writeSketchInDefaultPath();
+    void test_writeSketch();
+    void test_setBoardNameID();
     void test_verify();
 
     void cleanupTestCase();
@@ -57,83 +65,156 @@ TestArduinoHandler::TestArduinoHandler()
 
 TestArduinoHandler::~TestArduinoHandler()
 {
+    for(int i=0;i<arduinoList.size();i++){
+        if(arduinoList[i] != NULL)
+            //delete arduinoList[i];
+    }
+}
 
+void TestArduinoHandler::initTestCase(){
+    testingBaseDirPath = QCoreApplication::applicationDirPath() + "/temp/";
+    QDir().mkdir(testingBaseDirPath);
+    testingFileName = "test.ino";
+    QDir().mkdir(testingBaseDirPath + "test/");
+    testingFilePath = testingBaseDirPath + "test/" + testingFileName;
+    testingFile.setFileName(testingFilePath);
+    QVERIFY(testingFile.open(QIODevice::ReadWrite));
+    testingFile.close();
+}
+
+void TestArduinoHandler::test_setSketchesBasePath(){
+    ArduinoHandler* arduino = Arduino();
+
+    QCOMPARE(arduino->sketchesBaseDir, arduino->sketchesDefaultBaseDir);
+    arduino->setSketchesBaseDir(testingBaseDirPath);
+    QCOMPARE(arduino->sketchesBaseDir, testingBaseDirPath);
+
+    delete arduino; arduino=Q_NULLPTR;
+}
+
+void TestArduinoHandler::test_setBoardNameID(){
+    ArduinoHandler *arduino = Arduino();
+    arduino->writeSketch(workingSketch);
+    QVERIFY_EXCEPTION_THROWN(arduino->verify(),BoardNotSetException);
+    QVERIFY_EXCEPTION_THROWN(arduino->setBoardNameID("zzz"),BoardNotKnownException);
+    QVERIFY(arduino->setBoardNameID("ArduinoUNO"));
+
+    delete arduino; arduino=Q_NULLPTR;
 }
 
 void TestArduinoHandler::test_verify(){
-    QVERIFY(arduino.writeSketchInDefaultPath(workingSketch));
+    ArduinoHandler *arduino = Arduino();
+    QVERIFY(arduino->writeSketch(workingSketch));
+    QVERIFY(arduino->setBoardNameID("ArduinoUNO"));
     //it should work ok
-    QCOMPARE(arduino.verify("ArduinoUNO"),0);
+    QCOMPARE(arduino->verify(),0);
 
-    QVERIFY(arduino.writeSketchInDefaultPath(oneErrorSketch));
+    QVERIFY(arduino->writeSketch(oneErrorSketch));
     //check whether it throwns verify exception (wrong sketch)
-    QVERIFY_EXCEPTION_THROWN(arduino.verify("ArduinoUNO"),VerifyException);
+    QVERIFY_EXCEPTION_THROWN(arduino->verify(),VerifyException);
     //check whether it throwns board not known exception (invented board ID)
-    QVERIFY_EXCEPTION_THROWN(arduino.verify("xxx"),BoardNotKnownException);
 
+    QVERIFY(arduino->setSketchWithAbsolutePath("/home/avalero/arduino-1.8.5/examples/01.Basics/Blink/Blink.ino"));
+    QCOMPARE(arduino->verify(),0);
+
+    delete arduino; arduino=Q_NULLPTR;
 }
 
-void TestArduinoHandler::test_writeSketchInDefaultPath(){
-    QVERIFY(arduino.writeSketchInDefaultPath(workingSketch));
+void TestArduinoHandler::test_writeSketch(){
+    ArduinoHandler *arduino = Arduino();
+    QVERIFY(arduino->writeSketch(workingSketch));
 
-    QFile sketchFile(arduino.sketchWithPath);
+    QString sketchPath = arduino->sketchesBaseDir
+            + arduino->sketchName + "/"
+            + arduino->sketchName + ".ino";
+
+    QFile sketchFile(sketchPath);
     QVERIFY(sketchFile.open(QIODevice::ReadOnly | QFile::Text));
 
     QString sketch = QString(sketchFile.readAll());
     QCOMPARE(sketch.simplified().trimmed(),workingSketch.simplified().trimmed());
+
+    sketchFile.close();
+    sketchFile.remove();
+
+   //*************
+
+    arduino->setSketchesBaseDir(testingBaseDirPath);
+    QVERIFY(arduino->writeSketch(workingSketch));
+
+    sketchPath = arduino->sketchesBaseDir
+            + arduino->sketchName + "/"
+            + arduino->sketchName + ".ino";
+
+    sketchFile.setFileName(sketchPath);
+    QVERIFY(sketchFile.open(QIODevice::ReadOnly | QFile::Text));
+
+    sketch = QString(sketchFile.readAll());
+    QCOMPARE(sketch.simplified().trimmed(),workingSketch.simplified().trimmed());
+
+    sketchFile.close();
+    sketchFile.remove();
+
+    delete arduino; arduino=Q_NULLPTR;
 }
 
-void TestArduinoHandler::initTestCase(){
-    testingDirPath = QCoreApplication::applicationDirPath() + "/temp/";
-    QDir().mkdir(testingDirPath);
-    testingFileName = "test.tst";
-    testingFilePath = testingDirPath + testingFileName;
-    testingFile.setFileName(testingFilePath);
-    testingFile.open(QIODevice::ReadWrite);
-    testingFile.close();
-}
 
 void TestArduinoHandler::test_setArduinoPath()
 {
-    QString dirPath = testingDirPath;
+    ArduinoHandler *arduino = Arduino();
+    QString dirPath = testingBaseDirPath;
 
-    QVERIFY(arduino.setArduinoPath(testingDirPath));
-    QCOMPARE(arduino.arduinoPath,dirPath);
+    QVERIFY(arduino->setArduinoPath(testingBaseDirPath));
+    QCOMPARE(arduino->arduinoPath,dirPath);
 
-    QVERIFY(arduino.setArduinoPath());
-    QCOMPARE(arduino.arduinoPath,arduino.arduinoDefaultDir);
+    QVERIFY(arduino->setArduinoPath());
+    QCOMPARE(arduino->arduinoPath,arduino->arduinoDefaultDir);
+
+    delete arduino; arduino=Q_NULLPTR;
 }
 
 void TestArduinoHandler::test_setBuildPath()
 {
-    QString dirPath = testingDirPath;
+    ArduinoHandler *arduino = Arduino();
+    QString dirPath = testingBaseDirPath;
 
-    QVERIFY(arduino.setBuildPath(dirPath));
+    QVERIFY(arduino->setBuildPath(dirPath));
 
-    QCOMPARE(arduino.buildPath,dirPath);
+    QCOMPARE(arduino->buildPath,dirPath);
 
-    QVERIFY(arduino.setBuildPath());
-    QCOMPARE(arduino.buildPath,arduino.buildDefaultDir);
+    QVERIFY(arduino->setBuildPath());
+    QCOMPARE(arduino->buildPath,arduino->buildDefaultDir);
+
+    delete arduino; arduino=Q_NULLPTR;
 }
 
 void TestArduinoHandler::test_setSketchWillFullPath()
 {
-    arduino.setSketchWithFullPath(testingFilePath);
+    ArduinoHandler *arduino = Arduino();
+    arduino->setSketchWithAbsolutePath(testingFilePath);
 
-    QCOMPARE(arduino.sketchWithPath,testingFilePath);
-    QCOMPARE(arduino.sketchPath,testingDirPath);
-    QCOMPARE(arduino.sketchName,testingFileName);
+    QString sketchWithPath=arduino->sketchesBaseDir
+            + arduino->sketchName + "/"
+            + arduino->sketchName + ".ino";
+
+    QString sketchPath=arduino->sketchesBaseDir;
+
+    QCOMPARE(sketchWithPath,testingFilePath);
+    QCOMPARE(sketchPath,testingBaseDirPath);
+    QCOMPARE(arduino->sketchName + ".ino",testingFileName);
 
     QString nonExistingPath = testingFilePath + "abc";
-    QVERIFY_EXCEPTION_THROWN(arduino.setSketchWithFullPath(nonExistingPath),FileNotFoundException);
+    QVERIFY_EXCEPTION_THROWN(arduino->setSketchWithAbsolutePath(nonExistingPath),FileNotFoundException);
 
+    delete arduino; arduino=Q_NULLPTR;
 }
 
 
 
 void TestArduinoHandler::cleanupTestCase(){
     testingFile.remove();
-    QDir().rmdir(testingDirPath);
+    QDir().rmdir(testingBaseDirPath);
+
 }
 
 QTEST_GUILESS_MAIN(TestArduinoHandler)

@@ -87,6 +87,18 @@ class BoardNotDetectedException: public QException{
         const QString errorType;
 };
 
+class BoardNotSetException: public QException{
+    public:
+        BoardNotSetException(const QString& s):
+            message(s),errorType(CommsProtocol::BOARD_NOT_SET_ERROR){}
+        void raise() const { throw *this; }
+        BoardNotSetException *clone() const { return new BoardNotSetException(*this); }
+
+        const QString message;
+        const QString errorType;
+};
+
+
 /**
  * @brief The FileNotCreatedException class
  * Exception thrown when the sketch file cannot be created (ususaly you have no write permissions)

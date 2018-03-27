@@ -22,6 +22,7 @@ const QString CommsProtocol::UPLOAD_ERROR = "UPLOADERROR";
 const QString CommsProtocol::FILE_NOT_FOUND_ERROR = "FILENOTFOUND";
 const QString CommsProtocol::BOARD_NOT_KNOWN_ERROR = "BOARDNOTKNOWN";
 const QString CommsProtocol::BOARD_NOT_DETECTED_ERROR = "BOARDNOTDETECTED";
+const QString CommsProtocol::BOARD_NOT_SET_ERROR = "BOARDNOTSET";
 const QString CommsProtocol::FILE_NOT_CREATED_ERROR ="FILENOTCREATED";
 const QString CommsProtocol::SERIAL_PORT_NOT_OPEN ="PORTNOTOPENED";
 

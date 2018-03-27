@@ -46,30 +46,22 @@ public:
      * @brief Sets the absolute path to the Arduino sketch file (.ino)
      * @param s The path.
      */
-    void setSketchPath(QString s);
+    void setSketchesBaseDir(QString s);
 
     /**
      * @brief Sets the sketch file name (.ino)
      * @param s The file name
      */
-    void setSketchName(QString s);
+    void setSketchFileName(QString s);
 
-    /**
-     * @brief Sets the absolute path to the Arduino sketch file (.ino) including the file name
-     * @param s The path+filename
-     * @returns True if everything has gone OK (for automated tests purpose)
-     * @throws FileNotFoundException
-     */
-    bool setSketchWithFullPath(QString s);
 
     /**
      * @brief verify. Verifies a sketch in Arduino for the selected board.
-     * @param _boardNameID . The Arduino Board. if left empty it takes the board set on the boardID member.
      * @throws BoardNotKnownException -> the board is not among the known boards
      * @throws VerifyException -> Verification (compiling) error
      * @return The exitCode verification process
      */
-    int verify(QString _boardNameID="");
+    int verify();
 
     /**
      * @brief Upload. Verifies and uploads a sketch in Arduino for the selected board.
@@ -80,13 +72,40 @@ public:
      * @throws UploadException -> Compiled Sketch cannot be uploaded to the board
      * @return The output of the upload process
      */
-    QString upload(QString _boardNameID="");
+    QString upload();
     /**
      * @brief writeSketch -> creates a Sketch file (.ino) whith a random name.
      * @param sketch -> The Arduino code
      * @throws FileNotCreatedException -> The file cannot be created
      */
-    bool writeSketchInDefaultPath(QString sketch);
+    bool writeSketch(QString _sketch, QString _sketchName="");
+
+    bool setSketchWithAbsolutePath(QString s);
+
+
+    /**
+     * @brief autoDetectBoardPort Detects the serial port where the board is connected
+     * If left empty it takes the member variable
+     * @return true if port exists and corresponds to the board, false otherwise
+     * @throws BoardNotKnownException -> When the board is not among the  know boards
+     * @throws BoardNotDetectedExcpetion -> When the board is not connected (or not found) to any serial port
+     */
+    bool autoDetectBoardPort();
+
+    /**
+     * @brief setBoardPort Sets the serial port where the board is connected
+     * @param _boardPort The boardPort.
+     * @return true if port exists
+     * @throws BoardNotDetectedExcpetion -> When the board is not connected (or not found) to any serial port
+     */
+    bool setBoardPort(QString _boardPort);
+
+
+    /**
+     * @brief getBoardPort returns board port
+     * @return board port
+     */
+    QString getBoardPort() const;
 
     /**
      * @brief setBoardNameID Sets the board to verify/upload
@@ -97,24 +116,10 @@ public:
     bool setBoardNameID(QString s);
 
 
-    /**
-     * @brief setBoardPort Sets the serial port where the board is connected
-     * @param s The serial port. If left empty it looks for it (using board vendorID and productID)
-     * @return true if port exists and corresponds to the board, false otherwise
-     * @throws BoardNotKnownException -> When the board is not among the  know boards
-     * @throws BoardNotDetectedExcpetion -> When the board is not connected (or not found) to any serial port
-     */
-    bool setBoardPort(QString s="");
-
-
-    /**
-     * @brief getBoardPort returns board port
-     * @return board port
-     */
-    QString getBoardPort() const;
-
 
 protected:
+
+
 
     /**
      * @brief extractErrorfromOutput. Analyzes the verify error output and get the full list of erros
@@ -132,14 +137,13 @@ protected:
 
     QString arduinoPath; /// the absolute path to the arduino executable file
     QString buildPath; /// the absolute path to the placement of the build process resulting files.
-    QString sketchPath; /// the absolut path to the sketch file.
-    QString sketchName; /// the name of the sketch file (.ino)
-    QString sketchWithPath; /// sketchPath + sketchName
+    QString sketchesBaseDir;
+    QString sketchName; /// the name of the sketch without .ino
     QString boardNameID; /// the name of the board as listed on the known boards json file
     QString boardPort; /// the serial port where the board is connected
     QList<QString> verifyErrorsList; /// List of Strings containing verification errors
 
-    const QString sketchesDefaultDir;
+    const QString sketchesDefaultBaseDir;
     const QString arduinoDefaultDir;
     const QString buildDefaultDir;
 

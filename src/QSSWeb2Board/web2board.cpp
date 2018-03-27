@@ -30,22 +30,24 @@ void Web2Board::processCommands(){
     ReturnMessage returnMessage;
 
     try{
-        arduino.writeSketchInDefaultPath(messageHandler.sketch);
+        arduino.writeSketch(messageHandler.sketch);
         if(messageHandler.action == MessageHandler::Action::VERIFY){
             returnMessage.action = ReturnMessage::Action::VERIFY;
-            arduino.verify(messageHandler.boardID);
+            arduino.setBoardNameID(messageHandler.boardID);
+            arduino.verify();
             returnMessage.success="TRUE";
 
         }else if (messageHandler.action == MessageHandler::Action::UPLOAD){
             returnMessage.action = ReturnMessage::Action::UPLOAD;
-            arduino.verify(messageHandler.boardID);
-            arduino.upload(messageHandler.boardID);
+            arduino.setBoardNameID(messageHandler.boardID);
+            arduino.verify();
+            arduino.upload();
             returnMessage.success="TRUE";
             returnMessage.action = ReturnMessage::Action::UPLOAD;
         }else if (messageHandler.action == MessageHandler::Action::OPENSERIALMONITOR){
             returnMessage.action = ReturnMessage::Action::OPENSERIALMONITOR;
             arduino.setBoardNameID(messageHandler.boardID);
-            arduino.setBoardPort();
+            arduino.autoDetectBoardPort();
             serialMonitor = new ArduinoSerialMonitor(arduino.getBoardPort(),messageHandler.baudrate);
             serialMonitor->open();
             QObject::connect(serialMonitor,SIGNAL(lineReceived(QString)),this,SLOT(sendIncomingSerialToClient(QString)));
@@ -95,6 +97,12 @@ void Web2Board::processCommands(){
         qDebug()<<e.message;
         returnMessage.success="FALSE";
         returnMessage.errorType=CommsProtocol::BOARD_NOT_DETECTED_ERROR;
+        returnMessage.errorDesc=e.message;
+
+    }catch(BoardNotSetException &e){
+        qDebug()<<e.message;
+        returnMessage.success="FALSE";
+        returnMessage.errorType=CommsProtocol::BOARD_NOT_SET_ERROR;
         returnMessage.errorDesc=e.message;
 
     }catch(UploadException &e){
