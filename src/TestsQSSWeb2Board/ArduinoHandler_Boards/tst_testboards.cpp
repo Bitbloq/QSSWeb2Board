@@ -114,7 +114,7 @@ void TestBoards::test_upload(){
     QVERIFY_EXCEPTION_THROWN(arduino->upload(),VerifyException);
     //check whether it throwns board not known exception (invented board ID)
 
-    QVERIFY(arduino->setSketchWithAbsolutePath("/home/avalero/arduino-1.8.5/examples/01.Basics/Blink/Blink.ino"));
+    QVERIFY(arduino->setSketchWithAbsolutePath(arduino->arduinoDefaultDir + "examples/01.Basics/Blink/Blink.ino"));
     QCOMPARE(arduino->upload(),0);
 
     arduino->boardPort="";

@@ -119,7 +119,7 @@ void TestArduinoHandler::test_verify(){
     QVERIFY_EXCEPTION_THROWN(arduino->verify(),VerifyException);
     //check whether it throwns board not known exception (invented board ID)
 
-    QVERIFY(arduino->setSketchWithAbsolutePath("/home/avalero/arduino-1.8.5/examples/01.Basics/Blink/Blink.ino"));
+    QVERIFY(arduino->setSketchWithAbsolutePath(arduino->arduinoPath + "examples/01.Basics/Blink/Blink.ino"));
     QCOMPARE(arduino->verify(),0);
 
     delete arduino; arduino=Q_NULLPTR;
