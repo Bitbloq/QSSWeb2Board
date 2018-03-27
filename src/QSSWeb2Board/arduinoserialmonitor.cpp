@@ -21,12 +21,14 @@ ArduinoSerialMonitor::~ArduinoSerialMonitor(){
     }
 }
 
-void ArduinoSerialMonitor::open(){
+bool ArduinoSerialMonitor::open(){
     if (!port.open(QSerialPort::ReadWrite)){
         throw SerialPortOpenException("Cannot Open Serial Port " + port.portName());
     }
 
     QObject::connect(&port, SIGNAL(readyRead()), this, SLOT(readArduino()));
+
+    return true;
 }
 
 void ArduinoSerialMonitor::close(){

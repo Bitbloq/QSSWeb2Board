@@ -11,6 +11,7 @@
 #include "arduinohandler.h"
 
 ArduinoHandler::ArduinoHandler():
+    serialMonitor(Q_NULLPTR),
     sketchesDefaultBaseDir(QCoreApplication::applicationDirPath() + "/res/sketches/"),
     arduinoDefaultDir(QCoreApplication::applicationDirPath() + "/res/arduino/"),
     buildDefaultDir(QCoreApplication::applicationDirPath() + "/res/build/"),
@@ -35,10 +36,30 @@ ArduinoHandler::ArduinoHandler():
     eraseExistingSketches();
 }
 
+bool ArduinoHandler::openSerialMonitor(int baudrate){
+    serialMonitor = new ArduinoSerialMonitor(getBoardPort(),baudrate);
+    return serialMonitor->open();
+}
+
+bool ArduinoHandler::closeSerialMonitor(){
+
+    if(serialMonitor){
+        serialMonitor->close();
+        delete serialMonitor;
+        serialMonitor = Q_NULLPTR;
+    }
+
+    return true;
+}
+
 ArduinoHandler::~ArduinoHandler(){
     //free memory from pointers
     if(proc!=NULL){
         delete proc;
+    }
+
+    if(serialMonitor){
+        delete serialMonitor;
     }
 }
 
@@ -228,6 +249,7 @@ bool ArduinoHandler::autoDetectBoardPort(){
 
 int ArduinoHandler::verify(){
 
+    if(sketchName.isEmpty()) throw SketchNotSetException("Sketch not set");
     if(boardNameID.isEmpty()) throw BoardNotSetException("BoardNameID not set");
 
     setArduinoPath();
@@ -263,8 +285,9 @@ int ArduinoHandler::verify(){
 
 }
 
-QString ArduinoHandler::upload()
+int ArduinoHandler::upload()
 {
+    if(sketchName.isEmpty()) throw SketchNotSetException("Sketch not set");
     if(boardNameID.isEmpty()) throw BoardNotSetException("BoardNameID not set");
     if(boardPort.isEmpty()) autoDetectBoardPort();
 
@@ -274,8 +297,8 @@ QString ArduinoHandler::upload()
     proc->start(makeUploadCommand());
     proc->waitForFinished(-1);
     QString errorOutput(proc->readAllStandardError());
-
-    switch(proc->exitCode()){
+    int exitCode = proc->exitCode();
+    switch(exitCode){
     case 0:
         qDebug()<<"Upload OK";
         break;
@@ -293,7 +316,7 @@ QString ArduinoHandler::upload()
         break;
     }
 
-    return errorOutput;
+    return exitCode;
 }
 
 

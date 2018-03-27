@@ -6,9 +6,9 @@
 
 
 Web2Board::Web2Board(QObject *parent):
-    QObject(parent),
-    serialMonitor(Q_NULLPTR)
-{    try{
+    QObject(parent)
+{
+    try{
         //arduino.setFileWithFullPath("/home/avalero/arduino-1.8.5/examples/01.Basics/Blink/Blink.ino");
         //arduino.setFileWithFullPath("/home/avalero/workspace/QSSWeb2Board/src/build-QSSWeb2Board-Desktop-Debug/res/arduino/hardware/BQ/avr/libraries/BQZUMI2C7SegmentDisplay/examples/7Segment_Characters/7Segment_Characters.ino");
         //arduino.setFileWithFullPath("/home/avalero/arduino-1.8.5/examples/error/error.ino");
@@ -19,9 +19,6 @@ Web2Board::Web2Board(QObject *parent):
 }
 
 Web2Board::~Web2Board(){
-    if(serialMonitor){
-        delete serialMonitor;
-    }
 }
 
 
@@ -48,24 +45,17 @@ void Web2Board::processCommands(){
             returnMessage.action = ReturnMessage::Action::OPENSERIALMONITOR;
             arduino.setBoardNameID(messageHandler.boardID);
             arduino.autoDetectBoardPort();
-            serialMonitor = new ArduinoSerialMonitor(arduino.getBoardPort(),messageHandler.baudrate);
-            serialMonitor->open();
-            QObject::connect(serialMonitor,SIGNAL(lineReceived(QString)),this,SLOT(sendIncomingSerialToClient(QString)));
+            arduino.openSerialMonitor(messageHandler.baudrate);
+            QObject::connect(arduino.serialMonitor,SIGNAL(lineReceived(QString)),this,SLOT(sendIncomingSerialToClient(QString)));
             returnMessage.success="TRUE";
         }else if (messageHandler.action == MessageHandler::Action::SENDSERIAL){
             returnMessage.action = ReturnMessage::Action::NONSET;
-            serialMonitor->sendToArduino(messageHandler.serialMessage);
+            arduino.serialMonitor->sendToArduino(messageHandler.serialMessage);
 
         }else if (messageHandler.action == MessageHandler::Action::CLOSESERIALMONITOR){
             returnMessage.action = ReturnMessage::Action::CLOSESERIALMONITOR;
-            QObject::disconnect(serialMonitor,SIGNAL(lineReceived(QString)),this,SLOT(sendIncomingSerialToClient(QString)));
-
-            if(serialMonitor){
-                serialMonitor->close();
-                delete serialMonitor;
-                serialMonitor = Q_NULLPTR;
-            }
-
+            QObject::disconnect(arduino.serialMonitor,SIGNAL(lineReceived(QString)),this,SLOT(sendIncomingSerialToClient(QString)));
+            arduino.closeSerialMonitor();
             returnMessage.success="TRUE";
         }
 
@@ -103,6 +93,12 @@ void Web2Board::processCommands(){
         qDebug()<<e.message;
         returnMessage.success="FALSE";
         returnMessage.errorType=CommsProtocol::BOARD_NOT_SET_ERROR;
+        returnMessage.errorDesc=e.message;
+
+    }catch(SketchNotSetException &e){
+        qDebug()<<e.message;
+        returnMessage.success="FALSE";
+        returnMessage.errorType=CommsProtocol::SKETCH_NOT_SET_ERROR;
         returnMessage.errorDesc=e.message;
 
     }catch(UploadException &e){

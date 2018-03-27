@@ -98,6 +98,17 @@ class BoardNotSetException: public QException{
         const QString errorType;
 };
 
+class SketchNotSetException: public QException{
+    public:
+        SketchNotSetException(const QString& s):
+            message(s),errorType(CommsProtocol::SKETCH_NOT_SET_ERROR){}
+        void raise() const { throw *this; }
+        SketchNotSetException *clone() const { return new SketchNotSetException(*this); }
+
+        const QString message;
+        const QString errorType;
+};
+
 
 /**
  * @brief The FileNotCreatedException class

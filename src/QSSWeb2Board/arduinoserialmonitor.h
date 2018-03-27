@@ -24,7 +24,7 @@ public:
      * @brief open Opens the serial port communications.
      * @throws SerialPortOpenException
      */
-    void open();
+    bool open();
 
     /**
      * @brief close Closesserial port communication

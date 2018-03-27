@@ -5,11 +5,12 @@
 
 #include "knownboards.h"
 #include "arduinoexceptions.h"
+#include "arduinoserialmonitor.h"
 
 //forward declararion of classes
-class QProcess;
-
+QT_FORWARD_DECLARE_CLASS(QProcess);
 QT_FORWARD_DECLARE_CLASS(TestArduinoHandler)
+QT_FORWARD_DECLARE_CLASS(TestBoards)
 
 /**
  * @brief The ArduinoHandler class
@@ -19,6 +20,7 @@ class ArduinoHandler
 {
 public:
     friend TestArduinoHandler;
+    friend TestBoards;
 
     /**
      * @brief Public default ArduinoHandler Constructor
@@ -72,7 +74,7 @@ public:
      * @throws UploadException -> Compiled Sketch cannot be uploaded to the board
      * @return The output of the upload process
      */
-    QString upload();
+    int upload();
     /**
      * @brief writeSketch -> creates a Sketch file (.ino) whith a random name.
      * @param sketch -> The Arduino code
@@ -115,7 +117,11 @@ public:
      */
     bool setBoardNameID(QString s);
 
+    bool openSerialMonitor(int baudrate);
+    bool closeSerialMonitor();
 
+public: //public members
+    ArduinoSerialMonitor* serialMonitor;
 
 protected:
 

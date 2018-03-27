@@ -66,7 +66,7 @@ TestArduinoHandler::TestArduinoHandler()
 TestArduinoHandler::~TestArduinoHandler()
 {
     for(int i=0;i<arduinoList.size();i++){
-        if(arduinoList[i] != NULL)
+        if(arduinoList[i] != NULL){;}
             //delete arduinoList[i];
     }
 }
@@ -104,8 +104,13 @@ void TestArduinoHandler::test_setBoardNameID(){
 
 void TestArduinoHandler::test_verify(){
     ArduinoHandler *arduino = Arduino();
+
+    QVERIFY_EXCEPTION_THROWN(arduino->verify(),SketchNotSetException);
     QVERIFY(arduino->writeSketch(workingSketch));
-    QVERIFY(arduino->setBoardNameID("ArduinoUNO"));
+
+    QVERIFY_EXCEPTION_THROWN(arduino->verify(),BoardNotSetException);
+    QVERIFY(arduino->setBoardNameID("ZUMCore"));
+
     //it should work ok
     QCOMPARE(arduino->verify(),0);
 
