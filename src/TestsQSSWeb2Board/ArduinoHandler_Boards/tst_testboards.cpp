@@ -55,8 +55,8 @@ TestBoards::TestBoards()
 TestBoards::~TestBoards()
 {
     for(int i=0;i<arduinoList.size();i++){
-        if(arduinoList[i] != Q_NULLPTR){;}
-            //delete arduinoList[i];
+        if(arduinoList[i])
+            delete arduinoList[i];
     }
 
 }
@@ -71,7 +71,7 @@ void TestBoards::initTestCase()
     testingFile.setFileName(testingFilePath);
     QVERIFY(testingFile.open(QIODevice::ReadWrite));
     testingFile.close();
-
+    QTest::qSleep(10);
 }
 
 void TestBoards::cleanupTestCase()
@@ -92,6 +92,7 @@ void TestBoards::test_SetPort()
 
     delete arduino;
     arduino = Q_NULLPTR;
+    QTest::qSleep(10);
 
 }
 
@@ -122,6 +123,7 @@ void TestBoards::test_upload(){
     QVERIFY_EXCEPTION_THROWN(arduino->upload(),BoardNotDetectedException);
 
     delete arduino; arduino=Q_NULLPTR;
+    QTest::qSleep(10);
 }
 
 QTEST_GUILESS_MAIN(TestBoards)

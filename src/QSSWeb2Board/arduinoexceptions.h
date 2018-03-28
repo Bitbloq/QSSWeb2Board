@@ -126,6 +126,21 @@ class FileNotCreatedException: public QException{
 };
 
 /**
+ * @brief The DirNotCreatedException class
+ * Exception thrown when the directory cannot be created (ususaly you have no write permissions)
+ */
+class DirNotCreatedException: public QException{
+    public:
+        DirNotCreatedException(const QString& s):
+            message(s),errorType(CommsProtocol::DIR_NOT_CREATED_ERROR){}
+        void raise() const { throw *this; }
+        DirNotCreatedException *clone() const { return new DirNotCreatedException(*this); }
+
+        const QString message;
+        const QString errorType;
+};
+
+/**
  * @brief The FileNotCreatedException class
  * Exception thrown when the sketch file cannot be created (ususaly you have no write permissions)
  */

@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>res/localhost.crt.txt</file>
-        <file>res/localhost.key.txt</file>
+        <file>res/localhost.key</file>
+        <file>res/localhost.crt</file>
     </qresource>
 </RCC>

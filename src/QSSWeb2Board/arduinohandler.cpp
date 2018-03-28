@@ -15,19 +15,17 @@ ArduinoHandler::ArduinoHandler():
     sketchesDefaultBaseDir(QCoreApplication::applicationDirPath() + "/res/sketches/"),
     arduinoDefaultDir(QCoreApplication::applicationDirPath() + "/res/arduino/"),
     buildDefaultDir(QCoreApplication::applicationDirPath() + "/res/build/"),
-    proc(NULL),
-    arduinoBoards("knownboards.json")
+    proc(Q_NULLPTR),
+    arduinoBoards(QCoreApplication::applicationDirPath() + "/res/knownboards.json")
 {
+    qsrand(QDateTime::currentMSecsSinceEpoch()); //seed for initializing randomstrings
+
     setSketchesBaseDir(sketchesDefaultBaseDir);
     proc = new QProcess(); //this is to launch the arduino commands
 
     if(!QDir().exists(sketchesDefaultBaseDir)){
         QDir().mkdir(sketchesDefaultBaseDir);
     }
-
-    /*if(!QDir().exists(arduinoDefaultDir)){
-        QDir().mkdir(arduinoDefaultDir);
-    }*/
 
     if(!QDir().exists(buildDefaultDir)){
         QDir().mkdir(buildDefaultDir);
@@ -37,7 +35,10 @@ ArduinoHandler::ArduinoHandler():
 }
 
 bool ArduinoHandler::openSerialMonitor(int baudrate){
-    serialMonitor = new ArduinoSerialMonitor(getBoardPort(),baudrate);
+    if(boardNameID.isEmpty()) throw BoardNotSetException("BoardNameID not set");
+    if(boardPort.isEmpty()) autoDetectBoardPort();
+
+    serialMonitor = new ArduinoSerialMonitor(boardPort,baudrate);
     return serialMonitor->open();
 }
 
@@ -54,7 +55,7 @@ bool ArduinoHandler::closeSerialMonitor(){
 
 ArduinoHandler::~ArduinoHandler(){
     //free memory from pointers
-    if(proc!=NULL){
+    if(proc){
         delete proc;
     }
 
@@ -64,9 +65,11 @@ ArduinoHandler::~ArduinoHandler(){
 }
 
 QString ArduinoHandler::createRandomString() const{
+
     const QString possibleCharacters("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
     const int randomStringLength = 12; // assuming you want random strings of 12 characters
-    qsrand(QDateTime::currentMSecsSinceEpoch() / 1000);
+
+
     QString randomString;
     for(int i=0; i<randomStringLength; ++i)
     {
@@ -104,11 +107,14 @@ bool ArduinoHandler::writeSketch(QString _sketch, QString _sketchName){
     if(_sketchName.isEmpty()) sketchName = createRandomString();
     else sketchName = _sketchName;
 
+    if(sketchesBaseDir.isEmpty()) setSketchesBaseDir(sketchesDefaultBaseDir);
+
     QString sketchFileName = sketchName + ".ino";
     QString sketchPath= sketchesBaseDir + sketchName + "/";
     QString sketchWithPath = sketchPath + sketchFileName;
 
-    QDir().mkdir(sketchPath);
+    if(!QDir().mkdir(sketchPath))
+        throw DirNotCreatedException("Cannot create sketch dir in " + sketchPath);
 
     QFile file(sketchWithPath);
     if (file.open(QIODevice::ReadWrite)) {
@@ -122,17 +128,22 @@ bool ArduinoHandler::writeSketch(QString _sketch, QString _sketchName){
     return true;
 }
 
+bool ArduinoHandler::resetPathsToDefault(){
+    return (setArduinoPath() &&
+            setBuildPath() &&
+            setSketchesBaseDir()
+            );
+}
+
 bool ArduinoHandler::setArduinoPath(QString s){
     //if no param passed, set the default directory (whis is relative to the app dir)
     if (s == ""){
-        //portable arduino ide MUST be in in ~/res/arduino relative to application path !!
         arduinoPath=arduinoDefaultDir;
     }else{
         arduinoPath=s;
     }
 
-    qDebug() << "app: " << QCoreApplication::applicationDirPath();
-    qDebug() << arduinoPath;
+    //we must not create this directory because it should already exist
 
     return true;
 }
@@ -146,32 +157,39 @@ bool ArduinoHandler::setBuildPath(QString s){
         buildPath=s;
     }
 
-    qDebug() << buildPath;
+    if(!QDir().exists(buildPath))
+        return QDir().mkdir(buildPath);
+
     return true;
 }
 
-void ArduinoHandler::setSketchesBaseDir(QString s){
-    //absolute path to the .ino file to verify
-    sketchesBaseDir=s;
+bool ArduinoHandler::setSketchesBaseDir(QString s){
+    if(s==""){
+        sketchesBaseDir = sketchesDefaultBaseDir;
+    }else{
+        //absolute path to the .ino file to verify
+        sketchesBaseDir=s;
+    }
+
     if(!QDir().exists(sketchesBaseDir))
-        QDir().mkdir(sketchesBaseDir);
+        return QDir().mkdir(sketchesBaseDir);
+
+    return true;
 }
 
 
 bool ArduinoHandler::setSketchWithAbsolutePath(QString s){
 
     if ( QFile::exists(s)) {
+
         QString sketchFileName = s.right(s.length() - s.lastIndexOf("/") - 1);
-        qDebug() << "sketchFileName: " << sketchFileName;
         sketchName = sketchFileName.left(sketchFileName.length()-4); //remove .ino
-        qDebug() << "sketchName: " << sketchName;
+
         QString sketchPath = s.left(s.lastIndexOf("/") + 1);
-        qDebug() << "sketchPath: " << sketchPath;
         sketchesBaseDir = sketchPath.left(sketchPath.length()-1);
         sketchesBaseDir = sketchesBaseDir.left(sketchesBaseDir.lastIndexOf("/") + 1);
-        qDebug() << "sketchBasePath: " << sketchesBaseDir;
     }else{
-        throw FileNotFoundException("File "+s+" does not exist");
+        throw FileNotFoundException("File " + s + " does not exist");
     }
 
     return true;
@@ -193,11 +211,15 @@ bool ArduinoHandler::setBoardNameID(QString s){
 bool ArduinoHandler::setBoardPort(QString _boardPort){
     QSerialPort port(_boardPort);
     QSerialPortInfo serialPort(port);
+
+    //Check whether there is anything connected to that port
+    //it does not imply that there is an Arduino Board there
     if(serialPort.isNull()){
         throw BoardNotDetectedException("NO BOARD CONNECTED TO " + _boardPort);
     }else{
         boardPort = _boardPort;
     }
+
     return true;
 }
 
@@ -217,46 +239,30 @@ bool ArduinoHandler::autoDetectBoardPort(){
 
     //gets list of all available serial ports
     QList<QSerialPortInfo> serialPorts = serialinfo.availablePorts();
-    qDebug() << "Available ports: " << serialPorts.size();
 
     //get all productID and vendorID and check if any is equal to boardNameID
     for(int i=0; i< serialPorts.size(); i++){
-        qDebug() << serialPorts.at(i).systemLocation();
-        qDebug() << "Product Id " <<serialPorts.at(i).productIdentifier();
-        qDebug() << "Vendor Id " <<serialPorts.at(i).vendorIdentifier();
-
         //loop over all vendorID and productID of selected board to check whether the board is connected (compare con vendor and product of connected serial ports)
         for (int j=0; j<arduinoBoards[boardNameID].size(); j++){
-            qDebug() << arduinoBoards[boardNameID][j]["productID"];
-            qDebug() << arduinoBoards[boardNameID][j]["vendorID"];
-
             if( (arduinoBoards[boardNameID][j]["productID"] == qint16(serialPorts.at(i).productIdentifier())) &&
                     (arduinoBoards[boardNameID][j]["vendorID"] == qint16(serialPorts.at(i).vendorIdentifier())) ){
                 //Yay found, save board port
                 QString _boardPort=serialPorts.at(i).systemLocation();
-                qDebug() << boardNameID << " found at " << _boardPort;
-                return setBoardPort(_boardPort);
-
+                return setBoardPort(_boardPort); //this is not optimal because we are making extra checking inside the function (already done here)
             }
         }
     }
 
     throw BoardNotDetectedException("BOARD NOT DETECTED: " + boardNameID);
     //board name not connected to the computer
-    qDebug() << boardNameID << "not connected to the computer";
     return false;
 }
 
 int ArduinoHandler::verify(){
 
-    if(sketchName.isEmpty()) throw SketchNotSetException("Sketch not set");
-    if(boardNameID.isEmpty()) throw BoardNotSetException("BoardNameID not set");
-
-    setArduinoPath();
-    setBuildPath();
-
     QString command = makeVerifyCommand();
 
+    //let's verify the sketch
     proc->start(command);
     proc->waitForFinished();
 
@@ -281,23 +287,20 @@ int ArduinoHandler::verify(){
     }
 
     return exitCode;
-
-
 }
 
 int ArduinoHandler::upload()
 {
-    if(sketchName.isEmpty()) throw SketchNotSetException("Sketch not set");
-    if(boardNameID.isEmpty()) throw BoardNotSetException("BoardNameID not set");
-    if(boardPort.isEmpty()) autoDetectBoardPort();
 
     verify();
 
-    //makeLoadCommand creates the load command to execute
+    //makeUploadCommand creates the load command to execute
     proc->start(makeUploadCommand());
-    proc->waitForFinished(-1);
+    proc->waitForFinished(-1); //-1 means there is no time out
+
     QString errorOutput(proc->readAllStandardError());
     int exitCode = proc->exitCode();
+
     switch(exitCode){
     case 0:
         qDebug()<<"Upload OK";
@@ -318,8 +321,6 @@ int ArduinoHandler::upload()
 
     return exitCode;
 }
-
-
 
 
 //This function, called recursively, allows to list the errors removing the local route to the file
@@ -346,7 +347,6 @@ QString ArduinoHandler::getBoardPort() const
 //This function, together with extractSingleError creates a string with all the errors eliminating reference
 //to local routes
 QString ArduinoHandler::extractErrorfromOutput(QString s){
-    qDebug() << s;
     QString errorsLine;
     QString match = sketchesBaseDir + sketchName + "/" + sketchName + "ino:";
     int pos = s.indexOf(match);
@@ -363,6 +363,9 @@ QString LinuxArduinoHandler::makeVerifyCommand(){
 
     if(arduinoPath.isEmpty()) setArduinoPath();
     if(buildPath.isEmpty()) setBuildPath();
+    if(sketchName.isEmpty()) throw SketchNotSetException("Sketch not set");
+    if(boardNameID.isEmpty()) throw BoardNotSetException("BoardNameID not set");
+
 
     QString boardCommand = arduinoBoards[boardNameID].toObject().value("board").toString();
     QString verifyCommand = QString(arduinoPath +
@@ -372,7 +375,6 @@ QString LinuxArduinoHandler::makeVerifyCommand(){
                                     "--board " +boardCommand + " " +
                                     sketchesBaseDir + sketchName + "/" + sketchName + "ino");
 
-    qDebug() << verifyCommand;
     return verifyCommand;
 }
 
@@ -380,6 +382,8 @@ QString MacArduinoHandler::makeVerifyCommand(){
 
     if(arduinoPath.isEmpty()) setArduinoPath();
     if(buildPath.isEmpty()) setBuildPath();
+    if(sketchName.isEmpty()) throw SketchNotSetException("Sketch not set");
+    if(boardNameID.isEmpty()) throw BoardNotSetException("BoardNameID not set");
 
     QString boardCommand = arduinoBoards[boardNameID].toObject().value("board").toString();
     QString verifyCommand = QString(arduinoPath +
@@ -389,7 +393,6 @@ QString MacArduinoHandler::makeVerifyCommand(){
                                     "--board " +boardCommand + " " +
                                     sketchesBaseDir + sketchName + "/" + sketchName + "ino");
 
-    qDebug() << verifyCommand;
     return verifyCommand;
 }
 
@@ -399,6 +402,8 @@ QString WindowsArduinoHandler::makeVerifyCommand(){
 
     if(arduinoPath.isEmpty()) setArduinoPath();
     if(buildPath.isEmpty()) setBuildPath();
+    if(sketchName.isEmpty()) throw SketchNotSetException("Sketch not set");
+    if(boardNameID.isEmpty()) throw BoardNotSetException("BoardNameID not set");
 
     QString boardCommand = arduinoBoards[boardNameID].toObject().value("board").toString();
     QString verifyCommand = QString(arduinoPath +
@@ -408,14 +413,16 @@ QString WindowsArduinoHandler::makeVerifyCommand(){
                                     "--board " +boardCommand + " " +
                                     sketchesBaseDir + sketchName + "/" + sketchName + "ino");
 
-    qDebug() << verifyCommand;
     return verifyCommand;
 }
 
 QString LinuxArduinoHandler::makeUploadCommand(){
 
+    if(boardNameID.isEmpty()) throw BoardNotSetException("BoardNameID not set");
+    if(boardPort.isEmpty()) autoDetectBoardPort();
     if(arduinoPath.isEmpty()) setArduinoPath();
     if(buildPath.isEmpty()) setBuildPath();
+    if(sketchName.isEmpty()) throw SketchNotSetException("Sketch not set");
 
     QString boardCommand = arduinoBoards[boardNameID].toObject().value("board").toString();
     QString uploadCommand = QString(arduinoPath +
@@ -425,14 +432,16 @@ QString LinuxArduinoHandler::makeUploadCommand(){
                                     " --port " + boardPort + " " +
                                     "--pref build.path=" + buildPath + " " +
                                     sketchesBaseDir + sketchName + "/" + sketchName + "ino");
-    qDebug() << uploadCommand;
     return uploadCommand;
 }
 
 QString MacArduinoHandler::makeUploadCommand(){
 
+    if(boardNameID.isEmpty()) throw BoardNotSetException("BoardNameID not set");
+    if(boardPort.isEmpty()) autoDetectBoardPort();
     if(arduinoPath.isEmpty()) setArduinoPath();
     if(buildPath.isEmpty()) setBuildPath();
+    if(sketchName.isEmpty()) throw SketchNotSetException("Sketch not set");
 
     QString boardCommand = arduinoBoards[boardNameID].toObject().value("board").toString();
     QString uploadCommand = QString(arduinoPath +
@@ -442,14 +451,16 @@ QString MacArduinoHandler::makeUploadCommand(){
                                     " --port " + boardPort + " " +
                                     "--pref build.path=" + buildPath + " " +
                                     sketchesBaseDir + sketchName + "/" + sketchName + "ino");
-    qDebug() << uploadCommand;
     return uploadCommand;
 }
 
 QString WindowsArduinoHandler::makeUploadCommand(){
 
+    if(boardNameID.isEmpty()) throw BoardNotSetException("BoardNameID not set");
+    if(boardPort.isEmpty()) autoDetectBoardPort();
     if(arduinoPath.isEmpty()) setArduinoPath();
     if(buildPath.isEmpty()) setBuildPath();
+    if(sketchName.isEmpty()) throw SketchNotSetException("Sketch not set");
 
     QString boardCommand = arduinoBoards[boardNameID].toObject().value("board").toString();
     QString uploadCommand = QString(arduinoPath +
@@ -459,6 +470,5 @@ QString WindowsArduinoHandler::makeUploadCommand(){
                                     " --port " + boardPort + " " +
                                     "--pref build.path=" + buildPath + " " +
                                     sketchesBaseDir + sketchName + "/" + sketchName + "ino");
-    qDebug() << uploadCommand;
     return uploadCommand;
 }

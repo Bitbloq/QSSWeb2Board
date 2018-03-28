@@ -34,6 +34,7 @@ public:
     static const QString BOARD_NOT_SET_ERROR; ///String to define Board not set Error (on Error Type)
     static const QString SKETCH_NOT_SET_ERROR; ///String to define Board not set Error (on Error Type)
     static const QString FILE_NOT_CREATED_ERROR; ///String to define File not created Error (on Error Type)
+    static const QString DIR_NOT_CREATED_ERROR; ///String to define Directory not created Error (on Error Type)
     static const QString SERIAL_PORT_NOT_OPEN; ///String to define Serial Port not opened Error (on Error Type)
 
 };

@@ -65,10 +65,6 @@ TestArduinoHandler::TestArduinoHandler()
 
 TestArduinoHandler::~TestArduinoHandler()
 {
-    for(int i=0;i<arduinoList.size();i++){
-        if(arduinoList[i] != NULL){;}
-            //delete arduinoList[i];
-    }
 }
 
 void TestArduinoHandler::initTestCase(){
@@ -80,6 +76,7 @@ void TestArduinoHandler::initTestCase(){
     testingFile.setFileName(testingFilePath);
     QVERIFY(testingFile.open(QIODevice::ReadWrite));
     testingFile.close();
+
 }
 
 void TestArduinoHandler::test_setSketchesBasePath(){
@@ -90,16 +87,23 @@ void TestArduinoHandler::test_setSketchesBasePath(){
     QCOMPARE(arduino->sketchesBaseDir, testingBaseDirPath);
 
     delete arduino; arduino=Q_NULLPTR;
+
+    QTest::qSleep(10);
+
 }
 
 void TestArduinoHandler::test_setBoardNameID(){
     ArduinoHandler *arduino = Arduino();
-    arduino->writeSketch(workingSketch);
+    QVERIFY(arduino->writeSketch(workingSketch));
+
     QVERIFY_EXCEPTION_THROWN(arduino->verify(),BoardNotSetException);
     QVERIFY_EXCEPTION_THROWN(arduino->setBoardNameID("zzz"),BoardNotKnownException);
+
     QVERIFY(arduino->setBoardNameID("ArduinoUNO"));
 
     delete arduino; arduino=Q_NULLPTR;
+
+    QTest::qSleep(10);
 }
 
 void TestArduinoHandler::test_verify(){
@@ -123,6 +127,8 @@ void TestArduinoHandler::test_verify(){
     QCOMPARE(arduino->verify(),0);
 
     delete arduino; arduino=Q_NULLPTR;
+
+    QTest::qSleep(10);
 }
 
 void TestArduinoHandler::test_writeSketch(){
@@ -161,6 +167,8 @@ void TestArduinoHandler::test_writeSketch(){
     sketchFile.remove();
 
     delete arduino; arduino=Q_NULLPTR;
+
+    QTest::qSleep(10);
 }
 
 
@@ -176,6 +184,8 @@ void TestArduinoHandler::test_setArduinoPath()
     QCOMPARE(arduino->arduinoPath,arduino->arduinoDefaultDir);
 
     delete arduino; arduino=Q_NULLPTR;
+
+    QTest::qSleep(10);
 }
 
 void TestArduinoHandler::test_setBuildPath()
@@ -191,6 +201,8 @@ void TestArduinoHandler::test_setBuildPath()
     QCOMPARE(arduino->buildPath,arduino->buildDefaultDir);
 
     delete arduino; arduino=Q_NULLPTR;
+
+    QTest::qSleep(10);
 }
 
 void TestArduinoHandler::test_setSketchWillFullPath()
@@ -212,6 +224,8 @@ void TestArduinoHandler::test_setSketchWillFullPath()
     QVERIFY_EXCEPTION_THROWN(arduino->setSketchWithAbsolutePath(nonExistingPath),FileNotFoundException);
 
     delete arduino; arduino=Q_NULLPTR;
+
+    QTest::qSleep(10);
 }
 
 

@@ -25,6 +25,7 @@ const QString CommsProtocol::BOARD_NOT_DETECTED_ERROR = "BOARDNOTDETECTED";
 const QString CommsProtocol::BOARD_NOT_SET_ERROR = "BOARDNOTSET";
 const QString CommsProtocol::SKETCH_NOT_SET_ERROR = "SKETCHNOTSET";
 const QString CommsProtocol::FILE_NOT_CREATED_ERROR ="FILENOTCREATED";
+const QString CommsProtocol::DIR_NOT_CREATED_ERROR ="DIRNOTCREATED";
 const QString CommsProtocol::SERIAL_PORT_NOT_OPEN ="PORTNOTOPENED";
 
 
