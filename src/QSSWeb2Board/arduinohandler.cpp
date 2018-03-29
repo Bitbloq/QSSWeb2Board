@@ -39,7 +39,15 @@ bool ArduinoHandler::openSerialMonitor(int baudrate){
     if(boardPort.isEmpty()) autoDetectBoardPort();
 
     serialMonitor = new ArduinoSerialMonitor(boardPort,baudrate);
+
+    QObject::connect(&serialMonitor->port, SIGNAL(readyRead()), serialMonitor, SLOT(readArduino()));
+
+    //for debugging purporses
+    QObject::connect(serialMonitor,SIGNAL(lineReceived(QString)),serialMonitor,SLOT(writeString(QString)));
+
     return serialMonitor->open();
+
+
 }
 
 bool ArduinoHandler::closeSerialMonitor(){
@@ -113,8 +121,17 @@ bool ArduinoHandler::writeSketch(QString _sketch, QString _sketchName){
     QString sketchPath= sketchesBaseDir + sketchName + "/";
     QString sketchWithPath = sketchPath + sketchFileName;
 
-    if(!QDir().mkdir(sketchPath))
-        throw DirNotCreatedException("Cannot create sketch dir in " + sketchPath);
+
+    //if there is a sketch with the same name remove
+    if(QFile().exists(sketchWithPath)){
+        QFile().remove(sketchWithPath);
+    }
+
+    //if sketch dir does not exist create
+    if(!QDir().exists(sketchPath)){
+        if(!QDir().mkdir(sketchPath))
+            throw DirNotCreatedException("Cannot create sketch dir in " + sketchPath);
+    }
 
     QFile file(sketchWithPath);
     if (file.open(QIODevice::ReadWrite)) {

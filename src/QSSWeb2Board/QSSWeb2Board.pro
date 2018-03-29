@@ -1,6 +1,8 @@
 QT += core \
       serialport \
-      websockets
+      websockets \
+      testlib
+
 QT -= gui
 
 CONFIG += c++11

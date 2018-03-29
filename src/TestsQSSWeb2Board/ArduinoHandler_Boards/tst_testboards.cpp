@@ -38,11 +38,14 @@ private:
     QString workingSketch;
     QString wrongSketch;
 
+
+
 private slots:
     void initTestCase();
     void cleanupTestCase();
     void test_SetPort();
     void test_upload();
+    void test_serialMonitor();
 
 };
 
@@ -55,8 +58,8 @@ TestBoards::TestBoards()
 TestBoards::~TestBoards()
 {
     for(int i=0;i<arduinoList.size();i++){
-        if(arduinoList[i])
-            delete arduinoList[i];
+        if(arduinoList[i]) {}
+            //delete arduinoList[i];
     }
 
 }
@@ -78,6 +81,50 @@ void TestBoards::cleanupTestCase()
 {
     testingFile.remove();
     QDir().rmdir(testingBaseDirPath);
+}
+
+void TestBoards::test_serialMonitor(){
+    QString sketch = QString("      void setup(){                                               ")+
+                     QString("          Serial.begin(9600);                                     ")+
+                     QString("          Serial.println(\"Hello World\");                        ")+
+                     QString("      }                                                           ")+
+                     QString("      void loop(){                                                ")+
+                     QString("          if(Serial.available()){                                 ")+
+                     QString("              char in = Serial.read();                            ")+
+                     QString("              Serial.print(\"Received \");Serial.println(in);     ")+
+                     QString("              delay(10); }                                        ")+
+                     QString("      }                                                           ");
+
+
+    ArduinoHandler* arduino = Arduino();
+
+    arduino->setBoardNameID("ZUMCore");
+    arduino->autoDetectBoardPort();
+    arduino->writeSketch(sketch);
+    arduino->upload();
+
+    //spy on lineReceived signal (emitted when something is received from serial)
+    QVERIFY(arduino->openSerialMonitor(9600));
+
+
+    QSignalSpy signalSpy(arduino->serialMonitor,SIGNAL(lineReceived(QString)));
+    //wait one second to be sure the message is sent
+    QVERIFY(signalSpy.wait(10000));
+    arduino->serialMonitor->sendToArduino("A");
+    QVERIFY(signalSpy.wait(10000));
+    //check that signal has been emitted once
+    QCOMPARE(signalSpy.count(),2);
+
+    QList<QVariant> arguments1 = signalSpy.takeFirst(); // take the first signal
+    QList<QVariant> arguments2 = signalSpy.takeLast(); // take the second signal
+    QCOMPARE(arguments1.at(0).toString().simplified(),QString("Hello World")); // verify the first argument
+    QCOMPARE(arguments2.at(0).toString().simplified(),QString("Received A")); // verify the first argument
+
+
+    QVERIFY(arduino->closeSerialMonitor());
+
+    delete arduino; arduino=Q_NULLPTR;
+    QTest::qSleep(10);
 }
 
 void TestBoards::test_SetPort()

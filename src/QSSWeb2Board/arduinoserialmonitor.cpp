@@ -5,7 +5,6 @@
 
 ArduinoSerialMonitor::ArduinoSerialMonitor(QString portName, int baudrate, QObject* parent): QObject(parent)
 {
-    qDebug() << "Port name: " <<portName;
     port.setPortName(portName);
     port.setBaudRate(baudrate);
     port.setDataBits(QSerialPort::Data8);
@@ -25,9 +24,6 @@ bool ArduinoSerialMonitor::open(){
     if (!port.open(QSerialPort::ReadWrite)){
         throw SerialPortOpenException("Cannot Open Serial Port " + port.portName());
     }
-
-    QObject::connect(&port, SIGNAL(readyRead()), this, SLOT(readArduino()));
-
     return true;
 }
 

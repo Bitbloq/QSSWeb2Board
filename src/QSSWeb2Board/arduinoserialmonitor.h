@@ -6,10 +6,16 @@
 #include <cstdio>
 #include "arduinoexceptions.h"
 
+QT_FORWARD_DECLARE_CLASS(ArduinoHandler)
+
+/**
+ * @brief The ArduinoSerialMonitor class. It handles serial port communication with Arduino Board
+ */
 class ArduinoSerialMonitor:public QObject
 {
     Q_OBJECT
 
+    friend ArduinoHandler;
 public:
     /**
      * @brief ArduinoSerialMonitor
@@ -18,16 +24,16 @@ public:
      * @param parent QObject parent
      */
     ArduinoSerialMonitor(QString portName, int baudrate, QObject* parent = NULL);
+
     virtual ~ArduinoSerialMonitor();
 
     /**
      * @brief open Opens the serial port communications.
-     * @throws SerialPortOpenException
      */
     bool open();
 
     /**
-     * @brief close Closesserial port communication
+     * @brief close Closes serial port communication
      */
     void close();
 
@@ -39,7 +45,7 @@ public:
 
 public slots:
     /**
-     * @brief readArduino Slot called whenever a message is received through serial port
+     * @brief readArduino slot called whenever a message is received through serial port
      */
     void readArduino();
 
