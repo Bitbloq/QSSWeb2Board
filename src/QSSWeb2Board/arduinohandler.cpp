@@ -96,7 +96,14 @@ void ArduinoHandler::eraseExistingSketches() const {
     dirToClean.setFilter(QDir::Dirs);
     foreach(QString subDir, dirToClean.entryList())
     {
-        dirToClean.remove(subDir);
+        if (subDir != "." && subDir != ".."){
+            QFileInfo sketchInfo(sketchesDefaultBaseDir + subDir + "/" + subDir + ".ino");
+            //remove sketches older than one day
+            if(sketchInfo.created().addDays(1) <= QDateTime::currentDateTime()){
+                qDebug() << "erasing " + sketchesDefaultBaseDir + subDir + "/";
+                QDir(sketchesDefaultBaseDir + subDir + "/").removeRecursively();
+            }
+        }
     }
 }
 
