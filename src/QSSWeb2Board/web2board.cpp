@@ -8,14 +8,6 @@
 Web2Board::Web2Board(QObject *parent):
     QObject(parent)
 {
-    try{
-        //arduino.setFileWithFullPath("/home/avalero/arduino-1.8.5/examples/01.Basics/Blink/Blink.ino");
-        //arduino.setFileWithFullPath("/home/avalero/workspace/QSSWeb2Board/src/build-QSSWeb2Board-Desktop-Debug/res/arduino/hardware/BQ/avr/libraries/BQZUMI2C7SegmentDisplay/examples/7Segment_Characters/7Segment_Characters.ino");
-        //arduino.setFileWithFullPath("/home/avalero/arduino-1.8.5/examples/error/error.ino");
-    }catch(FileNotFoundException &e){
-        qDebug() << e.message;
-    }
-
 }
 
 Web2Board::~Web2Board(){
@@ -62,56 +54,56 @@ void Web2Board::processCommands(){
     }catch(SerialPortOpenException &e){
         qDebug()<<e.message;
         returnMessage.success="FALSE";
-        returnMessage.errorType=CommsProtocol::SERIAL_PORT_NOT_OPEN;
+        returnMessage.errorType=e.errorType;
         returnMessage.errorDesc=e.message;
 
     }catch(FileNotCreatedException &e){
         qDebug()<<e.message;
         returnMessage.success="FALSE";
-        returnMessage.errorType=CommsProtocol::FILE_NOT_CREATED_ERROR;
+        returnMessage.errorType=e.errorType;
         returnMessage.errorDesc=e.message;
 
     }catch(BoardNotKnownException &e){
         qDebug()<<e.message;
         returnMessage.success="FALSE";
-        returnMessage.errorType=CommsProtocol::BOARD_NOT_KNOWN_ERROR;
+        returnMessage.errorType=e.errorType;
         returnMessage.errorDesc=e.message;
 
     }catch(FileNotFoundException &e){
         qDebug()<<e.message;
         returnMessage.success="FALSE";
-        returnMessage.errorType=CommsProtocol::FILE_NOT_FOUND_ERROR;
+        returnMessage.errorType=e.errorType;
         returnMessage.errorDesc=e.message;
 
     }catch(BoardNotDetectedException &e){
         qDebug()<<e.message;
         returnMessage.success="FALSE";
-        returnMessage.errorType=CommsProtocol::BOARD_NOT_DETECTED_ERROR;
+        returnMessage.errorType=e.errorType;
         returnMessage.errorDesc=e.message;
 
     }catch(BoardNotSetException &e){
         qDebug()<<e.message;
         returnMessage.success="FALSE";
-        returnMessage.errorType=CommsProtocol::BOARD_NOT_SET_ERROR;
+        returnMessage.errorType=e.errorType;
         returnMessage.errorDesc=e.message;
 
     }catch(SketchNotSetException &e){
         qDebug()<<e.message;
         returnMessage.success="FALSE";
-        returnMessage.errorType=CommsProtocol::SKETCH_NOT_SET_ERROR;
+        returnMessage.errorType=e.errorType;
         returnMessage.errorDesc=e.message;
 
     }catch(UploadException &e){
         qDebug()<<e.message;
         returnMessage.success="FALSE";
-        returnMessage.errorType=CommsProtocol::UPLOAD_ERROR;
+        returnMessage.errorType=e.errorType;
         returnMessage.errorDesc=e.message;
 
     }catch(VerifyException &e){
         qDebug()<<e.message;
         returnMessage.success="FALSE";
-        returnMessage.errorType=CommsProtocol::VERIFY_ERROR;
-        returnMessage.errorDesc=e.getErrorsLists();
+        returnMessage.errorType=e.errorType;
+        returnMessage.errorDesc=e.message;
     }
 
     m_pClient->sendTextMessage(returnMessage.makeReturnMessage());

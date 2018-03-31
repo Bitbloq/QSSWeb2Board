@@ -11,15 +11,14 @@
 #include "arduinohandler.h"
 
 ArduinoHandler::ArduinoHandler():
-    serialMonitor(Q_NULLPTR),
-    sketchesDefaultBaseDir(QCoreApplication::applicationDirPath() + "/res/sketches/"),
-    arduinoDefaultDir(QCoreApplication::applicationDirPath() + "/res/arduino/"),
-    buildDefaultDir(QCoreApplication::applicationDirPath() + "/res/build/"),
-    proc(Q_NULLPTR),
-    arduinoBoards(QCoreApplication::applicationDirPath() + "/res/knownboards.json")
+    serialMonitor{Q_NULLPTR},
+    sketchesDefaultBaseDir{QCoreApplication::applicationDirPath() + "/res/sketches/"},
+    arduinoDefaultDir{QCoreApplication::applicationDirPath() + "/res/arduino/"},
+    buildDefaultDir{QCoreApplication::applicationDirPath() + "/res/build/"},
+    proc{Q_NULLPTR},
+    arduinoBoards{QCoreApplication::applicationDirPath() + "/res/knownboards.json"}
 {
     qsrand(QDateTime::currentMSecsSinceEpoch()); //seed for initializing randomstrings
-
     setSketchesBaseDir(sketchesDefaultBaseDir);
     proc = new QProcess(); //this is to launch the arduino commands
 
@@ -94,7 +93,7 @@ void ArduinoHandler::eraseExistingSketches() const {
 
     dirToClean.setNameFilters(QStringList() << "*");
     dirToClean.setFilter(QDir::Dirs);
-    foreach(QString subDir, dirToClean.entryList())
+    foreach(const QString &subDir, dirToClean.entryList())
     {
         if (subDir != "." && subDir != ".."){
             QFileInfo sketchInfo(sketchesDefaultBaseDir + subDir + "/" + subDir + ".ino");
@@ -257,7 +256,20 @@ bool ArduinoHandler::autoDetectBoardPort(){
     QList<QSerialPortInfo> serialPorts = serialinfo.availablePorts();
 
     //get all productID and vendorID and check if any is equal to boardNameID
-    for(int i=0; i< serialPorts.size(); i++){
+
+    foreach(const QSerialPortInfo & port,serialPorts){
+        //loop over all vendorID and productID of selected board to check whether the board is connected (compare con vendor and product of connected serial ports)
+        for (int j=0; j<arduinoBoards[boardNameID].size(); j++){
+            if( (arduinoBoards[boardNameID][j]["productID"] == qint16(port.productIdentifier())) &&
+                    (arduinoBoards[boardNameID][j]["vendorID"] == qint16(port.vendorIdentifier())) ){
+                //Yay found, save board port
+                QString _boardPort=port.systemLocation();
+                return setBoardPort(_boardPort); //this is not optimal because we are making extra checking inside the function (already done here)
+            }
+        }
+    }
+
+    /*for(int i=0; i< serialPorts.size(); i++){
         //loop over all vendorID and productID of selected board to check whether the board is connected (compare con vendor and product of connected serial ports)
         for (int j=0; j<arduinoBoards[boardNameID].size(); j++){
             if( (arduinoBoards[boardNameID][j]["productID"] == qint16(serialPorts.at(i).productIdentifier())) &&
@@ -267,7 +279,7 @@ bool ArduinoHandler::autoDetectBoardPort(){
                 return setBoardPort(_boardPort); //this is not optimal because we are making extra checking inside the function (already done here)
             }
         }
-    }
+    }*/
 
     throw BoardNotDetectedException("BOARD NOT DETECTED: " + boardNameID);
     //board name not connected to the computer
@@ -289,7 +301,7 @@ int ArduinoHandler::verify(){
         qDebug()<<"Verify OK";
         break;
     case 1:
-        throw VerifyException(extractErrorfromOutput(output), verifyErrorsList);
+        throw VerifyException(output, verifyErrorsList);
         break;
     case 2:
         throw VerifyException("Sketch not found");
@@ -353,6 +365,11 @@ QString ArduinoHandler::extractSingleError(QString s){
         verifyErrorsList.append(s.simplified());
         return s.simplified();
     }
+}
+
+QString ArduinoHandler::getArduinoDefaultDir() const
+{
+    return arduinoDefaultDir;
 }
 
 QString ArduinoHandler::getBoardPort() const

@@ -134,6 +134,8 @@ public:
 public: //public members
     ArduinoSerialMonitor* serialMonitor;
 
+    QString getArduinoDefaultDir() const;
+
 protected:
 
 

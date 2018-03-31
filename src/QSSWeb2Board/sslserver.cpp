@@ -8,8 +8,8 @@
 QT_USE_NAMESPACE
 
 Web2BoardSocket::Web2BoardSocket(QWebSocket* ws):
-                       m_pWeb2Board(Q_NULLPTR),
-                       m_pWebSocket(Q_NULLPTR)
+                       m_pWeb2Board{Q_NULLPTR},
+                       m_pWebSocket{Q_NULLPTR}
 {
     m_pWebSocket = ws;
     m_pWeb2Board = new Web2Board();
