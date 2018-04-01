@@ -1,9 +1,0 @@
-QSSWeb2board
-./res
-	./arduino -> path to arduino executable
-	./res
-		./knownboards.json
-		./sketches -> temporaly sketches folder
-		./build -> temporaly build files
-		
-		
