@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node2" href="$class_arduino_serial_monitor.html" title="The ArduinoSerialMonitor class. It handles serial port communication with Arduino Board..." alt="" coords="124,5,267,32"/>
+<area shape="rect" id="node3" href="$class_s_s_l_server.html" title="The SSLServer class is a SSL Server for web secure sockets. " alt="" coords="153,56,238,83"/>
+<area shape="rect" id="node4" href="$class_web2_board.html" title="Web2Board" alt="" coords="150,107,241,133"/>
+<area shape="rect" id="node5" href="$class_web2_board_socket.html" title="The Web2BoardSocketServer class handles connections from clients. It implents the standard QWebSocket..." alt="" coords="130,157,261,184"/>
+</map>

@@ -1,0 +1,12 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node2" href="$class_board_not_detected_exception.html" title="The BoardNotDetectedException class Exception thrown when the board is not connected to any serial po..." alt="" coords="144,5,332,32"/>
+<area shape="rect" id="node3" href="$class_board_not_known_exception.html" title="The BoardNotKnownException class Exception thrown when the Board is not among the know boards (define..." alt="" coords="151,56,325,83"/>
+<area shape="rect" id="node4" href="$class_board_not_set_exception.html" title="BoardNotSetException" alt="" coords="161,107,315,133"/>
+<area shape="rect" id="node5" href="$class_dir_not_created_exception.html" title="The DirNotCreatedException class Exception thrown when the directory cannot be created (ususaly you h..." alt="" coords="156,157,320,184"/>
+<area shape="rect" id="node6" href="$class_file_not_created_exception.html" title="The FileNotCreatedException class Exception thrown when the sketch file cannot be created (ususaly yo..." alt="" coords="154,208,322,235"/>
+<area shape="rect" id="node7" href="$class_file_not_found_exception.html" title="The FileNotFoundException class Exception thrown when the Skecth file is not found (or you do not hav..." alt="" coords="159,259,317,285"/>
+<area shape="rect" id="node8" href="$class_serial_port_open_exception.html" title="The FileNotCreatedException class Exception thrown when the sketch file cannot be created (ususaly yo..." alt="" coords="154,309,322,336"/>
+<area shape="rect" id="node9" href="$class_sketch_not_set_exception.html" title="SketchNotSetException" alt="" coords="157,360,319,387"/>
+<area shape="rect" id="node10" href="$class_upload_exception.html" title="The UploadException class Exception thrown when the upload process of a compiled sketch fails..." alt="" coords="177,411,299,437"/>
+<area shape="rect" id="node11" href="$class_verify_exception.html" title="The VerifyException class Exception thrwon when the verification process of a sketch fails (compilati..." alt="" coords="181,461,295,488"/>
+</map>
