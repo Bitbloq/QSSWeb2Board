@@ -19,63 +19,62 @@ void MessageHandler::handle(QString _message){
 
 }
 
+QString MessageHandler::extractMessage(QString msg, QString first, QString second){
+    int begin = msg.indexOf(first) + first.length();
+    int end = msg.indexOf(second) - begin;
+    return msg.mid(begin,end).trimmed().simplified();
+
+}
+
+
 void MessageHandler::manageBodyMessage(){
     bodyMessage = bodyMessage.trimmed().simplified();
     if(bodyMessage.contains(CommsProtocol::SKETCH.first) && bodyMessage.contains(CommsProtocol::SKETCH.second) ){
-        int begin = bodyMessage.indexOf(CommsProtocol::SKETCH.first) + CommsProtocol::SKETCH.first.length();
-        int end = bodyMessage.indexOf(CommsProtocol::SKETCH.second) - begin;
-        sketch = bodyMessage.mid(begin,end).trimmed().simplified();
+        sketch = extractMessage(bodyMessage,CommsProtocol::SKETCH.first, CommsProtocol::SKETCH.second).trimmed().simplified();
         qDebug() << sketch;
     }
 
     if(bodyMessage.contains(CommsProtocol::BAUDRATE.first) && bodyMessage.contains(CommsProtocol::BAUDRATE.second) ){
-        int begin = bodyMessage.indexOf(CommsProtocol::BAUDRATE.first) + CommsProtocol::BAUDRATE.first.length();
-        int end = bodyMessage.indexOf(CommsProtocol::BAUDRATE.second) - begin;
-        baudrate = bodyMessage.mid(begin,end).trimmed().simplified().toInt();
+        baudrate = extractMessage(bodyMessage,CommsProtocol::BAUDRATE.first, CommsProtocol::BAUDRATE.second).trimmed().simplified().toInt();
         qDebug() << baudrate;
     }
 
     if(bodyMessage.contains(CommsProtocol::BOARDID.first) && bodyMessage.contains(CommsProtocol::BOARDID.second) ){
-        int begin = bodyMessage.indexOf(CommsProtocol::BOARDID.first) + CommsProtocol::BOARDID.first.length();
-        int end = bodyMessage.indexOf(CommsProtocol::BOARDID.second) - begin;
-        boardID = bodyMessage.mid(begin,end).trimmed().simplified();
+        boardID = extractMessage(bodyMessage,CommsProtocol::BOARDID.first, CommsProtocol::BOARDID.second).trimmed().simplified();
         qDebug() << "board: " << boardID;
     }
 }
 
+
 void MessageHandler::manageFullMessage(){
     if( message.startsWith(CommsProtocol::VERIFY.first) && message.endsWith(CommsProtocol::VERIFY.second) ){
         qDebug()<< "Verify message received";
-        int length = message.length() - CommsProtocol::VERIFY.first.length() - CommsProtocol::VERIFY.second.length();
-        bodyMessage = message.mid( CommsProtocol::VERIFY.first.length(), length);
+        bodyMessage = extractMessage(message,CommsProtocol::VERIFY.first,CommsProtocol::VERIFY.second);
         action = Action::VERIFY;
         manageBodyMessage();
     }else if( message.startsWith(CommsProtocol::UPLOAD.first) && message.endsWith(CommsProtocol::UPLOAD.second) ){
         qDebug()<< "Upload message received";
-        int length = message.length() - CommsProtocol::UPLOAD.first.length() - CommsProtocol::UPLOAD.second.length();
-        bodyMessage = message.mid( CommsProtocol::UPLOAD.first.length(), length);
-        qDebug() << bodyMessage;
+        bodyMessage = extractMessage(message,CommsProtocol::UPLOAD.first,CommsProtocol::UPLOAD.second);
         action = Action::UPLOAD;
+        manageBodyMessage();
+    }else if( message.startsWith(CommsProtocol::VERSION.first) && message.endsWith(CommsProtocol::VERSION.second) ){
+        qDebug()<< "Version message received";
+        bodyMessage = extractMessage(message,CommsProtocol::VERSION.first,CommsProtocol::VERSION.second);
+        action = Action::VERSION;
         manageBodyMessage();
     }else if( message.startsWith(CommsProtocol::OPENSERIALMONITOR.first) && message.endsWith(CommsProtocol::OPENSERIALMONITOR.second) ){
         qDebug()<< "Open Serial Monitor";
-        int length = message.length() - CommsProtocol::OPENSERIALMONITOR.first.length() - CommsProtocol::OPENSERIALMONITOR.second.length();
-        bodyMessage = message.mid( CommsProtocol::OPENSERIALMONITOR.first.length(), length);
-        qDebug() << bodyMessage;
+        bodyMessage = extractMessage(message,CommsProtocol::OPENSERIALMONITOR.first,CommsProtocol::OPENSERIALMONITOR.second);
         action = Action::OPENSERIALMONITOR;
         manageBodyMessage();
     }else if( message.startsWith(CommsProtocol::CLOSESERIALMONITOR.first) && message.endsWith(CommsProtocol::CLOSESERIALMONITOR.second) ){
         qDebug()<< "Close Serial Monitor";
-        int length = message.length() - CommsProtocol::CLOSESERIALMONITOR.first.length() - CommsProtocol::CLOSESERIALMONITOR.second.length();
-        bodyMessage = message.mid( CommsProtocol::CLOSESERIALMONITOR.first.length(), length);
-        qDebug() << bodyMessage;
+        bodyMessage = extractMessage(message,CommsProtocol::CLOSESERIALMONITOR.first,CommsProtocol::CLOSESERIALMONITOR.second);
         action = Action::CLOSESERIALMONITOR;
         manageBodyMessage();
     }else if( message.startsWith(CommsProtocol::SERIALMESSAGE.first) && message.endsWith(CommsProtocol::SERIALMESSAGE.second) ){
         qDebug()<< "Serial Message Received";
-        int length = message.length() - CommsProtocol::SERIALMESSAGE.first.length() - CommsProtocol::SERIALMESSAGE.second.length();
-        serialMessage = message.mid( CommsProtocol::SERIALMESSAGE.first.length(), length);
-        qDebug() << serialMessage;
+        bodyMessage = extractMessage(message,CommsProtocol::SERIALMESSAGE.first,CommsProtocol::SERIALMESSAGE.second);
         action = Action::SENDSERIAL;
     }else{
         action = Action::UNKNOWN;
@@ -89,6 +88,8 @@ QString ReturnMessage::makeReturnMessage(){
     //ACTION
     if (action == Action::VERIFY){
         msg = CommsProtocol::VERIFY.first;
+    }else if (action == Action::VERSION){
+        msg = CommsProtocol::VERSION.first;
     }else if (action == Action::UPLOAD){
         msg = CommsProtocol::UPLOAD.first;
     }else if (action == Action::OPENSERIALMONITOR){
@@ -100,10 +101,14 @@ QString ReturnMessage::makeReturnMessage(){
         return msg;
     }
 
-    //SUCCESS
-    msg+=CommsProtocol::SUCCESS.first;
-    msg+=success;
-    msg+=CommsProtocol::SUCCESS.second;
+    if (action != Action::VERSION){
+        //SUCCESS
+        msg+=CommsProtocol::SUCCESS.first;
+        msg+=success;
+        msg+=CommsProtocol::SUCCESS.second;
+    }else{ //Set version
+        msg+="1.0.0";
+    }
 
     //In case of error
     if(success == "FALSE"){
@@ -121,6 +126,8 @@ QString ReturnMessage::makeReturnMessage(){
     //CLOSE ACTION
     if (action == Action::VERIFY){
         msg += CommsProtocol::VERIFY.second;
+    }else if (action == Action::VERSION){
+        msg += CommsProtocol::VERSION.second;
     }else if (action == Action::UPLOAD){
         msg += CommsProtocol::UPLOAD.second;
     }else if (action == Action::OPENSERIALMONITOR){
@@ -128,7 +135,6 @@ QString ReturnMessage::makeReturnMessage(){
     }else if (action == Action::CLOSESERIALMONITOR){
         msg += CommsProtocol::CLOSESERIALMONITOR.second;
     }
-
 
     return msg;
 }

@@ -3,6 +3,8 @@
 
 const QPair<QString, QString> CommsProtocol::VERIFY = QPair<QString,QString>(   "<VERIFY>"  ,   "</VERIFY>");
 const QPair<QString, QString> CommsProtocol::UPLOAD = QPair<QString,QString>(   "<UPLOAD>"  ,   "</UPLOAD>");
+const QPair<QString, QString> CommsProtocol::VERSION = QPair<QString,QString>(   "<VERSION>"  ,   "</VERSION>");
+
 
 const QPair<QString, QString> CommsProtocol::OPENSERIALMONITOR = QPair<QString,QString>(   "<OPENSMONITOR>"  ,   "</OPENSMONITOR>");
 const QPair<QString, QString> CommsProtocol::CLOSESERIALMONITOR = QPair<QString,QString>(   "<CLOSESMONITOR>"  ,   "</CLOSESMONITOR>");
@@ -20,6 +22,7 @@ const QPair<QString, QString> CommsProtocol::ERROR_DESC = QPair<QString,QString>
 const QString CommsProtocol::VERIFY_ERROR = "VERIFYERROR";
 const QString CommsProtocol::UPLOAD_ERROR = "UPLOADERROR";
 const QString CommsProtocol::FILE_NOT_FOUND_ERROR = "FILENOTFOUND";
+const QString CommsProtocol::ARDUINO_NOT_FOUND_ERROR = "ARDUINONOTFOUND";
 const QString CommsProtocol::BOARD_NOT_KNOWN_ERROR = "BOARDNOTKNOWN";
 const QString CommsProtocol::BOARD_NOT_DETECTED_ERROR = "BOARDNOTDETECTED";
 const QString CommsProtocol::BOARD_NOT_SET_ERROR = "BOARDNOTSET";

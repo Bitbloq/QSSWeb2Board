@@ -22,6 +22,7 @@ public:
      */
     enum class Action{
         NONSET,
+        VERSION,
         VERIFY,
         UPLOAD,
         OPENSERIALMONITOR,
@@ -43,6 +44,7 @@ private:
     QString bodyMessage; /// Internal. Body message onche the beginnign and tail actions are interpreted.
 
 
+    QString extractMessage(QString msg, QString first, QString second);
     void manageBodyMessage(); ///Parses the body message
     void manageFullMessage(); ///Parses the full received message
 
@@ -59,6 +61,7 @@ public:
     enum class Action{
         NONSET,
         VERIFY,
+        VERSION,
         UPLOAD,
         OPENSERIALMONITOR,
         CLOSESERIALMONITOR,

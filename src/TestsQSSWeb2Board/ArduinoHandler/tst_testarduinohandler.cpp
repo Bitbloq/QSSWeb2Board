@@ -177,7 +177,7 @@ void TestArduinoHandler::test_setArduinoPath()
     ArduinoHandler *arduino = Arduino();
     QString dirPath = testingBaseDirPath;
 
-    QVERIFY(arduino->setArduinoPath(testingBaseDirPath));
+    QVERIFY_EXCEPTION_THROWN(arduino->setArduinoPath(testingBaseDirPath),ArduinoNotFoundException);
     QCOMPARE(arduino->arduinoPath,dirPath);
 
     QVERIFY(arduino->setArduinoPath());

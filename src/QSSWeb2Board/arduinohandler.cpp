@@ -43,8 +43,10 @@ ArduinoHandler::ArduinoHandler():
         QDir().mkdir(buildDefaultDir);
     }
 
+
+
     eraseExistingSketches();
-    eraseExistingBuildFiles();
+    //eraseExistingBuildFiles();
 }
 
 bool ArduinoHandler::openSerialMonitor(int baudrate){
@@ -121,6 +123,9 @@ void ArduinoHandler::eraseExistingSketches() const {
 }
 
 void ArduinoHandler::eraseExistingBuildFiles() const {
+
+    //DOES NOT WORK. CHECK
+
     QDir dirToClean(buildDefaultDir);
 
     dirToClean.setNameFilters(QStringList() << "*");
@@ -205,6 +210,9 @@ bool ArduinoHandler::setArduinoPath(QString s){
     }else{
         arduinoPath=s;
     }
+    qDebug() << "Arduino Path: " << arduinoPath << "arduino";
+    if(!QFile(arduinoPath + "arduino").exists()) throw(ArduinoNotFoundException("Arduino not found at " + arduinoPath));
+
 
     //we must not create this directory because it should already exist
 
@@ -216,12 +224,15 @@ bool ArduinoHandler::setBuildPath(QString s){
     if (s == ""){
         //build path MUST be in in ~/res/build relative to application path !!
         buildPath=buildDefaultDir;
+        qDebug() << "Build Path: " << buildPath;
     }else{
         buildPath=s;
     }
 
-    if(!QDir().exists(buildPath))
+    if(!QDir().exists(buildPath)){
+        qDebug() << "Path does not exist";
         return QDir().mkdir(buildPath);
+    }
 
     return true;
 }
@@ -446,6 +457,7 @@ QString LinuxArduinoHandler::makeVerifyCommand(){
     if(buildPath.isEmpty()) setBuildPath();
     if(sketchName.isEmpty()) throw SketchNotSetException("Sketch not set");
     if(boardNameID.isEmpty()) throw BoardNotSetException("BoardNameID not set");
+
 
 
     QString boardCommand = arduinoBoards[boardNameID].toObject().value("board").toString();

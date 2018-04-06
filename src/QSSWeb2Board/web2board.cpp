@@ -19,20 +19,27 @@ void Web2Board::processCommands(){
     ReturnMessage returnMessage;
 
     try{
-        arduino.writeSketch(messageHandler.sketch);
-        if(messageHandler.action == MessageHandler::Action::VERIFY){
+
+        if(messageHandler.action == MessageHandler::Action::VERSION){
+            returnMessage.action = ReturnMessage::Action::VERSION;
+            returnMessage.success="TRUE";
+            qInfo() << "Received Version Command";
+
+        }else if(messageHandler.action == MessageHandler::Action::VERIFY){
+            arduino.writeSketch(messageHandler.sketch);
             returnMessage.action = ReturnMessage::Action::VERIFY;
             arduino.setBoardNameID(messageHandler.boardID);
             arduino.verify();
             returnMessage.success="TRUE";
 
         }else if (messageHandler.action == MessageHandler::Action::UPLOAD){
+            arduino.writeSketch(messageHandler.sketch);
             returnMessage.action = ReturnMessage::Action::UPLOAD;
             arduino.setBoardNameID(messageHandler.boardID);
             arduino.verify();
             arduino.upload();
             returnMessage.success="TRUE";
-            returnMessage.action = ReturnMessage::Action::UPLOAD;
+
         }else if (messageHandler.action == MessageHandler::Action::OPENSERIALMONITOR){
             returnMessage.action = ReturnMessage::Action::OPENSERIALMONITOR;
             arduino.setBoardNameID(messageHandler.boardID);
@@ -101,6 +108,12 @@ void Web2Board::processCommands(){
 
     }catch(VerifyException &e){
         qDebug()<<e.message;
+        returnMessage.success="FALSE";
+        returnMessage.errorType=e.errorType;
+        returnMessage.errorDesc=e.message;
+
+    }catch(ArduinoNotFoundException &e){
+    qDebug()<<e.message;
         returnMessage.success="FALSE";
         returnMessage.errorType=e.errorType;
         returnMessage.errorDesc=e.message;

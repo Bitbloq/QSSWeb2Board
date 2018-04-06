@@ -12,6 +12,7 @@ public:
     //commands dicitionary
     static const QPair<QString,QString>  VERIFY; ///Verify command
     static const QPair<QString,QString>  UPLOAD; ///Uplad command
+    static const QPair<QString,QString>  VERSION; ///Uplad command
 
     static const QPair<QString,QString>  SKETCH; ///Sketch to verify
     static const QPair<QString,QString>  BOARDID; ///ID of the board on the knownboards.json file
@@ -29,6 +30,7 @@ public:
     static const QString VERIFY_ERROR; ///String to define Verify Error (on Error Type)
     static const QString UPLOAD_ERROR; ///String to define Upload Error (on Error Type)
     static const QString FILE_NOT_FOUND_ERROR; ///String to define File not found Error (on Error Type)
+    static const QString ARDUINO_NOT_FOUND_ERROR; ///String to define Arduino not found Error (on Error Type)
     static const QString BOARD_NOT_KNOWN_ERROR; ///String to define Board unknown Error (on Error Type)
     static const QString BOARD_NOT_DETECTED_ERROR; ///String to define Board not detected Error (on Error Type)
     static const QString BOARD_NOT_SET_ERROR; ///String to define Board not set Error (on Error Type)

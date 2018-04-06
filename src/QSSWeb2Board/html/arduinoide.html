@@ -84,6 +84,16 @@
                 }
 			}
 			
+			function getVersion(){
+				var msg = "<VERSION></VERSION>"
+				if ( websocket != null )
+                {
+                    websocket.send( msg );
+                    debugTextArea.value="";
+                    console.log( "string sent :", '"'+msg+'"' );
+                }
+			}
+			
 			function openSerial(){
 				var msg = "<OPENSMONITOR><BOARD>" + board.value.trim() + "</BOARD><BAUDRATE>9600</BAUDRATE></OPENSMONITOR>"
 				if ( websocket != null )
@@ -148,6 +158,7 @@
                     websocket = new WebSocket( wsUri );
                     websocket.onopen = function (evt) {
                         parseMessage("CONNECTED");
+                        getVersion();
                     };
                     websocket.onclose = function (evt) {
                         parseMessage("DISCONNECTED");

@@ -55,6 +55,17 @@ class FileNotFoundException: public QException{
         const QString errorType;
 };
 
+class ArduinoNotFoundException: public QException{
+    public:
+        ArduinoNotFoundException(const QString& s):
+            message(s),errorType(CommsProtocol::ARDUINO_NOT_FOUND_ERROR){}
+        void raise() const { throw *this; }
+        ArduinoNotFoundException *clone() const { return new ArduinoNotFoundException(*this); }
+
+        const QString message;
+        const QString errorType;
+};
+
 /**
  * @brief The BoardNotKnownException class
  * Exception thrown when the Board is not among the know boards (defined in knownboards json file)
