@@ -1,0 +1,4 @@
+<map id="ArduinoHandler" name="ArduinoHandler">
+<area shape="rect" id="node2" href="$class_arduino_serial_monitor.html" title="The ArduinoSerialMonitor class. It handles serial port communication with Arduino Board..." alt="" coords="5,81,148,108"/>
+<area shape="rect" id="node4" href="$class_known_boards.html" title="The KnownBoards class. Parses the knownboards.json file to get information about vendorID productID a..." alt="" coords="172,81,275,108"/>
+</map>

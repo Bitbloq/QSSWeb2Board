@@ -1,0 +1,11 @@
+<map id="/home/avalero/workspace/QSSWeb2Board/src/QSSWeb2Board/main.cpp" name="/home/avalero/workspace/QSSWeb2Board/src/QSSWeb2Board/main.cpp">
+<area shape="rect" id="node6" href="$runguard_8h.html" title="runguard.h" alt="" coords="485,109,567,136"/>
+<area shape="rect" id="node10" href="$sslserver_8h.html" title="sslserver.h" alt="" coords="987,109,1073,136"/>
+<area shape="rect" id="node16" href="$web2board_8h.html" title="web2board.h" alt="" coords="1511,184,1607,211"/>
+<area shape="rect" id="node19" href="$arduinohandler_8h.html" title="arduinohandler.h" alt="" coords="1210,259,1327,285"/>
+<area shape="rect" id="node31" href="$messagehandler_8h.html" title="messagehandler.h" alt="" coords="1571,408,1699,435"/>
+<area shape="rect" id="node20" href="$knownboards_8h.html" title="knownboards.h" alt="" coords="820,333,931,360"/>
+<area shape="rect" id="node24" href="$arduinoexceptions_8h.html" title="arduinoexceptions.h" alt="" coords="1358,408,1497,435"/>
+<area shape="rect" id="node28" href="$arduinoserialmonitor_8h.html" title="arduinoserialmonitor.h" alt="" coords="1194,333,1343,360"/>
+<area shape="rect" id="node26" href="$commsprotocol_8h.html" title="commsprotocol.h" alt="" coords="1393,483,1515,509"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="ArduinoHandler" name="ArduinoHandler">
+<area shape="rect" id="node2" href="$class_linux_arduino_handler.html" title="The LinuxArduinoHandler class for specific functions for linux based systems. " alt="" coords="5,80,148,107"/>
+<area shape="rect" id="node3" href="$class_mac_arduino_handler.html" title="The MacArduinoHandler class for specific functions for Mac OS/X based systems. " alt="" coords="173,80,309,107"/>
+<area shape="rect" id="node4" href="$class_windows_arduino_handler.html" title="The WindowsArduinoHandler class for specific functions for windows based systems. ..." alt="" coords="333,80,498,107"/>
+</map>
