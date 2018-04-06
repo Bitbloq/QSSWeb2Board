@@ -2,6 +2,7 @@
 #include <QProcess>
 #include <QDebug>
 #include <QtTest/QtTest>
+#include "runguard.h"
 
 #include "sslserver.h"
 
@@ -21,6 +22,7 @@ namespace Examples{
 namespace ArduinoExample1{
 int main(void){
     ArduinoHandler* arduino = Arduino();
+    qInfo() << "jsonFile" + QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_KNOWNBOARDS");
     try{
         arduino->setBoardNameID("ZUMCore");
         QString blinkSketch{arduino->getArduinoDefaultDir() + "examples/01.Basics/Blink/Blink.ino"};
@@ -110,12 +112,22 @@ int main(void){
 
 int main(int argc, char *argv[])
 {
+    RunGuard guard( "asdfghjkl" );
+    if( !guard.tryToRun() ){
+        qInfo() << "Another instance of QSSWeb2Board is running";
+        //guard.killQSSWeb2Board();
+        //qInfo() << "Killed";
+        return 0;
+    }
+
     QCoreApplication a(argc, argv);
 
-    Examples::ArduinoExample1::main();
-    Examples::ArduinoExample2::main();
+    //qInfo() << "Hola";
+    //Examples::ArduinoExample1::main();
+    //Examples::ArduinoExample2::main();
 
-    //SSLServer server(1234);
-    //Q_UNUSED(server);
-    //return a.exec();
+
+    SSLServer server(1234);
+    Q_UNUSED(server);
+    return a.exec();
 }

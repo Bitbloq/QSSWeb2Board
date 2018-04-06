@@ -12,11 +12,24 @@
 
 ArduinoHandler::ArduinoHandler():
     serialMonitor{Q_NULLPTR},
-    sketchesDefaultBaseDir{QCoreApplication::applicationDirPath() + "/res/sketches/"},
-    arduinoDefaultDir{QCoreApplication::applicationDirPath() + "/res/arduino/"},
-    buildDefaultDir{QCoreApplication::applicationDirPath() + "/res/build/"},
+
+    sketchesDefaultBaseDir{(QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_SKETCHES").isEmpty()) ?
+                              QCoreApplication::applicationDirPath() + "/res/sketches/" :
+                               QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_SKETCHES")},
+
+    arduinoDefaultDir{(QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_ARDUINO").isEmpty()) ?
+                          QCoreApplication::applicationDirPath() + "/res/arduino/" :
+                           QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_ARDUINO")},
+
+    buildDefaultDir{(QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_BUILD").isEmpty()) ?
+                        QCoreApplication::applicationDirPath() + "/res/build/" :
+                         QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_BUILD")},
     proc{Q_NULLPTR},
-    arduinoBoards{QCoreApplication::applicationDirPath() + "/res/knownboards.json"}
+
+    arduinoBoards{ (QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_KNOWNBOARDS").isEmpty()) ?
+                      QCoreApplication::applicationDirPath() + "/res/knownboards.json" :
+                       QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_KNOWNBOARDS")}
+
 {
     qsrand(QDateTime::currentMSecsSinceEpoch()); //seed for initializing randomstrings
     setSketchesBaseDir(sketchesDefaultBaseDir);
@@ -31,6 +44,7 @@ ArduinoHandler::ArduinoHandler():
     }
 
     eraseExistingSketches();
+    eraseExistingBuildFiles();
 }
 
 bool ArduinoHandler::openSerialMonitor(int baudrate){
@@ -101,6 +115,40 @@ void ArduinoHandler::eraseExistingSketches() const {
             if(sketchInfo.created().addDays(1) <= QDateTime::currentDateTime()){
                 qDebug() << "erasing " + sketchesDefaultBaseDir + subDir + "/";
                 QDir(sketchesDefaultBaseDir + subDir + "/").removeRecursively();
+            }
+        }
+    }
+}
+
+void ArduinoHandler::eraseExistingBuildFiles() const {
+    QDir dirToClean(buildDefaultDir);
+
+    dirToClean.setNameFilters(QStringList() << "*");
+
+    //remove subdirs
+    dirToClean.setFilter(QDir::Dirs);
+    foreach(const QString &subDir, dirToClean.entryList())
+    {
+        if (subDir != "." && subDir != ".."){
+            QFileInfo dirInfo(buildDefaultDir + subDir + "/");
+            //remove dirs older than one day
+            if(dirInfo.lastModified().addDays(1) <= QDateTime::currentDateTime()){
+                qDebug() << "erasing " + buildDefaultDir + subDir + "/";
+                QDir(sketchesDefaultBaseDir + subDir + "/").removeRecursively();
+            }
+        }
+    }
+
+    //remove files
+    dirToClean.setFilter(QDir::Files);
+    foreach(const QString &file, dirToClean.entryList())
+    {
+        if (file != "." && file != ".."){
+            QFileInfo fileInfo(buildDefaultDir + file);
+            //remove files older than one day
+            if(fileInfo.created().addDays(1) <= QDateTime::currentDateTime()){
+                qDebug() << "erasing " + buildDefaultDir + file;
+                QFile(sketchesDefaultBaseDir + file).remove();
             }
         }
     }

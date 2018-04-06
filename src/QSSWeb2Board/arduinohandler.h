@@ -192,6 +192,11 @@ protected:
      */
     void eraseExistingSketches() const;
 
+    /**
+     * @brief eraseExistingBuildFiles Erases all saved BuildFiles with more than one day old
+     */
+    void eraseExistingBuildFiles() const;
+
 };
 
 /**

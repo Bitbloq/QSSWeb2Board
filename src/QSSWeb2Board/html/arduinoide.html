@@ -9,6 +9,7 @@
         <table>
         <tr>
         <td><p>
+			<button onClick="launchQSSWeb2Board();">Launch QSSWeb2Board</button>
             <button onClick="initWebSocket();">Connect</button>
             <button onClick="stopWebSocket();">Disconnect</button>
             <button onClick="checkSocket();">State</button>
@@ -129,6 +130,14 @@
                     console.log( "string sent :", '"'+msg+'"' );
                 }
             }
+            
+            function launchQSSWeb2Board(){
+				let tempA = document.createElement('a');
+				tempA.setAttribute('href', 'QSSWeb2Board://');
+				document.body.appendChild(tempA);
+				tempA.click();
+				document.body.removeChild(tempA);
+			}
 
             function initWebSocket() {
                 try {

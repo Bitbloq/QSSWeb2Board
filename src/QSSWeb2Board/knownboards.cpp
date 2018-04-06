@@ -6,6 +6,7 @@
 
 KnownBoards::KnownBoards(QString jsonFileName)
 {
+    qInfo() << "json FileName: " << jsonFileName;
     QFile jsonFile;
     jsonFile.setFileName(jsonFileName);
     jsonFile.open(QIODevice::ReadOnly | QIODevice::Text);
