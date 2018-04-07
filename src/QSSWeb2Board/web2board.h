@@ -5,8 +5,9 @@
 #include <QMap>
 #include <QPair>
 
+#include <QJsonObject>
+
 #include "arduinohandler.h"
-#include "messagehandler.h"
 
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
 
@@ -31,7 +32,7 @@ private:
     void processCommands();
     QWebSocket *m_pClient;
 
-    MessageHandler messageHandler;
+    QJsonObject jsonMessage;
 
 
 #if (defined (Q_OS_WIN))

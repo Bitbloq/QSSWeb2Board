@@ -42,7 +42,14 @@
 				{"productID": 24577, "vendorID": 1027}
 			]
 		},
-
+		
+	"bt328":{    
+		"board": "arduino:avr:bt:cpu=atmega328",
+		"id":[
+				{"productID": 24577, "vendorID": 1027}
+			]
+		},
+		
 	"ZUMCore2":{    
 		"board": "BQ:avr:zum_core2",
 		"id":[

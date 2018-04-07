@@ -17,14 +17,13 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     arduinohandler.cpp \
-    knownboards.cpp \
     arduinoexceptions.cpp \
     sslserver.cpp \
     web2board.cpp \
-    messagehandler.cpp \
     commsprotocol.cpp \
     arduinoserialmonitor.cpp \
-    runguard.cpp
+    runguard.cpp \
+    knownboards.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -43,7 +42,6 @@ HEADERS += \
     arduinoexceptions.h \
     sslserver.h \
     web2board.h \
-    messagehandler.h \
     commsprotocol.h \
     arduinoserialmonitor.h \
     runguard.h

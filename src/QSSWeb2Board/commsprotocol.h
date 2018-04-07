@@ -10,22 +10,29 @@ public:
     CommsProtocol();
 
     //commands dicitionary
-    static const QPair<QString,QString>  VERIFY; ///Verify command
-    static const QPair<QString,QString>  UPLOAD; ///Uplad command
-    static const QPair<QString,QString>  VERSION; ///Uplad command
-
-    static const QPair<QString,QString>  SKETCH; ///Sketch to verify
-    static const QPair<QString,QString>  BOARDID; ///ID of the board on the knownboards.json file
-
-    static const QPair<QString,QString>  OPENSERIALMONITOR; ///Command to Open Serial Monitor
-    static const QPair<QString,QString>  CLOSESERIALMONITOR; /// Command to Close Serial Monitor
-    static const QPair<QString,QString>  BAUDRATE; ///Serial Port communications baudrate
-    static const QPair<QString,QString>  SERIALMESSAGE; ///Serial Message received/sent from/to Arduino
+    static const QString  VERSION; ///Uplad command
+    static const QString  LIBVERSION; ///Uplad command
 
 
-    static const QPair<QString,QString>  STATUS; ///Informing whether the performed action has succeed or not
-    static const QPair<QString,QString>  ERROR_TYPE; ///If error, error type
-    static const QPair<QString,QString>  ERROR_DESC; ///If error, error description
+    static const QString  VERIFY; ///Verify command
+    static const QString  VERIFYING; ///Verify command
+
+    static const QString  UPLOAD; ///Uplad command
+    static const QString  UPLOADING; ///Uplad command
+
+
+    static const QString  SKETCH; ///Sketch to verify
+    static const QString  BOARDID; ///ID of the board on the knownboards.json file
+
+    static const QString  OPENSERIALMONITOR; ///Command to Open Serial Monitor
+    static const QString  CLOSESERIALMONITOR; /// Command to Close Serial Monitor
+    static const QString  BAUDRATE; ///Serial Port communications baudrate
+    static const QString  SERIALMESSAGE; ///Serial Message received/sent from/to Arduino
+
+
+    static const QString  STATUS; ///Informing whether the performed action has succeed or not
+    static const QString  ERROR_TYPE; ///If error, error type
+    static const QString  ERROR_DESC; ///If error, error description
 
     static const QString VERIFY_ERROR; ///String to define Verify Error (on Error Type)
     static const QString UPLOAD_ERROR; ///String to define Upload Error (on Error Type)

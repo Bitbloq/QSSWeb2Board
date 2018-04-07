@@ -1,23 +1,28 @@
 #include "commsprotocol.h"
 
+const QString CommsProtocol::VERSION = "get_version";
+const QString CommsProtocol::LIBVERSION = "set_lib_version";
 
-const QPair<QString, QString> CommsProtocol::VERIFY = QPair<QString,QString>(   "<VERIFY>"  ,   "</VERIFY>");
-const QPair<QString, QString> CommsProtocol::UPLOAD = QPair<QString,QString>(   "<UPLOAD>"  ,   "</UPLOAD>");
-const QPair<QString, QString> CommsProtocol::VERSION = QPair<QString,QString>(   "<VERSION>"  ,   "</VERSION>");
+const QString CommsProtocol::VERIFY ="compile";
+const QString CommsProtocol::VERIFYING ="is_compiling";
 
 
-const QPair<QString, QString> CommsProtocol::OPENSERIALMONITOR = QPair<QString,QString>(   "<OPENSMONITOR>"  ,   "</OPENSMONITOR>");
-const QPair<QString, QString> CommsProtocol::CLOSESERIALMONITOR = QPair<QString,QString>(   "<CLOSESMONITOR>"  ,   "</CLOSESMONITOR>");
+const QString CommsProtocol::UPLOAD = "upload";
+const QString CommsProtocol::UPLOADING = "is_uploading";
 
-const QPair<QString, QString> CommsProtocol::SERIALMESSAGE = QPair<QString,QString>(   "<SMESSAGE>"  ,   "</SMESSAGE>");
 
-const QPair<QString, QString> CommsProtocol::SKETCH  = QPair<QString,QString>(  "<SKETCH>"  ,   "</SKETCH>");
-const QPair<QString, QString> CommsProtocol::BAUDRATE  = QPair<QString,QString>(  "<BAUDRATE>"  ,   "</BAUDRATE>");
-const QPair<QString, QString> CommsProtocol::BOARDID = QPair<QString,QString>(  "<BOARD>"   ,   "</BOARD>");
+const QString CommsProtocol::OPENSERIALMONITOR = "OPENSMONITOR";
+const QString CommsProtocol::CLOSESERIALMONITOR = "CLOSE";
 
-const QPair<QString, QString> CommsProtocol::STATUS = QPair<QString,QString>(  "<STATUS>"   ,   "</STATUS>");
-const QPair<QString, QString> CommsProtocol::ERROR_TYPE = QPair<QString,QString>(  "<ERROR_TYPE>"   ,   "</ERROR_TYPE>");
-const QPair<QString, QString> CommsProtocol::ERROR_DESC = QPair<QString,QString>(  "<ERROR_DESC>"   ,   "</ERROR_DESC>");
+const QString CommsProtocol::SERIALMESSAGE = "message";
+
+const QString CommsProtocol::SKETCH  = "code";
+const QString CommsProtocol::BAUDRATE  = "baudrate";
+const QString CommsProtocol::BOARDID = "board";
+
+const QString CommsProtocol::STATUS = "status";
+const QString CommsProtocol::ERROR_TYPE = "eror";
+const QString CommsProtocol::ERROR_DESC = "desc";
 
 const QString CommsProtocol::VERIFY_ERROR = "VERIFYERROR";
 const QString CommsProtocol::UPLOAD_ERROR = "UPLOADERROR";
