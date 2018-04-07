@@ -15,7 +15,7 @@ const QPair<QString, QString> CommsProtocol::SKETCH  = QPair<QString,QString>(  
 const QPair<QString, QString> CommsProtocol::BAUDRATE  = QPair<QString,QString>(  "<BAUDRATE>"  ,   "</BAUDRATE>");
 const QPair<QString, QString> CommsProtocol::BOARDID = QPair<QString,QString>(  "<BOARD>"   ,   "</BOARD>");
 
-const QPair<QString, QString> CommsProtocol::SUCCESS = QPair<QString,QString>(  "<SUCCESS>"   ,   "</SUCCESS>");
+const QPair<QString, QString> CommsProtocol::STATUS = QPair<QString,QString>(  "<STATUS>"   ,   "</STATUS>");
 const QPair<QString, QString> CommsProtocol::ERROR_TYPE = QPair<QString,QString>(  "<ERROR_TYPE>"   ,   "</ERROR_TYPE>");
 const QPair<QString, QString> CommsProtocol::ERROR_DESC = QPair<QString,QString>(  "<ERROR_DESC>"   ,   "</ERROR_DESC>");
 
@@ -30,6 +30,10 @@ const QString CommsProtocol::SKETCH_NOT_SET_ERROR = "SKETCHNOTSET";
 const QString CommsProtocol::FILE_NOT_CREATED_ERROR ="FILENOTCREATED";
 const QString CommsProtocol::DIR_NOT_CREATED_ERROR ="DIRNOTCREATED";
 const QString CommsProtocol::SERIAL_PORT_NOT_OPEN ="PORTNOTOPENED";
+
+const QString CommsProtocol::STATUS_FAIL ="FAIL";
+const QString CommsProtocol::STATUS_WORKING ="WORKING";
+const QString CommsProtocol::STATUS_SUCCESS ="SUCCESS";
 
 
 CommsProtocol::CommsProtocol()

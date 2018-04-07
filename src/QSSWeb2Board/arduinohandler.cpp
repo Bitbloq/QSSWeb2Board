@@ -45,7 +45,7 @@ ArduinoHandler::ArduinoHandler():
 
 
 
-    eraseExistingSketches();
+    //eraseExistingSketches();
     //eraseExistingBuildFiles();
 }
 

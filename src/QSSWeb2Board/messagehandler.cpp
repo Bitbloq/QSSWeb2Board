@@ -75,12 +75,19 @@ void MessageHandler::manageFullMessage(){
     }else if( message.startsWith(CommsProtocol::SERIALMESSAGE.first) && message.endsWith(CommsProtocol::SERIALMESSAGE.second) ){
         qDebug()<< "Serial Message Received";
         bodyMessage = extractMessage(message,CommsProtocol::SERIALMESSAGE.first,CommsProtocol::SERIALMESSAGE.second);
+        serialMessage = bodyMessage;
+        qDebug() << bodyMessage;
         action = Action::SENDSERIAL;
     }else{
         action = Action::UNKNOWN;
     }
 }
 
+ReturnMessage::ReturnMessage():
+    statusString{CommsProtocol::STATUS_WORKING, CommsProtocol::STATUS_SUCCESS, CommsProtocol::STATUS_FAIL}
+{
+
+}
 
 QString ReturnMessage::makeReturnMessage(){
     QString msg;
@@ -102,16 +109,16 @@ QString ReturnMessage::makeReturnMessage(){
     }
 
     if (action != Action::VERSION){
-        //SUCCESS
-        msg+=CommsProtocol::SUCCESS.first;
-        msg+=success;
-        msg+=CommsProtocol::SUCCESS.second;
+        //STATUS
+        msg+=CommsProtocol::STATUS.first;
+        msg+=statusString[(int)status];
+        msg+=CommsProtocol::STATUS.second;
     }else{ //Set version
         msg+="1.0.0";
     }
 
     //In case of error
-    if(success == "FALSE"){
+    if(status == ReturnMessage::Status::FAIL){
         //ErrorType
         msg+=CommsProtocol::ERROR_TYPE.first;
         msg+=errorType;

@@ -23,7 +23,7 @@ public:
     static const QPair<QString,QString>  SERIALMESSAGE; ///Serial Message received/sent from/to Arduino
 
 
-    static const QPair<QString,QString>  SUCCESS; ///Informing whether the performed action has succeed or not
+    static const QPair<QString,QString>  STATUS; ///Informing whether the performed action has succeed or not
     static const QPair<QString,QString>  ERROR_TYPE; ///If error, error type
     static const QPair<QString,QString>  ERROR_DESC; ///If error, error description
 
@@ -39,6 +39,9 @@ public:
     static const QString DIR_NOT_CREATED_ERROR; ///String to define Directory not created Error (on Error Type)
     static const QString SERIAL_PORT_NOT_OPEN; ///String to define Serial Port not opened Error (on Error Type)
 
+    static const QString STATUS_WORKING;
+    static const QString STATUS_SUCCESS;
+    static const QString STATUS_FAIL;
 };
 
 #endif // COMMSPROTOCOL_H

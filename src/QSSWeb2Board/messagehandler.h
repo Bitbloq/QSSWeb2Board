@@ -56,7 +56,7 @@ class ReturnMessage
 
 public:
 
-    ReturnMessage(){};
+    ReturnMessage();
 
     enum class Action{
         NONSET,
@@ -68,8 +68,15 @@ public:
         UNKNOWN
     };
 
+    enum class Status{
+        WORKING = 0,
+        SUCCESS,
+        FAIL
+    };
+
     Action action;
-    QString success;
+    Status status;
+    const QString statusString[3];
     QString errorType;
     QString errorDesc;
 
