@@ -1,7 +1,8 @@
 QT += core \
       serialport \
       websockets \
-      testlib
+      testlib \
+      widgets
 
 QT -= gui
 
@@ -46,7 +47,9 @@ HEADERS += \
     arduinoserialmonitor.h \
     runguard.h
 
-DISTFILES +=
+DISTFILES += \
+    res/bitbloqicon400x400.ico \
+    res/knownboards.json
 
 RESOURCES += \
     sslcertificates.qrc

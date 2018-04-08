@@ -30,8 +30,14 @@ public Q_SLOTS:
 
 private:
     void processCommands();
-    QWebSocket *m_pClient;
 
+    void sendVerifying();
+    void sendUploading();
+
+    void sendSuccess(QJsonObject const & jsonObj, QJsonValue const & replyValue);
+    void sendNotSuccess(QJsonObject const & jsonObj, QJsonValue const & replyValue);
+
+    QWebSocket *m_pClient;
     QJsonObject jsonMessage;
 
 

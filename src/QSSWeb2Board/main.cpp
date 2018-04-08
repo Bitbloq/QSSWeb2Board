@@ -1,7 +1,9 @@
 #include <QCoreApplication>
 #include <QProcess>
 #include <QDebug>
+#include <QSystemTrayIcon>
 #include <QtTest/QtTest>
+#include <QMenu>
 #include "runguard.h"
 
 #include "sslserver.h"
@@ -120,7 +122,14 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    QCoreApplication a(argc, argv);
+    //QCoreApplication a(argc, argv);
+    QApplication a(argc, argv);
+
+
+    QSystemTrayIcon trayIcon(QIcon(":/res/bitbloqicon400x400.ico"));
+    trayIcon.show();
+
+    qDebug() << QCoreApplication::applicationDirPath();
 
     //qInfo() << "Hola";
     //Examples::ArduinoExample1::main();
