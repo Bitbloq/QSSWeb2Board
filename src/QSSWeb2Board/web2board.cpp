@@ -64,6 +64,8 @@ void Web2Board::sendNotSuccess(QJsonObject const & jsonObj, QJsonValue const & r
 
 void Web2Board::processCommands(){
 
+    messageID = jsonMessage.value("ID").toInt();
+
     QString function = jsonMessage.value("function").toString();
 
     try{
@@ -95,6 +97,8 @@ void Web2Board::processCommands(){
             arduino.setBoardNameID(boardName);
             arduino.verify();
 
+            arduino.closeSerialMonitor(); //just in case it was opened
+
             arduino.autoDetectBoardPort();
             sendUploading();
             arduino.upload();
@@ -107,7 +111,15 @@ void Web2Board::processCommands(){
             arduino.setBoardNameID(boardName);
             arduino.autoDetectBoardPort();
 
+
             sendSuccess(jsonMessage,QJsonValue(arduino.getBoardPort()));
+
+        }else if (function == CommsProtocol::SUBSCRIBETOPORT){
+            QString port = jsonMessage.value("args").toArray().at(0).toString();
+
+            arduino.setBoardPort(port);
+
+            sendSuccess(jsonMessage,QJsonValue(true));
 
         }else if (function == CommsProtocol::OPENSERIALMONITOR){
             QString port = jsonMessage.value("args").toArray().at(0).toString();
@@ -117,19 +129,38 @@ void Web2Board::processCommands(){
             arduino.openSerialMonitor(baudrate);
             QObject::connect(arduino.serialMonitor,SIGNAL(lineReceived(QString)),this,SLOT(sendIncomingSerialToClient(QString)));
 
-/*        }else if (function == CommsProtocol::SENDSERIAL){
+            sendSuccess(jsonMessage,QJsonValue(true));
 
-            // -> TODO qDebug() << "Serial Message" << messageHandler.serialMessage;
-            //arduino.serialMonitor->sendToArduino(messageHandler.serialMessage);
+        }else if (function == CommsProtocol::CHANGEBAUDRATE){
+            QString port = jsonMessage.value("args").toArray().at(0).toString();
+            int baudrate = jsonMessage.value("args").toArray().at(1).toInt();
+
+            arduino.setBoardPort(port);
+
+            arduino.openSerialMonitor(baudrate);
+            QObject::connect(arduino.serialMonitor,SIGNAL(lineReceived(QString)),this,SLOT(sendIncomingSerialToClient(QString)));
+
+            sendSuccess(jsonMessage,QJsonValue(true));
 
         }else if (function == CommsProtocol::CLOSESERIALMONITOR){
-            returnMessage.action = ReturnJSONMessage::Action::CLOSESERIALMONITOR;
+
             QObject::disconnect(arduino.serialMonitor,SIGNAL(lineReceived(QString)),this,SLOT(sendIncomingSerialToClient(QString)));
             arduino.closeSerialMonitor();
-*/
+
+            sendSuccess(jsonMessage,QJsonValue(true));
+
+        }else if (function == CommsProtocol::SENDSERIAL){
+
+            QString msg = jsonMessage.value("args").toArray().at(1).toString();
+
+            qDebug() << "Sending to Arduino: " << msg;
+
+            arduino.serialMonitor->sendToArduino(msg);
+
+            sendSuccess(jsonMessage,QJsonValue());
+
         }else{
             //UNKNOWN MESSAGE
-            return;
         }
 
 
@@ -230,6 +261,14 @@ void Web2Board::processTextMessage(QString message)
 }
 
 void Web2Board::sendIncomingSerialToClient(QString message){
-    //QString msg = CommsProtocol::SERIALMESSAGE.first + message + CommsProtocol::SERIALMESSAGE.second;
-    //m_pClient->sendTextMessage(msg.toLatin1());
+    messageID++;
+
+    QJsonObject reply;
+
+    reply.insert("ID",messageID);
+    reply.insert("hub","SerialMonitorHub");
+    reply.insert("function","received");
+    reply.insert("args",QJsonValue(QJsonArray({arduino.getBoardPort(),message})));
+    m_pClient->sendTextMessage(QJsonDocument(reply).toJson());
+    m_pClient->flush();
 }

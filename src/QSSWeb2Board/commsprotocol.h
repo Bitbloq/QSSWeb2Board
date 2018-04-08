@@ -9,7 +9,7 @@ class CommsProtocol
 public:
     CommsProtocol();
 
-    //commands dicitionary
+    //COMMANDS LITERALS
     static const QString  VERSION; ///Uplad command
     static const QString  LIBVERSION; ///Uplad command
 
@@ -23,17 +23,13 @@ public:
     static const QString FINDBOARDPORT; ///Find Board Port
 
 
-    static const QString  BOARDID; ///ID of the board on the knownboards.json file
-
+    static const QString  SUBSCRIBETOPORT; ///Command to Open Serial Monitor
     static const QString  OPENSERIALMONITOR; ///Command to Open Serial Monitor
+    static const QString  SENDSERIAL; ///Serial Message received/sent from/to Arduino
     static const QString  CLOSESERIALMONITOR; /// Command to Close Serial Monitor
-    static const QString  BAUDRATE; ///Serial Port communications baudrate
-    static const QString  SERIALMESSAGE; ///Serial Message received/sent from/to Arduino
+    static const QString  CHANGEBAUDRATE;
 
-
-    static const QString  STATUS; ///Informing whether the performed action has succeed or not
-    static const QString  ERROR_TYPE; ///If error, error type
-    static const QString  ERROR_DESC; ///If error, error description
+    //ERRORS LITERALS
 
     static const QString VERIFY_ERROR; ///String to define Verify Error (on Error Type)
     static const QString UPLOAD_ERROR; ///String to define Upload Error (on Error Type)

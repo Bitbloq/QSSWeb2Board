@@ -13,17 +13,13 @@ const QString CommsProtocol::UPLOADING = "is_uploading";
 const QString CommsProtocol::FINDBOARDPORT = "find_board_port";
 
 
+const QString CommsProtocol::SUBSCRIBETOPORT= "subscribe_to_port";
 const QString CommsProtocol::OPENSERIALMONITOR = "start_connection";
-const QString CommsProtocol::CLOSESERIALMONITOR = "CLOSE";
+const QString CommsProtocol::CLOSESERIALMONITOR = "unsubscribe_from_port";
+const QString CommsProtocol::CHANGEBAUDRATE = "change_baudrate";
 
-const QString CommsProtocol::SERIALMESSAGE = "message";
+const QString CommsProtocol::SENDSERIAL = "write";
 
-const QString CommsProtocol::BAUDRATE  = "baudrate";
-const QString CommsProtocol::BOARDID = "board";
-
-const QString CommsProtocol::STATUS = "status";
-const QString CommsProtocol::ERROR_TYPE = "eror";
-const QString CommsProtocol::ERROR_DESC = "desc";
 
 const QString CommsProtocol::VERIFY_ERROR = "VERIFYERROR";
 const QString CommsProtocol::UPLOAD_ERROR = "UPLOADERROR";

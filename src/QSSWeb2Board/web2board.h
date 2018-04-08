@@ -40,6 +40,8 @@ private:
     QWebSocket *m_pClient;
     QJsonObject jsonMessage;
 
+    int messageID;
+
 
 #if (defined (Q_OS_WIN))
     WindowsArduinoHandler arduino;

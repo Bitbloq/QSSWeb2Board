@@ -45,13 +45,20 @@ ArduinoHandler::ArduinoHandler():
 
 
 
-    //eraseExistingSketches();
+    eraseExistingSketches();
     //eraseExistingBuildFiles();
 }
 
 bool ArduinoHandler::openSerialMonitor(int baudrate){
+   if(serialMonitor){
+       serialMonitor->close();
+       delete serialMonitor;
+    }
+
     if(boardNameID.isEmpty()) throw BoardNotSetException("BoardNameID not set");
     if(boardPort.isEmpty()) autoDetectBoardPort();
+
+
 
     serialMonitor = new ArduinoSerialMonitor(boardPort,baudrate);
 
@@ -377,12 +384,9 @@ int ArduinoHandler::verify(){
 
 int ArduinoHandler::upload()
 {
-
-    verify();
-
     //makeUploadCommand creates the load command to execute
     proc->start(makeUploadCommand());
-    proc->waitForFinished(-1); //-1 means there is no time out
+    proc->waitForFinished(30000); //-1 means there is no time out
 
     QString errorOutput(proc->readAllStandardError());
     int exitCode = proc->exitCode();
