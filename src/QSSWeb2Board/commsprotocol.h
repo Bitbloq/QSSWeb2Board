@@ -20,8 +20,9 @@ public:
     static const QString  UPLOAD; ///Uplad command
     static const QString  UPLOADING; ///Uplad command
 
+    static const QString FINDBOARDPORT; ///Find Board Port
 
-    static const QString  SKETCH; ///Sketch to verify
+
     static const QString  BOARDID; ///ID of the board on the knownboards.json file
 
     static const QString  OPENSERIALMONITOR; ///Command to Open Serial Monitor

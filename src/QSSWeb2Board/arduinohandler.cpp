@@ -161,7 +161,6 @@ void ArduinoHandler::eraseExistingBuildFiles() const {
 
 bool ArduinoHandler::writeSketch(QString _sketch, QString _sketchName){
     //remove tail white spaces and retrun cartridges
-    _sketch = _sketch.trimmed().simplified();
 
     if(_sketchName.isEmpty()) sketchName = createRandomString();
     else sketchName = _sketchName;

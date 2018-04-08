@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
 
-    QSystemTrayIcon trayIcon(QIcon(":/res/bitbloqicon400x400.ico"));
+    QSystemTrayIcon trayIcon(QIcon(":/res/Web2board.ico"));
     trayIcon.show();
 
     qDebug() << QCoreApplication::applicationDirPath();

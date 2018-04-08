@@ -10,13 +10,14 @@ const QString CommsProtocol::VERIFYING ="is_compiling";
 const QString CommsProtocol::UPLOAD = "upload";
 const QString CommsProtocol::UPLOADING = "is_uploading";
 
+const QString CommsProtocol::FINDBOARDPORT = "find_board_port";
 
-const QString CommsProtocol::OPENSERIALMONITOR = "OPENSMONITOR";
+
+const QString CommsProtocol::OPENSERIALMONITOR = "start_connection";
 const QString CommsProtocol::CLOSESERIALMONITOR = "CLOSE";
 
 const QString CommsProtocol::SERIALMESSAGE = "message";
 
-const QString CommsProtocol::SKETCH  = "code";
 const QString CommsProtocol::BAUDRATE  = "baudrate";
 const QString CommsProtocol::BOARDID = "board";
 

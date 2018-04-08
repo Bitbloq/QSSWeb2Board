@@ -48,8 +48,8 @@ HEADERS += \
     runguard.h
 
 DISTFILES += \
-    res/bitbloqicon400x400.ico \
-    res/knownboards.json
+    res/knownboards.json \
+    res/Web2board.ico
 
 RESOURCES += \
     sslcertificates.qrc
