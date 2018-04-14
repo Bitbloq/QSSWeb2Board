@@ -416,11 +416,14 @@ int ArduinoHandler::upload()
 //This function, called recursively, allows to list the errors removing the local route to the file
 QString ArduinoHandler::extractSingleError(QString s){
 
+    QJsonObject error;
+
     QString match = sketchesBaseDir + sketchName + "/" + sketchName + "ino:";
     int pos = s.indexOf(match);
     if ( pos >= 0 )
     {
         QString leftOf = s.left(pos);
+        qDebug() << "leftOf: " << leftOf;
         verifyErrorsList.append(leftOf.simplified());
         return (leftOf.simplified() + extractSingleError(s.mid (pos + match.length())));
     }else{

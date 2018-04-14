@@ -60,6 +60,16 @@ void Web2Board::sendNotSuccess(QJsonObject const & jsonObj, QJsonValue const & r
     m_pClient->flush();
 }
 
+QJsonObject Web2Board::makeVerifyError(int column, int line, QString file, QString error){
+    QJsonObject jsonError;
+    jsonError.insert("column", column);
+    jsonError.insert("line",line);
+    jsonError.insert("file",file);
+    jsonError.insert("error",error);
+
+    return jsonError;
+}
+
 
 
 void Web2Board::processCommands(){
@@ -150,13 +160,9 @@ void Web2Board::processCommands(){
             sendSuccess(jsonMessage,QJsonValue(true));
 
         }else if (function == CommsProtocol::SENDSERIAL){
-
             QString msg = jsonMessage.value("args").toArray().at(1).toString();
-
             qDebug() << "Sending to Arduino: " << msg;
-
             arduino.serialMonitor->sendToArduino(msg);
-
             sendSuccess(jsonMessage,QJsonValue());
 
         }else{
@@ -237,10 +243,13 @@ void Web2Board::processCommands(){
         qDebug()<<e.message;
 
     }catch(VerifyException &e){
-        sendNotSuccess(jsonMessage,QJsonValue(QJsonArray({e.message})));
+        QJsonObject error = makeVerifyError(1,1,"arduino",e.message);
+        sendNotSuccess(jsonMessage,QJsonValue(error));
         qDebug()<<e.message;
 
     }catch(ArduinoNotFoundException &e){
+        QJsonObject error = makeVerifyError(1,1,"arduino",e.message);
+        sendNotSuccess(jsonMessage,QJsonValue(error));
         qDebug()<<e.message;
     }
 }

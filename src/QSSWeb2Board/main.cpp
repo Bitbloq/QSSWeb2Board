@@ -26,8 +26,8 @@ int main(void){
     ArduinoHandler* arduino = Arduino();
     qInfo() << "jsonFile" + QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_KNOWNBOARDS");
     try{
-        arduino->setBoardNameID("ZUMCore");
-        QString blinkSketch{arduino->getArduinoDefaultDir() + "examples/01.Basics/Blink/Blink.ino"};
+        arduino->setBoardNameID("zumcore");
+        QString blinkSketch{/*arduino->getArduinoDefaultDir() + */ "/home/avalero/arduino1.8.5/examples/01.Basics/Blink/Blink.ino"};
         arduino->setSketchWithAbsolutePath(blinkSketch);
         arduino->verify();
         arduino->autoDetectBoardPort();
@@ -70,7 +70,7 @@ namespace ArduinoExample2{
 int main(void){
     ArduinoHandler* arduino = Arduino();
     try{
-        arduino->setBoardNameID("ZUMCore");
+        arduino->setBoardNameID("zumcore");
         QString blinkSketch{"void setup(){pinMode(13,OUTPUT);} void loop(){digitalWrite(13,HIGH);}"};
         arduino->writeSketch(blinkSketch);
         arduino->verify();
@@ -110,6 +110,51 @@ int main(void){
 
 }//end ArduinoExample2 namespace
 
+namespace ArduinoExample3{
+int main(void){
+    ArduinoHandler* arduino = Arduino();
+    qInfo() << "jsonFile" + QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_KNOWNBOARDS");
+    try{
+        arduino->setBoardNameID("zumcore");
+        QString blinkSketch{/*arduino->getArduinoDefaultDir() + */ "/home/avalero/arduino-1.8.5/examples/01.Basics/Error/Error.ino"};
+        arduino->setSketchWithAbsolutePath(blinkSketch);
+        arduino->verify();
+        arduino->autoDetectBoardPort();
+        arduino->upload();
+    }catch(SerialPortOpenException &e){
+        qDebug()<<e.message;
+
+    }catch(FileNotCreatedException &e){
+        qDebug()<<e.message;
+
+    }catch(BoardNotKnownException &e){
+        qDebug()<<e.message;
+
+    }catch(FileNotFoundException &e){
+        qDebug()<<e.message;
+
+
+    }catch(BoardNotDetectedException &e){
+        qDebug()<<e.message;
+
+    }catch(BoardNotSetException &e){
+        qDebug()<<e.message;
+
+    }catch(SketchNotSetException &e){
+        qDebug()<<e.message;
+
+    }catch(UploadException &e){
+        qDebug()<<e.message;
+
+    }catch(VerifyException &e){
+        qDebug()<<e.message;
+    }
+
+    return 0;
+}}
+
+
+
 } // end examples namespace
 
 int main(int argc, char *argv[])
@@ -126,15 +171,17 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
 
-    QSystemTrayIcon trayIcon(QIcon(":/res/Web2board.ico"));
-    trayIcon.show();
+    //QSystemTrayIcon trayIcon(QIcon(":/res/Web2board.ico"));
+    //trayIcon.show();
 
     qDebug() << QCoreApplication::applicationDirPath();
 
     //qInfo() << "Hola";
     //Examples::ArduinoExample1::main();
     //Examples::ArduinoExample2::main();
+    //Examples::ArduinoExample3::main();
 
+    //return 0;
 
     SSLServer server(1234);
     Q_UNUSED(server);

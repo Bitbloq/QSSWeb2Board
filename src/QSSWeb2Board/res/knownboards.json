@@ -51,7 +51,7 @@
             ]
         },
 
-	"ZUMJunior":{    
+	"zumjunior":{    
 		"board": "BQ:avr:zum_junior",
 		"id":[
 				{"productID": 60000, "vendorID": 4292}
@@ -59,7 +59,7 @@
 		
 		},
 
-	"ZUMCore":{    
+	"zumCore":{    
 		"board": "arduino:avr:bt:cpu=atmega328",
 		"id":[
 				{"productID": 24577, "vendorID": 1027}
@@ -73,7 +73,7 @@
 			]
 		},
 		
-	"ZUMCore2":{    
+	"zumcore2":{    
 		"board": "BQ:avr:zum_core2",
 		"id":[
 				{"productID": 60000, "vendorID": 4292}
