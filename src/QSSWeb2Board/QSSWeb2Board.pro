@@ -48,8 +48,9 @@ HEADERS += \
     runguard.h
 
 DISTFILES += \
-    res/knownboards.json \
-    res/Web2board.ico
+    res/knownboards.json
 
 RESOURCES += \
     sslcertificates.qrc
+
+FORMS +=

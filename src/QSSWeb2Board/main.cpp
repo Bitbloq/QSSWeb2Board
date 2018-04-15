@@ -1,11 +1,12 @@
 #include <QCoreApplication>
+#include <QApplication>
 #include <QProcess>
 #include <QDebug>
 #include <QSystemTrayIcon>
-#include <QtTest/QtTest>
 #include <QMenu>
-#include "runguard.h"
 
+#include "runguard.h"
+#include "mainwindow.h"
 #include "sslserver.h"
 
 ArduinoHandler* Arduino(){
@@ -162,26 +163,25 @@ int main(int argc, char *argv[])
     RunGuard guard( "asdfghjkl" );
     if( !guard.tryToRun() ){
         qInfo() << "Another instance of QSSWeb2Board is running";
-        //guard.killQSSWeb2Board();
-        //qInfo() << "Killed";
         return 0;
     }
 
-    //QCoreApplication a(argc, argv);
     QApplication a(argc, argv);
 
 
-    //QSystemTrayIcon trayIcon(QIcon(":/res/Web2board.ico"));
-    //trayIcon.show();
+    //System Tray Icon
 
-    qDebug() << QCoreApplication::applicationDirPath();
+    QSystemTrayIcon trayIcon(&a);
+    trayIcon.setIcon(QIcon(QCoreApplication::applicationDirPath() + "res/Web2board.ico"));
+    trayIcon.setToolTip("Web2Board");
 
-    //qInfo() << "Hola";
-    //Examples::ArduinoExample1::main();
-    //Examples::ArduinoExample2::main();
-    //Examples::ArduinoExample3::main();
+    QMenu * menu = new QMenu();
+    QAction * quitAction = new QAction("Close Web2Board");
+    QObject::connect(quitAction, SIGNAL(triggered()), QApplication::instance(), SLOT(quit()));
 
-    //return 0;
+    menu->addAction(quitAction);
+    trayIcon.setContextMenu(menu);
+    trayIcon.show();
 
     SSLServer server(1234);
     Q_UNUSED(server);
