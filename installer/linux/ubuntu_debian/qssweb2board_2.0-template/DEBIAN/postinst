@@ -1,0 +1,12 @@
+#!/bin/sh
+# postinst script for QSSWeb2Board
+
+#Add mime type to defaults (if not alrady present)
+grep -q -F 'x-scheme-handler/qssweb2board=QSSWeb2Board-handler.desktop' /usr/share/applications/defaults.list || echo "x-scheme-handler/qssweb2board=QSSWeb2Board-handler.desktop" >> /usr/share/applications/defaults.list
+
+#Env variables
+source ./etc/profile.d/10-qssweb2board.sh
+
+#require reboot
+/usr/share/update-notifier/notify-reboot-required
+echo 'Installation finished ---- Reboot Required'
