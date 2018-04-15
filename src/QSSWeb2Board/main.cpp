@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
     trayIcon.setToolTip("Web2Board");
 
     QMenu * menu = new QMenu();
-    QAction * quitAction = new QAction("Close Web2Board");
+    QAction * quitAction = new QAction("Close Web2Board", menu);
     QObject::connect(quitAction, SIGNAL(triggered()), QApplication::instance(), SLOT(quit()));
 
     menu->addAction(quitAction);
