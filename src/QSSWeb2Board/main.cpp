@@ -172,7 +172,8 @@ int main(int argc, char *argv[])
     //System Tray Icon
 
     QSystemTrayIcon trayIcon(&a);
-    trayIcon.setIcon(QIcon(QCoreApplication::applicationDirPath() + "res/Web2board.ico"));
+    trayIcon.setIcon(QIcon(QCoreApplication::applicationDirPath() + "/res/Web2board.ico"));
+    qDebug() << QCoreApplication::applicationDirPath() + "res/Web2board.ico";
     trayIcon.setToolTip("Web2Board");
 
     QMenu * menu = new QMenu();
@@ -183,7 +184,7 @@ int main(int argc, char *argv[])
     trayIcon.setContextMenu(menu);
     trayIcon.show();
 
-    SSLServer server(1234);
+    SSLServer server(9867);
     Q_UNUSED(server);
     return a.exec();
 }
