@@ -7,6 +7,20 @@ grep -q -F 'x-scheme-handler/qssweb2board=QSSWeb2Board-handler.desktop' /usr/sha
 #Env variables
 source ./etc/profile.d/10-qssweb2board.sh
 
+addgroup qssweb2board
+
+export PATH=$PATH:/opt/QSSWeb2Board/
+export QSSWEB2BOARD_SKETCHES=/var/tmp/QSSWeb2Board/sketches/
+export QSSWEB2BOARD_BUILD=/var/tmp/QSSWeb2Board/build/
+export QSSWEB2BOARD_KNOWNBOARDS=/etc/QSSWeb2Board/knownboards.json
+export QSSWEB2BOARD_ARDUINO=/opt/QSSWeb2Board/res/arduino/
+
+chown root:qssweb2board -R /opt/QSSWeb2Board/
+chown root:qssweb2board -R $QSSWEB2BOARD_SKETCHES
+chown root:qssweb2board -R $QSSWEB2BOARD_BUILD
+chown root:qssweb2board -R $QSSWEB2BOARD_KNOWNBOARDS
+chown root:qssweb2board -R $QSSWEB2BOARD_ARDUINO
+
 #require reboot
 /usr/share/update-notifier/notify-reboot-required
 echo 'Installation finished ---- Reboot Required'
