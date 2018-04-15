@@ -6,7 +6,6 @@
 #include <QMenu>
 
 #include "runguard.h"
-#include "mainwindow.h"
 #include "sslserver.h"
 
 ArduinoHandler* Arduino(){
