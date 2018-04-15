@@ -1,6 +1,0 @@
-<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_arduino_handler.html" title="The ArduinoHandler class It handles all the actions to be made with Arduino: create sketch..." alt="" coords="5,56,116,83"/>
-<area shape="rect" id="node2" href="$class_linux_arduino_handler.html" title="The LinuxArduinoHandler class for specific functions for linux based systems. " alt="" coords="175,5,318,32"/>
-<area shape="rect" id="node3" href="$class_mac_arduino_handler.html" title="The MacArduinoHandler class for specific functions for Mac OS/X based systems. " alt="" coords="179,56,315,83"/>
-<area shape="rect" id="node4" href="$class_windows_arduino_handler.html" title="The WindowsArduinoHandler class for specific functions for windows based systems. ..." alt="" coords="164,107,329,133"/>
-</map>
