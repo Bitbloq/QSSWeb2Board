@@ -56,10 +56,10 @@ echo ${packageDir}
 rm -fr ${packageDir}
 cp -fr qssweb2board_2.0-template ${packageDir}
 
-cd "$(dirname "$0")"
 
 #build application
 baseDir=$(pwd)
+mkdir build
 cd build
 echo "running qmake on " $1
 qmake $1
