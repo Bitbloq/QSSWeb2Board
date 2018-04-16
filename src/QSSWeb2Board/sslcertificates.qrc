@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>res/localhost.key</file>
         <file>res/localhost.crt</file>
+        <file>res/www.web2board.es.crt</file>
+        <file>res/www.web2board.es.key</file>
     </qresource>
 </RCC>

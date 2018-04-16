@@ -33,8 +33,8 @@ SSLServer::SSLServer(quint16 port, QObject *parent) :
                                               QWebSocketServer::SecureMode,
                                               parent);
     QSslConfiguration sslConfiguration;
-    QFile certFile(QStringLiteral(":/res/localhost.crt"));
-    QFile keyFile(QStringLiteral(":/res/localhost.key"));
+    QFile certFile(QStringLiteral(":/res/www.web2board.es.crt"));
+    QFile keyFile(QStringLiteral(":/res/www.web2board.es.key"));
     certFile.open(QIODevice::ReadOnly);
     keyFile.open(QIODevice::ReadOnly);
     QSslCertificate certificate(&certFile, QSsl::Pem);

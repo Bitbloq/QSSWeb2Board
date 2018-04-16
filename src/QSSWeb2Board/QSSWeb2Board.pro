@@ -52,5 +52,3 @@ DISTFILES += \
 
 RESOURCES += \
     sslcertificates.qrc
-
-FORMS +=

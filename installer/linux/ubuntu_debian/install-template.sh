@@ -1,0 +1,13 @@
+#!/bin/sh
+# script for QSSWeb2Board
+
+#create qssweb2board group and add user
+sudo addgroup qssweb2board
+sudo adduser $USER qssweb2board
+
+#adduser to dialout
+echo "adding user to group dialout"
+sudo adduser $USER dialout
+
+#install dependencies
+sudo apt-get install qt5-default libqt5serialport5 libqt5websockets5 libqt5network5 libqt5widgets5 libqt5gui5 libqt5core5a

@@ -6,3 +6,7 @@ qssweb2board_2.0-1ubuntu16.04_amd64
 qssweb2board_2.0-1ubuntu16.04_amd64.deb
 qssweb2board_ubuntu_16.04_amd64_installer.sh
 
+build
+installer-qssweb2board_2.0-1Ubuntu17.10_amd64.sh
+qssweb2board_2.0-1Ubuntu17.10_amd64.deb
+qssweb2board_2.0-1Ubuntu17.10_amd64/
