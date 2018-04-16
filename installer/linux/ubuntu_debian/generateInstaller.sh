@@ -1,5 +1,9 @@
 #!/bin/bash
 
+
+#INSTALL dependencies
+sudo apt-get install qtcreator libqt5websockets5-dev libqt5serialport5-dev build-essential
+
 #GET VERSION AND NAME OF OS
 if [ -f /etc/os-release ]; then
     # freedesktop.org and systemd
