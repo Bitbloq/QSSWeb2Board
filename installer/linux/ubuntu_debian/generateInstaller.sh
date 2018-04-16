@@ -59,13 +59,14 @@ cp -fr qssweb2board_2.0-template ${packageDir}
 
 #build application
 baseDir=$(pwd)
+
 mkdir build
 cd build
+
 echo "running qmake on " $1
 qmake $1
 echo "running make..."
 make
-make clean
 cd ${baseDir}
 
 #copy application into packageDir
@@ -81,3 +82,9 @@ cp install-template.sh installer-${packageDir}.sh
 echo sudo dpkg -i ${packageDir}.deb >> installer-${packageDir}.sh
 
 zip -r installer-${packageDir}.zip ${packageDir}.deb installer-${packageDir}.sh
+
+
+cd ${baseDir}
+cd build
+make clean
+cd ${baseDir}
