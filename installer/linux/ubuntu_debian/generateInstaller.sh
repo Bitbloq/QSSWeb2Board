@@ -2,7 +2,8 @@
 
 
 #INSTALL dependencies
-sudo apt-get install qtcreator libqt5websockets5-dev libqt5serialport5-dev build-essential
+sudo apt-get update
+sudo apt-get install qtcreator libqt5websockets5-dev libqt5serialport5-dev build-essential zip unzip
 
 #GET VERSION AND NAME OF OS
 if [ -f /etc/os-release ]; then
@@ -61,7 +62,6 @@ echo ${packageDir}
 #create packageDir form template
 rm -fr ${packageDir}
 cp -fr qssweb2board_2.0-template ${packageDir}
-
 
 #build application
 baseDir=$(pwd)

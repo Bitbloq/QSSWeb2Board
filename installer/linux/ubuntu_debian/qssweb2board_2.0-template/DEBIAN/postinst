@@ -11,6 +11,17 @@ adduser $(logname) qssweb2board
 #Add user to dialout group
 adduser $(logname) dialout
 
+#FOR MAX MAD systems
+if id "alumno" >/dev/null 2>&1; then
+        adduser alumno qssweb2board
+        adduser alumno dialout
+fi
+
+if id "profesor" >/dev/null 2>&1; then
+        adduser profesor qssweb2board
+        adduser profesor dialout
+fi
+
 #Env variables
 export PATH=$PATH:/opt/QSSWeb2Board/
 export QSSWEB2BOARD_SKETCHES=/var/tmp/QSSWeb2Board/sketches/
