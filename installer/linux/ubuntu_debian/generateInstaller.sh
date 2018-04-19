@@ -38,9 +38,11 @@ fi
 case $(uname -m) in
 x86_64)
     ARCH=amd64  # or AMD64 or Intel64 or whatever
+    BITS='64'
     ;;
 i*86)
     ARCH=i386  # or IA32 or Intel32 or whatever
+    BITS='32'
     ;;
 *)
     # leave ARCH as-is
@@ -86,7 +88,7 @@ dpkg --build ${packageDir}
 cp install-template.sh installer-${packageDir}.sh
 sed -i -e "s/###OS###/${OS}/g" installer-${packageDir}.sh
 sed -i -e "s/###VERSION###/${VER}/g" installer-${packageDir}.sh
-sed -i -e "s/###ARCH###/${ARCH}/g" installer-${packageDir}.sh
+sed -i -e "s/###ARCH###/${BITS}/g" installer-${packageDir}.sh
 
 
 

@@ -2,7 +2,7 @@
 # script for QSSWeb2Board
 
 echo "Vas a instalar Web2Board en tu sistema".
-echo "Has escogido realizar la instalación para ###OS### ###VERSION### ###ARCH### (amd64 -> 64 bits | i386 -> 32 bits)"
+echo "Has escogido realizar la instalación para ###OS### ###VERSION### ###ARCH### bits"
 while true; do
     read -p "¿Es este tu sistema operativo? (SI/NO)" yn
     case $yn in
