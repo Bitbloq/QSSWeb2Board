@@ -4,8 +4,12 @@
 #Add mime type to defaults (if not alrady present)
 grep -q -F 'x-scheme-handler/qssweb2board=QSSWeb2Board-handler.desktop' /usr/share/applications/defaults.list || echo "x-scheme-handler/qssweb2board=QSSWeb2Board-handler.desktop" >> /usr/share/applications/defaults.list
 
-#Create app group
+#Create app group and add user
 addgroup qssweb2board
+adduser $(logname) qssweb2board
+
+#Add user to dialout group
+adduser $(logname) dialout
 
 #Env variables
 export PATH=$PATH:/opt/QSSWeb2Board/

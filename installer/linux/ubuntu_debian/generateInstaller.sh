@@ -67,8 +67,8 @@ baseDir=$(pwd)
 mkdir build
 cd build
 
-echo "running qmake on " $1
-qmake $1
+echo "running qmake on " ${1:-../../../../src/QSSWeb2Board/QSSWeb2Board.pro}
+qmake ${1:-../../../../src/QSSWeb2Board/QSSWeb2Board.pro}
 echo "running make..."
 make
 cd ${baseDir}
@@ -76,12 +76,19 @@ cd ${baseDir}
 #copy application into packageDir
 cp build/QSSWeb2Board ${packageDir}/opt/QSSWeb2Board/
 
+sed -i -e "s/###ARCH###/${ARCH}/g" ${packageDir}/DEBIAN/control
+
 #build deb package
 dpkg --build ${packageDir}
 
 #create install script
 
 cp install-template.sh installer-${packageDir}.sh
+sed -i -e "s/###OS###/${OS}/g" installer-${packageDir}.sh
+sed -i -e "s/###VERSION###/${VER}/g" installer-${packageDir}.sh
+sed -i -e "s/###ARCH###/${ARCH}/g" installer-${packageDir}.sh
+
+
 
 echo sudo dpkg -i ${packageDir}.deb >> installer-${packageDir}.sh
 
