@@ -95,8 +95,8 @@ baseDir=$(pwd)
 mkdir build
 cd build
 
-echo "running qmake on " ${1:-../../../../src/QSSWeb2Board/QSSWeb2Board.pro}
-qmake ${1:-../../../../src/QSSWeb2Board/QSSWeb2Board.pro}
+echo "running qmake on ../../../../src/QSSWeb2Board/QSSWeb2Board.pro"
+qmake ../../../../src/QSSWeb2Board/QSSWeb2Board.pro
 echo "running make..."
 make
 cd ${baseDir}
