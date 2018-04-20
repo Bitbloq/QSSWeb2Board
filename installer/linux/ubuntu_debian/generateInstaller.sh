@@ -2,8 +2,10 @@
 
 
 #INSTALL dependencies
-sudo apt-get update
-sudo apt-get install qtcreator libqt5websockets5-dev libqt5serialport5-dev build-essential zip unzip
+
+echo "Instalando dependencias..."
+sudo apt-get update > /dev/null
+sudo apt-get install qtcreator libqt5websockets5-dev libqt5serialport5-dev build-essential zip unzip > /dev/null
 
 #GET VERSION AND NAME OF OS
 if [ -f /etc/os-release ]; then
@@ -62,14 +64,10 @@ else
 	VER=${2}
 fi
 
-echo ${OS}
-echo ${VER}
-echo ${ARCH}
+echo "Creando instalador para ${OS} ${VER} ${ARCH}"
 
 
 packageDir=qssweb2board_2.0-1${OS}${VER}_${ARCH}
-
-echo ${packageDir}
 
 #create packageDir form template
 rm -fr ${packageDir}
@@ -80,21 +78,21 @@ cp -fr qssweb2board_2.0-template ${packageDir}
 echo "Downloading arduino_BQ_Linux_${ARCH}.zip"
 cd ${packageDir}/opt/QSSWeb2Board/res/
 wget https://github.com/avalero/QSSWeb2Board/releases/download/18.16.4/arduino1.8.5_BQ_Linux_${ARCH}.zip
-unzip arduino1.8.5_BQ_Linux_${ARCH}.zip
-rm arduino1.8.5_BQ_Linux_${ARCH}.zip
+unzip arduino1.8.5_BQ_Linux_${ARCH}.zip > /dev/null
+rm arduino1.8.5_BQ_Linux_${ARCH}.zip > /dev/null
 cd -
 
 
 #build application
 baseDir=$(pwd)
 
-mkdir build
-cd build
+mkdir build > /dev/null
+cd build > /dev/null
 
 echo "running qmake on ../../../../src/QSSWeb2Board/QSSWeb2Board.pro"
-qmake ../../../../src/QSSWeb2Board/QSSWeb2Board.pro
+qmake ../../../../src/QSSWeb2Board/QSSWeb2Board.pro > /dev/null
 echo "running make..."
-make
+make > /dev/null
 cd ${baseDir}
 
 #copy application into packageDir
@@ -123,4 +121,5 @@ cd ${baseDir}
 cd build
 make clean
 cd ${baseDir}
+rm -fr build
 rm -fr ${packageDir}
