@@ -54,6 +54,22 @@ echo ${OS}
 echo ${VER}
 echo ${ARCH}
 
+if [ -z "${1}" ];then
+	echo "No OS introduced"
+else
+	OS=${1}
+fi
+
+if [ -z "${2}" ];then
+	echo "No VERSION introduced"
+else
+	VER=${2}
+fi
+
+echo ${OS}
+echo ${VER}
+echo ${ARCH}
+
 
 packageDir=qssweb2board_2.0-1${OS}${VER}_${ARCH}
 
@@ -62,6 +78,16 @@ echo ${packageDir}
 #create packageDir form template
 rm -fr ${packageDir}
 cp -fr qssweb2board_2.0-template ${packageDir}
+
+#Download arduino BQ version
+
+echo "Downloading arduino_BQ_Linux_${ARCH}.zip"
+cd ${packageDir}/opt/QSSWeb2Board/res/
+wget https://github.com/avalero/QSSWeb2Board/releases/download/18.16.4/arduino1.8.5_BQ_Linux_${ARCH}.zip
+unzip arduino_BQ_Linux_${ARCH}.zip
+rm arduino_BQ_Linux_${ARCH}.zip
+cd -
+
 
 #build application
 baseDir=$(pwd)
@@ -101,3 +127,4 @@ cd ${baseDir}
 cd build
 make clean
 cd ${baseDir}
+rm -fr ${packageDir}
