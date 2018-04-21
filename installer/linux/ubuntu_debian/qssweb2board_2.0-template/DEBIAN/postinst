@@ -5,20 +5,20 @@
 grep -q -F 'x-scheme-handler/qssweb2board=QSSWeb2Board-handler.desktop' /usr/share/applications/defaults.list || echo "x-scheme-handler/qssweb2board=QSSWeb2Board-handler.desktop" >> /usr/share/applications/defaults.list
 
 #Create app group and add user
-addgroup qssweb2board
-adduser $(logname) qssweb2board
+addgroup bitbloq
+adduser $(logname) bitbloq
 
 #Add user to dialout group
 adduser $(logname) dialout
 
 #FOR MAX MAD systems
 if id "alumno" >/dev/null 2>&1; then
-        adduser alumno qssweb2board
+        adduser alumno bitbloq
         adduser alumno dialout
 fi
 
 if id "profesor" >/dev/null 2>&1; then
-        adduser profesor qssweb2board
+        adduser profesor bitbloq
         adduser profesor dialout
 fi
 
@@ -29,11 +29,11 @@ export QSSWEB2BOARD_BUILD=/var/tmp/QSSWeb2Board/build/
 export QSSWEB2BOARD_KNOWNBOARDS=/etc/QSSWeb2Board/knownboards.json
 export QSSWEB2BOARD_ARDUINO=/opt/QSSWeb2Board/res/arduino/
 
-chown root:qssweb2board -R /opt/QSSWeb2Board/
-chown root:qssweb2board -R $QSSWEB2BOARD_SKETCHES
-chown root:qssweb2board -R $QSSWEB2BOARD_BUILD
-chown root:qssweb2board -R $QSSWEB2BOARD_KNOWNBOARDS
-chown root:qssweb2board -R $QSSWEB2BOARD_ARDUINO
+chown root:bitbloq -R /opt/QSSWeb2Board/
+chown root:bitbloq -R $QSSWEB2BOARD_SKETCHES
+chown root:bitbloq -R $QSSWEB2BOARD_BUILD
+chown root:bitbloq -R $QSSWEB2BOARD_KNOWNBOARDS
+chown root:bitbloq -R $QSSWEB2BOARD_ARDUINO
 
 chmod g+x ${QSSWEB2BOARD_ARDUINO}arduino
 chmod g+w -R $QSSWEB2BOARD_BUILD

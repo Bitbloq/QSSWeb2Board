@@ -94,7 +94,11 @@ cd -
 #build application
 baseDir=$(pwd)
 
-mkdir build > /dev/null
+if [ -d build ]; then
+  rm -fr build
+fi
+
+mkdir build
 cd build > /dev/null
 
 echo "running qmake on ../../../../src/QSSWeb2Board/QSSWeb2Board.pro"
@@ -118,9 +122,7 @@ sed -i -e "s/###OS###/${OS}/g" installer-${packageDir}.sh
 sed -i -e "s/###VERSION###/${VER}/g" installer-${packageDir}.sh
 sed -i -e "s/###ARCH###/${BITS}/g" installer-${packageDir}.sh
 
-
-
-echo sudo dpkg -i ${packageDir}.deb >> installer-${packageDir}.sh
+sed -i -e "s/###INSTALL_COMMAND###/sudo dpkg -i ${packageDir}.deb/g" installer-${packageDir}.sh
 
 zip -r installer-${packageDir}.zip ${packageDir}.deb installer-${packageDir}.sh
 
