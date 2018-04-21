@@ -20,8 +20,8 @@ sudo apt-get install qt5-default libqt5serialport5 libqt5websockets5 libqt5netwo
 #CLEAR SCREEN
 printf "\033c"
 echo "====== INSTALACIÓN FINALIZADA ======"
-echo "Si desea que otros usuarios usen Bitbloq deberán ser añadidos a los grupos bitbloq y dialout"
-echo "adduser USUARIO bitbloq"
+echo "Si desea que otros usuarios usen Bitbloq deberán ser añadidos a los grupos qssweb2board y dialout"
+echo "adduser USUARIO qssweb2board"
 echo "adduser USUARIO dialout"
 echo "===================================="
 echo "Por favor, reincie el sistema"
