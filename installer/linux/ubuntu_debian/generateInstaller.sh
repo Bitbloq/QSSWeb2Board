@@ -5,7 +5,7 @@
 
 echo "Instalando dependencias..."
 sudo apt-get update > /dev/null
-sudo apt-get install qtcreator libqt5websockets5-dev libqt5serialport5-dev build-essential zip unzip > /dev/null
+sudo apt-get install qt5-qmake qt5-default libqt5websockets5-dev libqt5serialport5-dev build-essential zip unzip
 
 #GET VERSION AND NAME OF OS
 if [ -f /etc/os-release ]; then
@@ -65,6 +65,14 @@ else
 fi
 
 echo "Creando instalador para ${OS} ${VER} ${ARCH}"
+while true; do
+    read -p "¿Es este tu sistema operativo? (SI/NO)" yn
+    case $yn in
+        [SI]* ) break;;
+        [NO]* ) exit;;
+        * ) echo "Por favor, contesta SI o NO";;
+    esac
+done
 
 
 packageDir=qssweb2board_2.0-1${OS}${VER}_${ARCH}
