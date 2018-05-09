@@ -13,12 +13,17 @@ while true; do
 done
 
 #install dependencies
+sudo apt-get update
+
 sudo apt-get install qt5-default libqt5serialport5 libqt5websockets5 libqt5network5 libqt5widgets5 libqt5gui5 libqt5core5a
 
 ###INSTALL_COMMAND###
 
 #CLEAR SCREEN
-printf "\033c"
+#printf "\033c"
+echo ""
+echo ""
+echo ""
 echo "====== INSTALACIÓN FINALIZADA ======"
 echo "Si desea que otros usuarios usen Bitbloq deberán ser añadidos a los grupos qssweb2board y dialout"
 echo "adduser USUARIO qssweb2board"
