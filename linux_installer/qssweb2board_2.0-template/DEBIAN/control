@@ -1,0 +1,9 @@
+Package: QSSWeb2Board
+Version: 2.0-1
+Section: base
+Priority: optional
+Architecture: ###ARCH###
+Depends: qt5-default (>= 5.3), libqt5serialport5 (>= 5.3), libqt5websockets5 (>= 5.3), libqt5network5 (>=5.3), libqt5widgets5 (>=5.3), libqt5gui5 (>=5.3), libqt5core5a (>=5.3)
+Maintainer: Alberto Valero <alberto.valero@bq.com>
+Description: QSSWeb2Board
+ Web Interface to verify upload and serial with Arduino Boards.
