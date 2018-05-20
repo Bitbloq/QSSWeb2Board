@@ -177,6 +177,8 @@ protected:
      */
     virtual QString makeVerifyCommand(){return "";};
 
+    virtual bool checkArduinoPath(QString arduinoPath){return false;};
+
     QProcess *proc; ///variable to handle command line commands.
 
     KnownBoards arduinoBoards; ///object holding known boards with their vendorID and productID
@@ -208,6 +210,7 @@ public:
     virtual ~LinuxArduinoHandler(){};
     virtual QString makeUploadCommand();
     virtual QString makeVerifyCommand();
+    virtual bool checkArduinoPath(QString arduinoPath);
 };
 
 /**
@@ -219,6 +222,7 @@ public:
     virtual ~WindowsArduinoHandler(){};
     virtual QString makeUploadCommand();
     virtual QString makeVerifyCommand();
+    virtual bool checkArduinoPath(QString arduinoPath);
 };
 
 /**
@@ -230,6 +234,7 @@ public:
     virtual ~MacArduinoHandler(){};
     virtual QString makeUploadCommand();
     virtual QString makeVerifyCommand();
+    virtual bool checkArduinoPath(QString arduinoPath);
 };
 
 #endif // ARDUINOHANDLER_H

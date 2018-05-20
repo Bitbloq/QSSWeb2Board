@@ -217,8 +217,8 @@ bool ArduinoHandler::setArduinoPath(QString s){
         arduinoPath=s;
     }
     qDebug() << "Arduino Path: " << arduinoPath << "arduino";
-    if(!QFile(arduinoPath + "arduino").exists()) throw(ArduinoNotFoundException("Arduino not found at " + arduinoPath));
 
+    if(! checkArduinoPath(arduinoPath) ) throw(ArduinoNotFoundException("Arduino not found at " + arduinoPath));
 
     //we must not create this directory because it should already exist
 
@@ -333,18 +333,6 @@ bool ArduinoHandler::autoDetectBoardPort(){
             }
         }
     }
-
-    /*for(int i=0; i< serialPorts.size(); i++){
-        //loop over all vendorID and productID of selected board to check whether the board is connected (compare con vendor and product of connected serial ports)
-        for (int j=0; j<arduinoBoards[boardNameID].size(); j++){
-            if( (arduinoBoards[boardNameID][j]["productID"] == qint16(serialPorts.at(i).productIdentifier())) &&
-                    (arduinoBoards[boardNameID][j]["vendorID"] == qint16(serialPorts.at(i).vendorIdentifier())) ){
-                //Yay found, save board port
-                QString _boardPort=serialPorts.at(i).systemLocation();
-                return setBoardPort(_boardPort); //this is not optimal because we are making extra checking inside the function (already done here)
-            }
-        }
-    }*/
 
     throw BoardNotDetectedException("BOARD NOT DETECTED: " + boardNameID);
     //board name not connected to the computer
@@ -571,3 +559,16 @@ QString WindowsArduinoHandler::makeUploadCommand(){
                                     sketchesBaseDir + sketchName + "/" + sketchName + "ino");
     return uploadCommand;
 }
+
+bool WindowsArduinoHandler::checkArduinoPath(QString arduinoPath){
+    return (QFile(arduinoPath + "arduino_debug.exe").exists());
+}
+
+bool MacArduinoHandler::checkArduinoPath(QString arduinoPath){
+    return (QFile(arduinoPath + "Arduino.app/Contents/MacOS/Arduino").exists());
+}
+
+bool LinuxArduinoHandler::checkArduinoPath(QString arduinoPath){
+    return (QFile(arduinoPath + "arduino").exists());
+}
+

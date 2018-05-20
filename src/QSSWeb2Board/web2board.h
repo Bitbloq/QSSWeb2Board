@@ -44,7 +44,6 @@ private:
 
     int messageID;
 
-
 #if (defined (Q_OS_WIN))
     WindowsArduinoHandler arduino;
 #elif (defined (Q_OS_LINUX))
