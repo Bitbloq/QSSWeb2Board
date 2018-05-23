@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
     //System Tray Icon
 
     QSystemTrayIcon trayIcon(&a);
-    trayIcon.setIcon(QIcon(QCoreApplication::applicationDirPath() + "/res/Web2board.ico"));
+    trayIcon.setIcon(QIcon(QCoreApplication::applicationDirPath() + "/res/qssweb2board.ico"));
     trayIcon.setToolTip("Web2Board");
 
     QMenu * menu = new QMenu();

@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=2.0.0
 Type=Application
-Icon=/opt/QSSWeb2Board/res/Web2board.ico
+Icon=/opt/QSSWeb2Board/res/qssweb2board.ico
 Exec=/opt/QSSWeb2Board/QSSWeb2Board
 StartupNotify=true
 Terminal=false
