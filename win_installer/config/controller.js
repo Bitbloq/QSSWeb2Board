@@ -30,7 +30,6 @@ Controller.prototype.TargetDirectoryPageCallback = function()
 {
     var currentPage = gui.currentPageWidget();
     currentPage.TargetDirectoryLineEdit.enabled = false;
-    currentPate.BrowseButton.setVisible(false);
     //currentPage.TargetDirectoryLineEdit.textChanged.connect(this, Controller.prototype.targetChanged);
     //currentPage.MessageLabel.text = "It is highly recommended to install on C:\QSSWeb2Board:";
     //Controller.prototype.targetChanged(currentPage.TargetDirectoryLineEdit.text);
