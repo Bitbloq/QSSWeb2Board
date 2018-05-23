@@ -11,7 +11,7 @@ function Component()
         console.log("Component(): isInstaller()");
 
 		installer.setAutomatedPageSwitchEnabled(false);
-		gui.pageWidgetByObjectName("TargetDirectoryPage").entered.connect(Component.prototype.targetDirectoryPageIsShown);
+		//gui.pageWidgetByObjectName("TargetDirectoryPage").entered.connect(Component.prototype.targetDirectoryPageIsShown);
 
 	    if (systemInfo.productType === "windows")
 	    {
