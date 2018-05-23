@@ -3,7 +3,7 @@ function Controller()
     if ( installer.isInstaller())
     {
         installer.setDefaultPageVisible(QInstaller.ComponentSelection, false);
-        //installer.setDefaultPageVisible(QInstaller.TargetDirectory, false);
+        installer.setDefaultPageVisible(QInstaller.TargetDirectory, false);
     }
 
     installer.setMessageBoxAutomaticAnswer("AuthorizationError", QMessageBox.Abort); // Do not show AuthorizationError default window
@@ -25,17 +25,19 @@ Controller.prototype.IntroductionPageCallback = function()
 }
 
 // Target Directory Page
-
+/*
 Controller.prototype.TargetDirectoryPageCallback = function()
 {
     var currentPage = gui.currentPageWidget();
     currentPage.TargetDirectoryLineEdit.enabled = false;
-    currentPage.buttons[0].visible = false;
+    currentPage.buttons[0].hide();
     //currentPage.TargetDirectoryLineEdit.textChanged.connect(this, Controller.prototype.targetChanged);
     //currentPage.MessageLabel.text = "It is highly recommended to install on C:\QSSWeb2Board:";
     //Controller.prototype.targetChanged(currentPage.TargetDirectoryLineEdit.text);
 }
+*/
 
+/*
 Controller.prototype.targetChanged = function (text)
 {
     var currentPage = gui.currentPageWidget();
@@ -49,7 +51,7 @@ Controller.prototype.targetChanged = function (text)
         currentPage.WarningLabel.text = "\n\tIt is highly recommeded to install on C:\QSSWeb2Board.\n\n\tChosing another directory may cause malfunctioning.";
     }
 }
-
+*/
 // Component Selection Page
 
 Controller.prototype.ComponentSelectionPageCallback = function()
