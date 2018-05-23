@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+	<Name>QSSWeb2Board</Name>
+	<Version>1.0.0</Version>
+	<Title>QSSWeb2Board Installer</Title>
+	<Publisher>BQ Educacion</Publisher>
+	<StartMenuDir>Bitbloq</StartMenuDir>
+	<TargetDir>C:/QSSWeb2Board</TargetDir>
+</Installer>
+
