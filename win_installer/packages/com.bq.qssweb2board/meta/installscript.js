@@ -91,6 +91,7 @@ Component.prototype.installationFinished = function()
         {
             installer.executeDetached("@TargetDir@/QSSWeb2Board.exe");
         }
+    }
 }
 
 changeLicenseLabels = function()
