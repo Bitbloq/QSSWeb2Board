@@ -3,7 +3,7 @@ function Controller()
     if ( installer.isInstaller())
     {
         installer.setDefaultPageVisible(QInstaller.ComponentSelection, false);
-        installer.setDefaultPageVisible(QInstaller.TargetDirectory, false);
+        //installer.setDefaultPageVisible(QInstaller.TargetDirectory, false);
     }
 
     installer.setMessageBoxAutomaticAnswer("AuthorizationError", QMessageBox.Abort); // Do not show AuthorizationError default window
@@ -30,6 +30,7 @@ Controller.prototype.TargetDirectoryPageCallback = function()
 {
     var currentPage = gui.currentPageWidget();
     currentPage.TargetDirectoryLineEdit.enabled = false;
+    currentPage.buttons[0].visible = false;
     //currentPage.TargetDirectoryLineEdit.textChanged.connect(this, Controller.prototype.targetChanged);
     //currentPage.MessageLabel.text = "It is highly recommended to install on C:\QSSWeb2Board:";
     //Controller.prototype.targetChanged(currentPage.TargetDirectoryLineEdit.text);
