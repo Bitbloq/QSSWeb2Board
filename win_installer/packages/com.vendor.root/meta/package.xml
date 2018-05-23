@@ -8,7 +8,7 @@
         <License name="MIT" file="license.txt"/>
     </Licenses>
     <Default>true</Default>
-    <Script>installscript.js</Script>
+    
     <UserInterfaces>
         <UserInterface>page.ui</UserInterface>
     </UserInterfaces>
