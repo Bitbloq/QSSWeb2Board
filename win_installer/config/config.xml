@@ -8,9 +8,9 @@
 	<StartMenuDir>Bitbloq</StartMenuDir>
 	<TargetDir>C:/QSSWeb2Board</TargetDir>
 	<AllowSpaceInPath>false</AllowSpaceInPath>
-	<InstallerApplicationIcon>bitbloq</InstallerApplicationIcon>
-	<InstallerWindowIcon>bitbloq</InstallerWindowIcon>
-	<Logo>bitbloq_64.png</Logo>
+	<InstallerApplicationIcon>qssweb2board</InstallerApplicationIcon>
+	<InstallerWindowIcon>qssweb2board</InstallerWindowIcon>
+	<Logo>qssweb2board.png</Logo>
     <WizardStyle>Modern</WizardStyle>
     <ControlScript>controller.js</ControlScript>
 	
