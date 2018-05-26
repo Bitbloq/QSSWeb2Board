@@ -166,6 +166,9 @@ int main(int argc, char *argv[])
     GitHubRestApiClient git;
     QMap<QString,QString> versionInfo = git.getLatestTagVersion("bq","bitbloqLibs");
     qInfo() << "BitbloqLibs version: " << versionInfo;
+    qInfo() << "Downloading " << versionInfo["zip"];
+    qInfo() << git.downloadFile(versionInfo["zip"]);
+
     return app.exec();
 /*
     RunGuard guard( "asdfghjkl" );

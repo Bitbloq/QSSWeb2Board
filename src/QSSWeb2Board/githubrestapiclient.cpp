@@ -20,9 +20,9 @@ void GitHubRestApiClient::setTimeOut()
 }
 
 
-QJsonDocument GitHubRestApiClient::get(QUrl url, int timeout){
+QJsonDocument GitHubRestApiClient::get(QUrl url, QString header, int timeout){
     QNetworkRequest request(url);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    request.setHeader(QNetworkRequest::ContentTypeHeader, header);
     QNetworkAccessManager nam;
     QNetworkReply * reply = nam.get(request);
 
@@ -45,11 +45,66 @@ QJsonDocument GitHubRestApiClient::get(QUrl url, int timeout){
     }
 }
 
+
+bool GitHubRestApiClient::saveToDisk(const QString &filename, QIODevice *data)
+{
+    QFile file(filename);
+    if (!file.open(QIODevice::WriteOnly)) {
+        fprintf(stderr, "Could not open %s for writing: %s\n",
+                qPrintable(filename),
+                qPrintable(file.errorString()));
+        return false;
+    }
+
+    file.write(data->readAll());
+    file.close();
+
+    return true;
+}
+
+
+
+QString GitHubRestApiClient::downloadFile(QString url,int timeout){
+
+    const QUrl qurl(url);
+    qInfo() << url;
+
+    QNetworkRequest request(qurl);
+    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+    QNetworkAccessManager manager;
+    QNetworkReply * reply = manager.get(request);
+
+    _timeout=false;
+    _timer->start(timeout);
+
+    while(!_timeout){
+        qApp->processEvents();
+        if(reply->isFinished()) break;
+    }
+
+    _timeout = false;
+
+    if(reply->isFinished()){
+        if (reply->error()) {
+                fprintf(stderr, "Download of %s failed: %s\n",
+                        qurl.toEncoded().constData(),
+                        qPrintable(reply->errorString()));
+                return "";
+        }else{
+            QString fileName = "/home/avalero/test.zip";
+            saveToDisk(fileName,reply);
+            return fileName;
+        }
+    }else{
+        return "";
+    }
+}
+
 QMap<QString,QString> GitHubRestApiClient::getLatestTagVersion(QString owner, QString project, int timeout)
 {
     QUrl url("https://api.github.com/repos/" + owner +"/" + project + "/tags");
     qInfo() << url.toString();
-    QJsonDocument json = get(url,timeout);
+    QJsonDocument json = get(url, "application/json", timeout);
     if(json.isEmpty()){
         QMap<QString, QString> r_value;
         r_value.insert("Error","Timeout");
@@ -68,7 +123,7 @@ QMap<QString,QString> GitHubRestApiClient::getLatestReleaseVersion(QString owner
 {
     QUrl url("https://api.github.com/repos/" + owner +"/" + project + "/releases/latest");
     qInfo() << url.toString();
-    QJsonDocument json = get(url,timeout);
+    QJsonDocument json = get(url,"application/json", timeout);
     if(json.isEmpty()){
         QMap<QString, QString> r_value;
         r_value.insert("Error","Timeout");
