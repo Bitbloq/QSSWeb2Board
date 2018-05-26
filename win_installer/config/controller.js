@@ -20,7 +20,7 @@ Controller.prototype.IntroductionPageCallback = function()
     if ( installer.isInstaller())
     {
         currentPage.title = "QSSWeb2Board Installer"
-        currentPage.MessageLabel.text = "Welcome to QSSWeb2Board installer.\n\nThis installer will guide you through the software installation needed to use Bitbloq with QSSWeb2Board.";
+        currentPage.MessageLabel.text = "Welcome to QSSWeb2Board installer.\n\nThis installer will guide you through the software installation needed to use Bitbloq with QSSWeb2Board.\n\n QSSWeb2Board will be installed in C:\QSSWeb2Board .";
     }
 }
 
@@ -54,17 +54,18 @@ Controller.prototype.targetChanged = function (text)
 */
 // Component Selection Page
 
+/*
 Controller.prototype.ComponentSelectionPageCallback = function()
 {
     console.log("Controller.prototype.ComponentSelectionPageCallback");
 }
+*/
 
 // License Agreement Page
 
 Controller.prototype.LicenseAgreementPageCallback = function()
 {
     console.log("Controller.prototype.LicenseAgreementPageCallback");
-
     installer.setValue("RemoveTargetDir", true); // Allow uninstaller remove target directory
 }
 
@@ -90,11 +91,12 @@ Controller.prototype.PerformInstallationPageCallback = function()
 Controller.prototype.FinishedPageCallback = function()
 {
     console.log("Controller.prototype.FinishedPageCallback");
-
+/*
     if (installer.isUpdater())
     {
         console.log("Controller.prototype.FinishedPageCallback(): Skipping page");
 
         gui.clickButton(buttons.FinishButton);
     }
+*/
 }

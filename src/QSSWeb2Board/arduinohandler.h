@@ -177,7 +177,7 @@ protected:
      */
     virtual QString makeVerifyCommand(){return "";};
 
-    virtual bool checkArduinoPath(QString arduinoPath){return false;};
+    virtual bool checkArduinoPath(QString arduinoPath){arduinoPath=""; return false;};
 
     QProcess *proc; ///variable to handle command line commands.
 

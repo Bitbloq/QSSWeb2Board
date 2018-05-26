@@ -36,7 +36,7 @@ Component.prototype.createOperations = function()
 Component.prototype.registerApp = function(){
 	try{
 		// call the base create operations function
-		component.addElevatedOperation("GlobalConfig", "company", "Application", "mykey", "myvalue");
+		//component.addElevatedOperation("GlobalConfig", "company", "Application", "mykey", "myvalue");
 	} catch (e){
 		print(e);
 	}

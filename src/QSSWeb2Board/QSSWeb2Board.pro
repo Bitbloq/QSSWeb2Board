@@ -2,6 +2,7 @@ QT += core \
       serialport \
       websockets \
       testlib \
+      network \
       widgets
 
 QT -= gui
@@ -24,7 +25,8 @@ SOURCES += main.cpp \
     commsprotocol.cpp \
     arduinoserialmonitor.cpp \
     runguard.cpp \
-    knownboards.cpp
+    knownboards.cpp \
+    githubrestapiclient.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -45,7 +47,8 @@ HEADERS += \
     web2board.h \
     commsprotocol.h \
     arduinoserialmonitor.h \
-    runguard.h
+    runguard.h \
+    githubrestapiclient.h
 
 DISTFILES += \
     res/knownboards.json

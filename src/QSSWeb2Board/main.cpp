@@ -5,6 +5,8 @@
 #include <QSystemTrayIcon>
 #include <QMenu>
 
+#include "githubrestapiclient.h"
+
 #include "runguard.h"
 #include "sslserver.h"
 
@@ -159,6 +161,13 @@ int main(void){
 
 int main(int argc, char *argv[])
 {
+
+    QApplication app(argc, argv);
+    GitHubRestApiClient git;
+    QMap<QString,QString> versionInfo = git.getLatestTagVersion("bq","bitbloqLibs");
+    qInfo() << "BitbloqLibs version: " << versionInfo;
+    return app.exec();
+/*
     RunGuard guard( "asdfghjkl" );
     if( !guard.tryToRun() ){
         qInfo() << "Another instance of QSSWeb2Board is running";
@@ -185,4 +194,5 @@ int main(int argc, char *argv[])
     SSLServer server(9867);
     Q_UNUSED(server);
     return a.exec();
+    */
 }

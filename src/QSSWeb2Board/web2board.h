@@ -8,6 +8,7 @@
 #include <QJsonObject>
 
 #include "arduinohandler.h"
+#include "githubrestapiclient.h"
 
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
 
@@ -29,6 +30,9 @@ public Q_SLOTS:
     void sendIncomingSerialToClient(QString message);
 
 private:
+
+    GitHubRestApiClient git;
+
     void processCommands();
 
     void sendVerifying();

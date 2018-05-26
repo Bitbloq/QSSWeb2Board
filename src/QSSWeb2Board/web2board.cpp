@@ -83,6 +83,13 @@ void Web2Board::processCommands(){
             sendSuccess(jsonMessage,QJsonValue("2.1.3"));
 
         }else if(function == CommsProtocol::LIBVERSION){
+            //TODO
+
+            QMap<QString,QString> versionInfo = git.getLatestReleaseVersion("bq","bitbloqLibs");
+            qInfo() << "BitbloqLibs version: " << versionInfo;
+
+            //TODO
+
             sendSuccess(jsonMessage,QJsonValue());
 
         }else if(function == CommsProtocol::VERIFY){
