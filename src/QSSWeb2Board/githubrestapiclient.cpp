@@ -3,7 +3,7 @@
 GitHubRestApiClient::GitHubRestApiClient():QObject()
 {
     _timer = new QTimer(this);
-    QObject::connect(_timer , SIGNAL(_timeout()), this ,SLOT(setTimeOut()));
+    QObject::connect(_timer , SIGNAL(timeout()), this ,SLOT(setTimeOut()));
 }
 
 GitHubRestApiClient::~GitHubRestApiClient()
@@ -20,7 +20,7 @@ void GitHubRestApiClient::setTimeOut()
 }
 
 
-QJsonDocument GitHubRestApiClient::get(QUrl url, QString header, int timeout){
+QJsonDocument GitHubRestApiClient::get(const QUrl &url, const QString &header, int timeout){
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, header);
     QNetworkAccessManager nam;
@@ -46,12 +46,20 @@ QJsonDocument GitHubRestApiClient::get(QUrl url, QString header, int timeout){
 }
 
 
-bool GitHubRestApiClient::saveToDisk(const QString &filename, QIODevice *data)
+bool GitHubRestApiClient::saveToDisk(const QString & dir, QString &filename, QIODevice *data)
 {
-    QFile file(filename);
+    qInfo() << QString ("Saving to " + dir + "/" + filename);
+    if(!QDir().exists(dir)){
+        QDir().mkdir(dir);
+    }
+
+    QString targetFileName = dir + "/" + filename;
+
+    QFile file(targetFileName);
+
     if (!file.open(QIODevice::WriteOnly)) {
         fprintf(stderr, "Could not open %s for writing: %s\n",
-                qPrintable(filename),
+                qPrintable(targetFileName),
                 qPrintable(file.errorString()));
         return false;
     }
@@ -59,24 +67,31 @@ bool GitHubRestApiClient::saveToDisk(const QString &filename, QIODevice *data)
     file.write(data->readAll());
     file.close();
 
+    filename = targetFileName;
+
+    qInfo()<< "Done";
     return true;
 }
 
 
 
-QString GitHubRestApiClient::downloadFile(QString url,int timeout){
+QString GitHubRestApiClient::downloadFile(QString url, QString path, QString filename, int timeout){
 
+    qInfo() << "Downloading " << url;
     const QUrl qurl(url);
     qInfo() << url;
 
     QNetworkRequest request(qurl);
+    //github redirects the request, so this attribute must be set to true, otherwise retuns nothing
     request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
     QNetworkAccessManager manager;
     QNetworkReply * reply = manager.get(request);
 
+
     _timeout=false;
     _timer->start(timeout);
 
+    //if download takes more time that set on timeout cancel download
     while(!_timeout){
         qApp->processEvents();
         if(reply->isFinished()) break;
@@ -91,48 +106,47 @@ QString GitHubRestApiClient::downloadFile(QString url,int timeout){
                         qPrintable(reply->errorString()));
                 return "";
         }else{
-            QString fileName = "/home/avalero/test.zip";
-            saveToDisk(fileName,reply);
-            return fileName;
+            saveToDisk(path, filename,reply);
+            return filename;
         }
     }else{
         return "";
     }
 }
 
-QMap<QString,QString> GitHubRestApiClient::getLatestTagVersion(QString owner, QString project, int timeout)
+QJsonObject GitHubRestApiClient::getLatestTagVersion(QString owner, QString project, int timeout)
 {
     QUrl url("https://api.github.com/repos/" + owner +"/" + project + "/tags");
     qInfo() << url.toString();
     QJsonDocument json = get(url, "application/json", timeout);
     if(json.isEmpty()){
-        QMap<QString, QString> r_value;
+        QJsonObject r_value;
         r_value.insert("Error","Timeout");
         return r_value;
     }else{
-        QMap<QString, QString> r_value;
-        r_value.insert("version",json[0]["name"].toString());
-        r_value.insert("zip" , json[0]["zipball_url"].toString());
-        r_value.insert("tar", json[0]["tarball_url"].toString());
+        QJsonObject r_value;
+        r_value.insert("version",json.array().at(0).toObject().value("name").toString());
+        r_value.insert("zipball_url" , json.array().at(0).toObject().value("zipball_url").toString());
+        r_value.insert("tarball_url", json.array().at(0).toObject().value("tarball_url").toString());
         return r_value;
     }
 }
 
 
-QMap<QString,QString> GitHubRestApiClient::getLatestReleaseVersion(QString owner, QString project, int timeout)
+QJsonObject GitHubRestApiClient::getLatestReleaseVersion(QString owner, QString project, int timeout)
 {
     QUrl url("https://api.github.com/repos/" + owner +"/" + project + "/releases/latest");
     qInfo() << url.toString();
     QJsonDocument json = get(url,"application/json", timeout);
     if(json.isEmpty()){
-        QMap<QString, QString> r_value;
+        QJsonObject r_value;
         r_value.insert("Error","Timeout");
         return r_value;
     }else{
-        QMap<QString, QString> r_value;
-        r_value.insert("version",json["tag_name"].toString());
-        r_value.insert("zip" , json["zipball_url"].toString());
-        r_value.insert("tar", json["tarball_url"].toString());
+        QJsonObject r_value;
+        r_value.insert("version",json.object().value("tag_name").toString());
+        r_value.insert("zipball_url" , json.object().value("zipball_url").toString());
+        r_value.insert("tarball_url", json.object().value("tarball_url").toString());
         return r_value;
     }
 }

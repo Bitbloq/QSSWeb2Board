@@ -2,7 +2,7 @@
 #include <QtWebSockets/QWebSocket>
 
 #include "commsprotocol.h"
-
+#include "bitbloqlibsupdater.h"
 
 Web2Board::Web2Board(QObject *parent):
     QObject(parent)
@@ -84,9 +84,12 @@ void Web2Board::processCommands(){
 
         }else if(function == CommsProtocol::LIBVERSION){
             //TODO
+            BitbloqLibsUpdater libs;
+            if (libs.existsNewVersion()){
+                //SEND UPDATING TO BITBLOQ
+                libs.update();
+            }
 
-            QMap<QString,QString> versionInfo = git.getLatestReleaseVersion("bq","bitbloqLibs");
-            qInfo() << "BitbloqLibs version: " << versionInfo;
 
             //TODO
 

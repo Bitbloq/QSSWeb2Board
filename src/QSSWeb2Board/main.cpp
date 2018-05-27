@@ -6,6 +6,7 @@
 #include <QMenu>
 
 #include "githubrestapiclient.h"
+#include "bitbloqlibsupdater.h"
 
 #include "runguard.h"
 #include "sslserver.h"
@@ -163,11 +164,12 @@ int main(int argc, char *argv[])
 {
 
     QApplication app(argc, argv);
-    GitHubRestApiClient git;
-    QMap<QString,QString> versionInfo = git.getLatestTagVersion("bq","bitbloqLibs");
-    qInfo() << "BitbloqLibs version: " << versionInfo;
-    qInfo() << "Downloading " << versionInfo["zip"];
-    qInfo() << git.downloadFile(versionInfo["zip"]);
+    BitbloqLibsUpdater libs;
+
+    if (libs.existsNewVersion()){
+        libs.update();
+    }
+
 
     return app.exec();
 /*
