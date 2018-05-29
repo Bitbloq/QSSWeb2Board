@@ -22,7 +22,7 @@ bool BitbloqLibsUpdater::existsNewVersion()
     jsonFile.close();
 
     __localVersionInfo = QJsonDocument::fromJson(val.toUtf8()).object();
-    __remoteVersionInfo = __git.getLatestTagVersion("bq","bitbloqLibs");
+    __remoteVersionInfo = __git.getLatestReleaseVersion("bq","bitbloqLibs");
 
 
     qInfo() << "Current bitbloqLibs version " << __remoteVersionInfo["version"].toString();

@@ -83,15 +83,12 @@ void Web2Board::processCommands(){
             sendSuccess(jsonMessage,QJsonValue("2.1.3"));
 
         }else if(function == CommsProtocol::LIBVERSION){
-            //TODO
-            //BitbloqLibsUpdater libs;
-            //if (libs.existsNewVersion()){
-                //SEND UPDATING TO BITBLOQ
-            //    libs.update();
-            //}
 
+            BitbloqLibsUpdater libs;
+            if (libs.existsNewVersion()){
+                libs.update();
+            }
 
-            //TODO
 
             sendSuccess(jsonMessage,QJsonValue());
 
