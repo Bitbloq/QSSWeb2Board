@@ -84,11 +84,11 @@ void Web2Board::processCommands(){
 
         }else if(function == CommsProtocol::LIBVERSION){
             //TODO
-            BitbloqLibsUpdater libs;
-            if (libs.existsNewVersion()){
+            //BitbloqLibsUpdater libs;
+            //if (libs.existsNewVersion()){
                 //SEND UPDATING TO BITBLOQ
-                libs.update();
-            }
+            //    libs.update();
+            //}
 
 
             //TODO
