@@ -14,5 +14,7 @@ QT Secure Web Socket for compiling and loading online generated Arduino code int
     QFile certFile(QStringLiteral(":/res/www.web2board.es.crt"));
     QFile keyFile(QStringLiteral(":/res/www.web2board.es.key"));
   
-  qmake QSSWeb2Board.pro
-  make
+## Build
+  
+    qmake QSSWeb2Board.pro
+    make
