@@ -42,6 +42,8 @@ public:
     static const QString FILE_NOT_CREATED_ERROR; ///String to define File not created Error (on Error Type)
     static const QString DIR_NOT_CREATED_ERROR; ///String to define Directory not created Error (on Error Type)
     static const QString SERIAL_PORT_NOT_OPEN; ///String to define Serial Port not opened Error (on Error Type)
+    static const QString CANNOT_MOVE_ARDUINO_LIBS; ///String to define Serial Port not opened Error (on Error Type)
+
 
     static const QString STATUS_WORKING;
     static const QString STATUS_SUCCESS;

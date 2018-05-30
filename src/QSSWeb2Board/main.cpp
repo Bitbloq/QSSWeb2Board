@@ -9,10 +9,13 @@
 
 #include "runguard.h"
 #include "sslserver.h"
+#include "unzipper.h"
 
 
 int main(int argc, char *argv[])
 {
+    UnZipper::unzip("/home/avalero/file.zip", "/home/avalero/res");
+
     RunGuard guard( "asdfghjkl" );
     if( !guard.tryToRun() ){
         qInfo() << "Another instance of QSSWeb2Board is running";
@@ -21,7 +24,7 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
-
+/*
     //System Tray Icon
 
     QSystemTrayIcon trayIcon(&a);
@@ -38,5 +41,7 @@ int main(int argc, char *argv[])
 
     SSLServer server(9867);
     Q_UNUSED(server);
+*/
+
     return a.exec();
 }

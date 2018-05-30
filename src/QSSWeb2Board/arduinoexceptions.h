@@ -166,4 +166,19 @@ class SerialPortOpenException: public QException{
         const QString errorType;
 };
 
+/**
+ * @brief The CannotMoveLibraryFiles class
+ * Exception thrown when the library files cannot be moved from tmp to arduino dir (ususaly you have no write permissions)
+ */
+class CannotMoveTmpLibsException: public QException{
+    public:
+        CannotMoveTmpLibsException(const QString& s):
+            message(s),errorType(CommsProtocol::SERIAL_PORT_NOT_OPEN){}
+        void raise() const { throw *this; }
+        CannotMoveTmpLibsException *clone() const { return new CannotMoveTmpLibsException(*this); }
+
+        const QString message;
+        const QString errorType;
+};
+
 #endif // ARDUINOEXCEPTIONS_H

@@ -27,7 +27,8 @@ SOURCES += main.cpp \
     runguard.cpp \
     knownboards.cpp \
     githubrestapiclient.cpp \
-    bitbloqlibsupdater.cpp
+    bitbloqlibsupdater.cpp \
+    unzipper.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -50,7 +51,11 @@ HEADERS += \
     arduinoserialmonitor.h \
     runguard.h \
     githubrestapiclient.h \
-    bitbloqlibsupdater.h
+    bitbloqlibsupdater.h \
+    unzipper.h
+
+
+
 
 DISTFILES += \
     res/knownboards.json
