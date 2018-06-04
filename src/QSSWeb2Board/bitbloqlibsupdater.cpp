@@ -17,7 +17,7 @@ bool BitbloqLibsUpdater::existsNewVersion()
     jsonFile.setFileName(__jsonFilePath);
     qInfo() << "Versions file " << __jsonFilePath;
 
-    __remoteVersionInfo = __git.getLatestTagVersion("bq","bitbloqLibs");
+    __remoteVersionInfo = __git.getLatestReleaseVersion("bq","bitbloqLibs");
 
     //if local file does not exist return existing new version
     if(!jsonFile.exists()){
@@ -62,7 +62,6 @@ bool BitbloqLibsUpdater::update(){
     QString arduinoLibrariesDir = __arduinoDir + "libraries";
     qInfo()  << "Removing former libs version " << arduinoLibrariesDir;
     QDir(arduinoLibrariesDir).removeRecursively();
-    QDir(arduinoLibrariesDir).rmpath(arduinoLibrariesDir);
 
     qInfo() << "Removed "  << arduinoLibrariesDir;
 

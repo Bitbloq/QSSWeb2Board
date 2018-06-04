@@ -14,7 +14,7 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+  /*  QApplication a(argc, argv);
 
     LinuxArduinoHandler arduino;
     qInfo() << "Arduino Default dir: " << arduino.getArduinoDefaultDir();
@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
         libs.update();
     }
 
-    /*
+    */
     RunGuard guard( "asdfghjkl" );
     if( !guard.tryToRun() ){
         qInfo() << "Another instance of QSSWeb2Board is running";
@@ -48,7 +48,6 @@ int main(int argc, char *argv[])
 
     SSLServer server(9867);
     Q_UNUSED(server);
-*/
 
     return a.exec();
 }

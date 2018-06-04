@@ -30,8 +30,10 @@ chmod a+w -R $QSSWEB2BOARD_BUILD
 chmod a+w -R $QSSWEB2BOARD_SKETCHES
 chmod a+r -R $QSSWEB2BOARD_ARDUINO
 chmod a+wx -R ${QSSWEB2BOARD_ARDUINO}hardware/tools/avr/*
-chmod g+w -R ${QSSWEB2BOARD_ARDUINO}libraries/
-chmod g+w ${QSSWEB2BOARD_ARDUINO}
+chmod a+w -R ${QSSWEB2BOARD_ARDUINO}libraries/
+chmod a+w -R /opt/QSSWeb2Board/tmp/
+chmod a+w /opt/QSSWeb2Board/res/
+chmod a+w ${QSSWEB2BOARD_ARDUINO}
 
 #require reboot
 /usr/share/update-notifier/notify-reboot-required
