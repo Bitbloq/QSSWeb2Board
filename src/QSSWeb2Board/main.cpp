@@ -14,8 +14,16 @@
 
 int main(int argc, char *argv[])
 {
-    UnZipper::unzip("/home/avalero/file.zip", "/home/avalero/res");
+    QApplication a(argc, argv);
 
+    LinuxArduinoHandler arduino;
+    qInfo() << "Arduino Default dir: " << arduino.getArduinoDefaultDir();
+    BitbloqLibsUpdater libs(arduino.getArduinoDefaultDir());
+    if (libs.existsNewVersion()){
+        libs.update();
+    }
+
+    /*
     RunGuard guard( "asdfghjkl" );
     if( !guard.tryToRun() ){
         qInfo() << "Another instance of QSSWeb2Board is running";
@@ -24,7 +32,6 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
-/*
     //System Tray Icon
 
     QSystemTrayIcon trayIcon(&a);

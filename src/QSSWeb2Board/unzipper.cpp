@@ -11,7 +11,7 @@ void UnZipper::unzip(QString filename, QString targetdir){
 #if (defined (Q_OS_WIN))
 
 #elif (defined (Q_OS_LINUX))
-    QString command = "unzip -of " + filename + " -d " + targetdir;
+    QString command = "unzip -o " + filename + " -d " + targetdir;
 #elif (defined (Q_OS_MAC))
 
 #endif

@@ -26,6 +26,22 @@ class VerifyException: public QException{
 };
 
 /**
+ * @brief The GetTimeOutException class
+ * Exception thrown when the HTTP GET exceeds defined timeout
+ */
+class GetTimeOutException: public QException{
+    public:
+        GetTimeOutException(const QString& s):
+            errorType(CommsProtocol::GET_TIMEOUT),message(s){}
+        void raise() const { throw *this; }
+        GetTimeOutException *clone() const { return new GetTimeOutException(*this); }
+
+        const QString errorType;
+        const QString message;
+};
+
+
+/**
  * @brief The UploadException class
  * Exception thrown when the upload process of a compiled sketch fails.
  */

@@ -175,75 +175,66 @@ void Web2Board::processCommands(){
         }else{
             //UNKNOWN MESSAGE
         }
-
-
     }catch(FileNotCreatedException &e){
         QJsonObject replyObject;
         replyObject.insert("stdErr",QJsonValue(e.message));
         replyObject.insert("title",e.errorType);
         sendNotSuccess(jsonMessage,QJsonValue(replyObject));
         qCritical()<<e.message;
-
     }catch(DirNotCreatedException &e){
         QJsonObject replyObject;
         replyObject.insert("stdErr",QJsonValue(e.message));
         replyObject.insert("title",e.errorType);
         sendNotSuccess(jsonMessage,QJsonValue(replyObject));
         qCritical()<<e.message;
-
-
     }catch(BoardNotKnownException &e){
         QJsonObject replyObject;
         replyObject.insert("stdErr",QJsonValue(e.message));
         replyObject.insert("title",e.errorType);
         sendNotSuccess(jsonMessage,QJsonValue(replyObject));
         qCritical()<<e.message;
-
     }catch(FileNotFoundException &e){
         QJsonObject replyObject;
         replyObject.insert("stdErr",QJsonValue(e.message));
         replyObject.insert("title",e.errorType);
         sendNotSuccess(jsonMessage,QJsonValue(replyObject));
         qCritical()<<e.message;
-
     }catch(BoardNotDetectedException &e){
         QJsonObject replyObject;
         replyObject.insert("stdErr",QJsonValue(e.message));
         replyObject.insert("title",e.errorType);
         sendNotSuccess(jsonMessage,QJsonValue(replyObject));
         qCritical()<<e.message;
-
     }catch(BoardNotSetException &e){
         QJsonObject replyObject;
         replyObject.insert("stdErr",QJsonValue(e.message));
         replyObject.insert("title",e.errorType);
         sendNotSuccess(jsonMessage,QJsonValue(replyObject));
         qCritical()<<e.message;
-
     }catch(SketchNotSetException &e){
         QJsonObject replyObject;
         replyObject.insert("stdErr",QJsonValue(e.message));
         replyObject.insert("title",e.errorType);
         sendNotSuccess(jsonMessage,QJsonValue(replyObject));
         qCritical()<<e.message;
-
     }catch(UploadException &e){
         QJsonObject replyObject;
         replyObject.insert("stdErr",QJsonValue(e.message));
         replyObject.insert("title",e.errorType);
         sendNotSuccess(jsonMessage,QJsonValue(replyObject));
         qCritical()<<e.message;
-
     }catch(VerifyException &e){
         QJsonObject error = makeVerifyError(1,1,"arduino",e.message);
         sendNotSuccess(jsonMessage,QJsonValue(error));
         qCritical()<<e.message;
-
     }catch(ArduinoNotFoundException &e){
         QJsonObject error = makeVerifyError(1,1,"arduino",e.message);
         sendNotSuccess(jsonMessage,QJsonValue(error));
         qCritical()<<e.message;
     }catch(CannotMoveTmpLibsException &e){
+        sendNotSuccess(jsonMessage,e.message);
+        qCritical()<<e.message;
+    }catch(GetTimeOutException &e){
         sendNotSuccess(jsonMessage,e.message);
         qCritical()<<e.message;
     }
