@@ -46,8 +46,10 @@ bool BitbloqLibsUpdater::update(){
 
     qInfo() << "Updating to new version";
 
-    //REMOVE PREVIOUS TMP FILES
-    QDir(__tmpDir).removeRecursively();
+    //CREATE TMP DIR IF IT DOES NOT EXIST
+    if(!QDir(__tmpDir).exists()){
+        QDir().mkdir(__tmpDir);
+    }
 
     //DOWNLOAD ZIP FILE
     __git.downloadFile(__remoteVersionInfo["zipball_url"].toString(),
@@ -105,7 +107,8 @@ bool BitbloqLibsUpdater::update(){
     jsonFile.close();
 
     //REMOVE TMP FILES
-    QDir(__tmpDir).removeRecursively();
+    QFile(zipfilename).remove();
+    QDir(temp_LibsDir).removeRecursively();
 
     return true;
 }
