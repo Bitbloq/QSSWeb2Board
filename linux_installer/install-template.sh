@@ -15,7 +15,7 @@ done
 #install dependencies
 sudo apt-get update
 
-sudo apt-get install qt5-default libqt5serialport5 libqt5websockets5 libqt5network5 libqt5widgets5 libqt5gui5 libqt5core5a
+sudo apt-get install qt5-default libqt5serialport5 libqt5websockets5 libqt5network5 libqt5widgets5 libqt5gui5 libqt5core5a unzip zip
 
 ###INSTALL_COMMAND###
 

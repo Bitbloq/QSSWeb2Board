@@ -17,6 +17,7 @@ private:
     QJsonObject __remoteVersionInfo;
     QString __jsonFilePath;
     QString __arduinoDir;
+    QString __tmpDir;
 };
 
 #endif // BITBLOQLIBSUPDATER_H
