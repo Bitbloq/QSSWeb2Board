@@ -75,7 +75,7 @@ bool BitbloqLibsUpdater::update(){
     QDirIterator it(temp_targetDir);
     while (it.hasNext()) {
         QString foundDir = it.next();
-        if(foundDir.contains("Bitbloq-bitbloqLibs"))
+        if(foundDir.contains("-bitbloqLibs-"))
             temp_LibsDir = foundDir;
 
     }
