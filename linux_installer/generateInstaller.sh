@@ -85,7 +85,7 @@ cp -fr qssweb2board_2.0-template ${packageDir}
 
 echo "Downloading arduino_BQ_Linux_${ARCH}.zip"
 cd ${packageDir}/opt/QSSWeb2Board/res/
-wget https://github.com/avalero/QSSWeb2Board/releases/download/18.16.4/arduino1.8.5_BQ_Linux_${ARCH}.zip
+wget https://github.com/bq/QSSWeb2Board/releases/download/18.04.16/arduino1.8.5_BQ_Linux_${ARCH}.zip
 unzip arduino1.8.5_BQ_Linux_${ARCH}.zip > /dev/null
 rm arduino1.8.5_BQ_Linux_${ARCH}.zip > /dev/null
 cd -

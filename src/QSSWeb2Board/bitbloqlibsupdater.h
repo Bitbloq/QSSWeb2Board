@@ -7,7 +7,7 @@
 class BitbloqLibsUpdater
 {
 public:
-    BitbloqLibsUpdater();
+    BitbloqLibsUpdater(QString arduinoDir);
     bool existsNewVersion();
     bool update();
 
@@ -16,6 +16,7 @@ private:
     QJsonObject __localVersionInfo;
     QJsonObject __remoteVersionInfo;
     QString __jsonFilePath;
+    QString __arduinoDir;
 };
 
 #endif // BITBLOQLIBSUPDATER_H

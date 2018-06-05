@@ -349,6 +349,7 @@ int ArduinoHandler::verify(){
 
     QString output = QString(proc->readAllStandardError());
     int exitCode = proc->exitCode();
+    proc->close();
     switch(exitCode){
     case 0:
         qDebug()<<"Verify OK";
@@ -378,7 +379,7 @@ int ArduinoHandler::upload()
 
     QString errorOutput(proc->readAllStandardError());
     int exitCode = proc->exitCode();
-
+    proc->close();
     switch(exitCode){
     case 0:
         qDebug()<<"Upload OK";

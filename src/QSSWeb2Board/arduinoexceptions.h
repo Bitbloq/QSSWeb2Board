@@ -26,6 +26,22 @@ class VerifyException: public QException{
 };
 
 /**
+ * @brief The GetTimeOutException class
+ * Exception thrown when the HTTP GET exceeds defined timeout
+ */
+class GetTimeOutException: public QException{
+    public:
+        GetTimeOutException(const QString& s):
+            errorType(CommsProtocol::GET_TIMEOUT),message(s){}
+        void raise() const { throw *this; }
+        GetTimeOutException *clone() const { return new GetTimeOutException(*this); }
+
+        const QString errorType;
+        const QString message;
+};
+
+
+/**
  * @brief The UploadException class
  * Exception thrown when the upload process of a compiled sketch fails.
  */
@@ -161,6 +177,21 @@ class SerialPortOpenException: public QException{
             message(s),errorType(CommsProtocol::SERIAL_PORT_NOT_OPEN){}
         void raise() const { throw *this; }
         SerialPortOpenException *clone() const { return new SerialPortOpenException(*this); }
+
+        const QString message;
+        const QString errorType;
+};
+
+/**
+ * @brief The CannotMoveLibraryFiles class
+ * Exception thrown when the library files cannot be moved from tmp to arduino dir (ususaly you have no write permissions)
+ */
+class CannotMoveTmpLibsException: public QException{
+    public:
+        CannotMoveTmpLibsException(const QString& s):
+            message(s),errorType(CommsProtocol::SERIAL_PORT_NOT_OPEN){}
+        void raise() const { throw *this; }
+        CannotMoveTmpLibsException *clone() const { return new CannotMoveTmpLibsException(*this); }
 
         const QString message;
         const QString errorType;

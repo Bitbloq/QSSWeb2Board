@@ -1,4 +1,5 @@
 #include "githubrestapiclient.h"
+#include "arduinoexceptions.h"
 
 GitHubRestApiClient::GitHubRestApiClient():QObject()
 {
@@ -41,7 +42,8 @@ QJsonDocument GitHubRestApiClient::get(const QUrl &url, const QString &header, i
         QJsonDocument json = QJsonDocument::fromJson(response_data);
         return json;
     }else{
-        return QJsonDocument();
+        qInfo() << "Time to get data from " << url.toString()  << " exceeded";
+        throw GetTimeOutException("Time to get data from " +  url.toString()  + " exceeded");
     }
 }
 
