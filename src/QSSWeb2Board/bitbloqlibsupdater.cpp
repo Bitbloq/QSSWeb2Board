@@ -5,7 +5,11 @@
 
 BitbloqLibsUpdater::BitbloqLibsUpdater(QString arduinoDir):
     __jsonFilePath{QCoreApplication::applicationDirPath() + "/res/versions.json"},
-    __arduinoDir{arduinoDir}
+    __arduinoDir{arduinoDir},
+    __tmpDir{(QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_TMP").isEmpty()) ?
+                              QCoreApplication::applicationDirPath() + "/tmp/" :
+                               QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_TMP")}
+
 {
 
 }
@@ -18,7 +22,6 @@ bool BitbloqLibsUpdater::existsNewVersion()
     qInfo() << "Versions file " << __jsonFilePath;
 
     __remoteVersionInfo = __git.getLatestReleaseVersion("bitbloq","bitbloqLibs");
-    qInfo() << __remoteVersionInfo;
 
     //if local file does not exist return existing new version
     if(!jsonFile.exists()){
@@ -43,20 +46,21 @@ bool BitbloqLibsUpdater::update(){
 
     qInfo() << "Updating to new version";
 
-    //REMOVE PREVIOUS TMP FILES
-    QDir(QCoreApplication::applicationDirPath() + "/tmp/").removeRecursively();
+    //CREATE TMP DIR IF IT DOES NOT EXIST
+    if(!QDir(__tmpDir).exists()){
+        QDir().mkdir(__tmpDir);
+    }
 
     //DOWNLOAD ZIP FILE
     __git.downloadFile(__remoteVersionInfo["zipball_url"].toString(),
-            QCoreApplication::applicationDirPath() + "/tmp",
+            __tmpDir,
             "bitbloqLibs.zip",
             10000);
 
     //UNCOMPRESS ZIP FILE
-    QString zipfilename = QCoreApplication::applicationDirPath() + "/tmp/bitbloqLibs.zip";
-    QString temp_targetDir = QCoreApplication::applicationDirPath() + "/tmp/";
+    QString zipfilename = __tmpDir + "bitbloqLibs.zip";
 
-    UnZipper::unzip(zipfilename,temp_targetDir);
+    UnZipper::unzip(zipfilename,__tmpDir);
 
     //REMOVE FORMER BITBLOQLIBS
     QString arduinoLibrariesDir = __arduinoDir + "libraries";
@@ -72,7 +76,7 @@ bool BitbloqLibsUpdater::update(){
 
     QString temp_LibsDir;
 
-    QDirIterator it(temp_targetDir);
+    QDirIterator it(__tmpDir);
     while (it.hasNext()) {
         QString foundDir = it.next();
         if(foundDir.contains("-bitbloqLibs-"))
@@ -103,7 +107,8 @@ bool BitbloqLibsUpdater::update(){
     jsonFile.close();
 
     //REMOVE TMP FILES
-    QDir(QCoreApplication::applicationDirPath() + "/tmp/").removeRecursively();
+    QFile(zipfilename).remove();
+    QDir(temp_LibsDir).removeRecursively();
 
     return true;
 }
