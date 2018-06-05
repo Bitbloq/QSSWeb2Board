@@ -22,7 +22,6 @@ bool BitbloqLibsUpdater::existsNewVersion()
     qInfo() << "Versions file " << __jsonFilePath;
 
     __remoteVersionInfo = __git.getLatestReleaseVersion("bitbloq","bitbloqLibs");
-    qInfo() << __remoteVersionInfo;
 
     //if local file does not exist return existing new version
     if(!jsonFile.exists()){
