@@ -17,7 +17,8 @@ bool BitbloqLibsUpdater::existsNewVersion()
     jsonFile.setFileName(__jsonFilePath);
     qInfo() << "Versions file " << __jsonFilePath;
 
-    __remoteVersionInfo = __git.getLatestReleaseVersion("bq","bitbloqLibs");
+    __remoteVersionInfo = __git.getLatestReleaseVersion("bitbloq","bitbloqLibs");
+    qInfo() << __remoteVersionInfo;
 
     //if local file does not exist return existing new version
     if(!jsonFile.exists()){
@@ -30,7 +31,6 @@ bool BitbloqLibsUpdater::existsNewVersion()
     jsonFile.close();
 
     __localVersionInfo = QJsonDocument::fromJson(val.toUtf8()).object();
-
 
 
     qInfo() << "Current bitbloqLibs version " << __remoteVersionInfo["version"].toString();
@@ -75,7 +75,7 @@ bool BitbloqLibsUpdater::update(){
     QDirIterator it(temp_targetDir);
     while (it.hasNext()) {
         QString foundDir = it.next();
-        if(foundDir.contains("bq-bitbloqLibs"))
+        if(foundDir.contains("-bitbloqLibs-"))
             temp_LibsDir = foundDir;
 
     }
