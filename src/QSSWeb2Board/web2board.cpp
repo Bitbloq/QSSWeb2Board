@@ -232,11 +232,17 @@ void Web2Board::processCommands(){
         sendNotSuccess(jsonMessage,QJsonValue(error));
         qCritical()<<e.message;
     }catch(CannotMoveTmpLibsException &e){
-        sendNotSuccess(jsonMessage,e.message);
+        QJsonObject replyObject;
+        replyObject.insert("stdErr",QJsonValue(e.message));
+        replyObject.insert("title",e.errorType);
+        sendNotSuccess(jsonMessage,QJsonValue(replyObject));
         qCritical()<<e.message;
     }catch(GetTimeOutException &e){
-        sendNotSuccess(jsonMessage,e.message);
-        qCritical()<<e.message;
+        QJsonObject replyObject;
+        replyObject.insert("stdErr",QJsonValue(e.message));
+        replyObject.insert("title",e.errorType);
+        sendNotSuccess(jsonMessage,QJsonValue(replyObject));
+        qCritical()<<e.message;qCritical()<<e.message;
     }
 }
 
