@@ -303,6 +303,20 @@ bool ArduinoHandler::setBoardPort(QString _boardPort){
     return true;
 }
 
+QString ArduinoHandler::getHex(){
+
+    QString hexfilename = buildPath + "/" + sketchName + ".ino.hex";
+    qInfo() << "Hex filename: " << hexfilename;
+
+    QFile f(hexfilename);
+    if (!f.open(QFile::ReadOnly | QFile::Text)) return QString("");
+    QTextStream in(&f);
+    QString ret = in.readAll();
+    f.close();
+
+    return ret;
+}
+
 bool ArduinoHandler::autoDetectBoardPort(){
 
     if(boardNameID.isEmpty()){
@@ -435,7 +449,7 @@ QString ArduinoHandler::getBoardPort() const
 //to local routes
 QString ArduinoHandler::extractErrorfromOutput(QString s){
     QString errorsLine;
-    QString match = sketchesBaseDir + sketchName + "/" + sketchName + "ino:";
+    QString match = sketchesBaseDir + sketchName + "/" + sketchName + ".ino:";
     int pos = s.indexOf(match);
     if ( pos >= 0 )
     {
@@ -461,7 +475,9 @@ QString LinuxArduinoHandler::makeVerifyCommand(){
                                     "--verify " +
                                     "--pref build.path=" + buildPath + " " +
                                     "--board " +boardCommand + " " +
-                                    sketchesBaseDir + sketchName + "/" + sketchName + "ino");
+                                    sketchesBaseDir + sketchName + "/" + sketchName + ".ino");
+
+    qInfo() << "Verify command: " << verifyCommand;
 
     return verifyCommand;
 }
@@ -479,7 +495,7 @@ QString MacArduinoHandler::makeVerifyCommand(){
                                     "--verify " +
                                     "--pref build.path=" + buildPath + " " +
                                     "--board " +boardCommand + " " +
-                                    sketchesBaseDir + sketchName + "/" + sketchName + "ino");
+                                    sketchesBaseDir + sketchName + "/" + sketchName + ".ino");
 
     return verifyCommand;
 }
@@ -499,7 +515,7 @@ QString WindowsArduinoHandler::makeVerifyCommand(){
                                     "--verify " +
                                     "--pref build.path=" + buildPath + " " +
                                     "--board " +boardCommand + " " +
-                                    sketchesBaseDir + sketchName + "/" + sketchName + "ino");
+                                    sketchesBaseDir + sketchName + "/" + sketchName + ".ino");
 
     return verifyCommand;
 }
@@ -519,7 +535,7 @@ QString LinuxArduinoHandler::makeUploadCommand(){
                                     "--board " +boardCommand +
                                     " --port " + boardPort + " " +
                                     "--pref build.path=" + buildPath + " " +
-                                    sketchesBaseDir + sketchName + "/" + sketchName + "ino");
+                                    sketchesBaseDir + sketchName + "/" + sketchName + ".ino");
     return uploadCommand;
 }
 
@@ -538,7 +554,7 @@ QString MacArduinoHandler::makeUploadCommand(){
                                     "--board " +boardCommand +
                                     " --port " + boardPort + " " +
                                     "--pref build.path=" + buildPath + " " +
-                                    sketchesBaseDir + sketchName + "/" + sketchName + "ino");
+                                    sketchesBaseDir + sketchName + "/" + sketchName + ".ino");
     return uploadCommand;
 }
 
@@ -557,7 +573,7 @@ QString WindowsArduinoHandler::makeUploadCommand(){
                                     "--board " +boardCommand +
                                     " --port " + boardPort + " " +
                                     "--pref build.path=" + buildPath + " " +
-                                    sketchesBaseDir + sketchName + "/" + sketchName + "ino");
+                                    sketchesBaseDir + sketchName + "/" + sketchName + ".ino");
     return uploadCommand;
 }
 

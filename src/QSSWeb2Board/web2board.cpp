@@ -43,6 +43,9 @@ void Web2Board::sendSuccess(QJsonObject const & jsonObj, QJsonValue const & repl
     reply.insert("reply",QJsonValue(replyValue));
     reply.insert("success",QJsonValue(true));
 
+    if(jsonObj.contains("hex")) reply.insert("hex",jsonObj.value("hex"));
+
+    qInfo() << reply ;
     m_pClient->sendTextMessage(QJsonDocument(reply).toJson());
     m_pClient->flush();
 }
@@ -102,6 +105,7 @@ void Web2Board::processCommands(){
             arduino.setBoardNameID(boardName);
 
             arduino.verify();
+            jsonMessage.insert("hex",arduino.getHex());
             sendSuccess(jsonMessage, QJsonValue(true));
 
         }else if (function == CommsProtocol::UPLOAD){
@@ -232,11 +236,17 @@ void Web2Board::processCommands(){
         sendNotSuccess(jsonMessage,QJsonValue(error));
         qCritical()<<e.message;
     }catch(CannotMoveTmpLibsException &e){
-        sendNotSuccess(jsonMessage,e.message);
+        QJsonObject replyObject;
+        replyObject.insert("stdErr",QJsonValue(e.message));
+        replyObject.insert("title",e.errorType);
+        sendNotSuccess(jsonMessage,QJsonValue(replyObject));
         qCritical()<<e.message;
     }catch(GetTimeOutException &e){
-        sendNotSuccess(jsonMessage,e.message);
-        qCritical()<<e.message;
+        QJsonObject replyObject;
+        replyObject.insert("stdErr",QJsonValue(e.message));
+        replyObject.insert("title",e.errorType);
+        sendNotSuccess(jsonMessage,QJsonValue(replyObject));
+        qCritical()<<e.message;qCritical()<<e.message;
     }
 }
 
