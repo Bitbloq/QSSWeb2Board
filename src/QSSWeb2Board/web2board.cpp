@@ -247,6 +247,12 @@ void Web2Board::processCommands(){
         replyObject.insert("title",e.errorType);
         sendNotSuccess(jsonMessage,QJsonValue(replyObject));
         qCritical()<<e.message;qCritical()<<e.message;
+    }catch(HexFileException &e){
+        QJsonObject replyObject;
+        replyObject.insert("stdErr",QJsonValue(e.message));
+        replyObject.insert("title",e.errorType);
+        sendNotSuccess(jsonMessage,QJsonValue(replyObject));
+        qCritical()<<e.message;qCritical()<<e.message;
     }
 }
 
