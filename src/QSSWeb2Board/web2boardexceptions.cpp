@@ -1,4 +1,4 @@
-#include "arduinoexceptions.h"
+#include "web2boardexceptions.h"
 
 QString VerifyException::getErrorsLists(){
     QString msg="";

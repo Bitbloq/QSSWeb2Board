@@ -1,7 +1,7 @@
 #include "web2board.h"
 #include <QtWebSockets/QWebSocket>
 
-#include "commsprotocol.h"
+#include "literals.h"
 #include "bitbloqlibsupdater.h"
 
 Web2Board::Web2Board(QObject *parent):
@@ -16,7 +16,7 @@ void Web2Board::sendVerifying(){
     QJsonObject reply;
     reply.insert("ID",jsonMessage.value("ID").toInt());
     reply.insert("hub",jsonMessage.value("hub").toString());
-    reply.insert("function",QJsonValue(CommsProtocol::VERIFYING));
+    reply.insert("function",QJsonValue(Literals::VERIFYING));
     reply.insert("args",QJsonValue(QJsonArray()));
 
     m_pClient->sendTextMessage(QJsonDocument(reply).toJson());
@@ -27,7 +27,7 @@ void Web2Board::sendUploading(){
     QJsonObject reply;
     reply.insert("ID",jsonMessage.value("ID").toInt());
     reply.insert("hub",jsonMessage.value("hub").toString());
-    reply.insert("function",QJsonValue(CommsProtocol::UPLOADING));
+    reply.insert("function",QJsonValue(Literals::UPLOADING));
     reply.insert("args",QJsonValue(QJsonArray({arduino.getBoardPort()})));
 
     m_pClient->sendTextMessage(QJsonDocument(reply).toJson());
@@ -82,10 +82,10 @@ void Web2Board::processCommands(){
     QString function = jsonMessage.value("function").toString();
 
     try{
-        if(function == CommsProtocol::VERSION){
+        if(function == Literals::VERSION){
             sendSuccess(jsonMessage,QJsonValue("2.1.3"));
 
-        }else if(function == CommsProtocol::LIBVERSION){
+        }else if(function == Literals::LIBVERSION){
 
             BitbloqLibsUpdater libs(arduino.getArduinoDefaultDir());
             if (libs.existsNewVersion()){
@@ -95,7 +95,7 @@ void Web2Board::processCommands(){
 
             sendSuccess(jsonMessage,QJsonValue());
 
-        }else if(function == CommsProtocol::VERIFY){
+        }else if(function == Literals::VERIFY){
             sendVerifying();
             //write skectch stored in jsonMessage.value("args").toArray().at(0)
             QString sketch = jsonMessage.value("args").toArray().at(0).toString();
@@ -108,7 +108,7 @@ void Web2Board::processCommands(){
             jsonMessage.insert("hex",arduino.getHex());
             sendSuccess(jsonMessage, QJsonValue(true));
 
-        }else if (function == CommsProtocol::UPLOAD){
+        }else if (function == Literals::UPLOAD){
             sendVerifying();
 
             QString sketch = jsonMessage.value("args").toArray().at(0).toString();
@@ -126,7 +126,7 @@ void Web2Board::processCommands(){
 
             sendSuccess(jsonMessage,QJsonValue(arduino.getBoardPort()));
 
-        }else if (function == CommsProtocol::FINDBOARDPORT){
+        }else if (function == Literals::FINDBOARDPORT){
             QString boardName = jsonMessage.value("args").toArray().at(0).toString();
 
             arduino.setBoardNameID(boardName);
@@ -135,14 +135,14 @@ void Web2Board::processCommands(){
 
             sendSuccess(jsonMessage,QJsonValue(arduino.getBoardPort()));
 
-        }else if (function == CommsProtocol::SUBSCRIBETOPORT){
+        }else if (function == Literals::SUBSCRIBETOPORT){
             QString port = jsonMessage.value("args").toArray().at(0).toString();
 
             arduino.setBoardPort(port);
 
             sendSuccess(jsonMessage,QJsonValue(true));
 
-        }else if (function == CommsProtocol::OPENSERIALMONITOR){
+        }else if (function == Literals::OPENSERIALMONITOR){
             QString port = jsonMessage.value("args").toArray().at(0).toString();
             int baudrate = jsonMessage.value("args").toArray().at(1).toInt();
 
@@ -152,7 +152,7 @@ void Web2Board::processCommands(){
 
             sendSuccess(jsonMessage,QJsonValue(true));
 
-        }else if (function == CommsProtocol::CHANGEBAUDRATE){
+        }else if (function == Literals::CHANGEBAUDRATE){
             QString port = jsonMessage.value("args").toArray().at(0).toString();
             int baudrate = jsonMessage.value("args").toArray().at(1).toInt();
 
@@ -163,14 +163,14 @@ void Web2Board::processCommands(){
 
             sendSuccess(jsonMessage,QJsonValue(true));
 
-        }else if (function == CommsProtocol::CLOSESERIALMONITOR){
+        }else if (function == Literals::CLOSESERIALMONITOR){
 
             QObject::disconnect(arduino.serialMonitor,SIGNAL(lineReceived(QString)),this,SLOT(sendIncomingSerialToClient(QString)));
             arduino.closeSerialMonitor();
 
             sendSuccess(jsonMessage,QJsonValue(true));
 
-        }else if (function == CommsProtocol::SENDSERIAL){
+        }else if (function == Literals::SENDSERIAL){
             QString msg = jsonMessage.value("args").toArray().at(1).toString();
             qDebug() << "Sending to Arduino: " << msg;
             arduino.serialMonitor->sendToArduino(msg);
@@ -242,6 +242,12 @@ void Web2Board::processCommands(){
         sendNotSuccess(jsonMessage,QJsonValue(replyObject));
         qCritical()<<e.message;
     }catch(GetTimeOutException &e){
+        QJsonObject replyObject;
+        replyObject.insert("stdErr",QJsonValue(e.message));
+        replyObject.insert("title",e.errorType);
+        sendNotSuccess(jsonMessage,QJsonValue(replyObject));
+        qCritical()<<e.message;qCritical()<<e.message;
+    }catch(HexFileException &e){
         QJsonObject replyObject;
         replyObject.insert("stdErr",QJsonValue(e.message));
         replyObject.insert("title",e.errorType);

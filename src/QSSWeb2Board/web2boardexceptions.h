@@ -1,10 +1,10 @@
-#ifndef ARDUINOEXCEPTIONS_H
-#define ARDUINOEXCEPTIONS_H
+#ifndef WEB2BOARDEXCEPTIONS_H
+#define WEB2BOARDEXCEPTIONS_H
 
 #include <QObject>
 #include <QException>
 
-#include "commsprotocol.h"
+#include "literals.h"
 
 
 /**
@@ -14,7 +14,7 @@
 class VerifyException: public QException{
     public:
         VerifyException(const QString& s, const QList<QString>& l = QList<QString>()):
-            message(s),errorType(CommsProtocol::VERIFY_ERROR),errorsList(l){}
+            message(s),errorType(Literals::VERIFY_ERROR),errorsList(l){}
         void raise() const { throw *this; }
         VerifyException *clone() const { return new VerifyException(*this); }
         QString getErrorsLists();
@@ -32,7 +32,7 @@ class VerifyException: public QException{
 class GetTimeOutException: public QException{
     public:
         GetTimeOutException(const QString& s):
-            errorType(CommsProtocol::GET_TIMEOUT),message(s){}
+            errorType(Literals::GET_TIMEOUT),message(s){}
         void raise() const { throw *this; }
         GetTimeOutException *clone() const { return new GetTimeOutException(*this); }
 
@@ -48,7 +48,7 @@ class GetTimeOutException: public QException{
 class UploadException: public QException{
     public:
         UploadException(const QString& s):
-            errorType(CommsProtocol::UPLOAD_ERROR),message(s){}
+            errorType(Literals::UPLOAD_ERROR),message(s){}
         void raise() const { throw *this; }
         UploadException *clone() const { return new UploadException(*this); }
 
@@ -63,7 +63,7 @@ class UploadException: public QException{
 class FileNotFoundException: public QException{
     public:
         FileNotFoundException(const QString& s):
-            message(s),errorType(CommsProtocol::FILE_NOT_FOUND_ERROR){}
+            message(s),errorType(Literals::FILE_NOT_FOUND_ERROR){}
         void raise() const { throw *this; }
         FileNotFoundException *clone() const { return new FileNotFoundException(*this); }
 
@@ -74,7 +74,7 @@ class FileNotFoundException: public QException{
 class ArduinoNotFoundException: public QException{
     public:
         ArduinoNotFoundException(const QString& s):
-            message(s),errorType(CommsProtocol::ARDUINO_NOT_FOUND_ERROR){}
+            message(s),errorType(Literals::ARDUINO_NOT_FOUND_ERROR){}
         void raise() const { throw *this; }
         ArduinoNotFoundException *clone() const { return new ArduinoNotFoundException(*this); }
 
@@ -89,7 +89,7 @@ class ArduinoNotFoundException: public QException{
 class BoardNotKnownException: public QException{
     public:
         BoardNotKnownException(const QString& s)
-            :message(s),errorType(CommsProtocol::BOARD_NOT_KNOWN_ERROR){}
+            :message(s),errorType(Literals::BOARD_NOT_KNOWN_ERROR){}
         void raise() const { throw *this; }
         BoardNotKnownException *clone() const { return new BoardNotKnownException(*this); }
 
@@ -106,7 +106,7 @@ class BoardNotKnownException: public QException{
 class BoardNotDetectedException: public QException{
     public:
         BoardNotDetectedException(const QString& s):
-            message(s),errorType(CommsProtocol::BOARD_NOT_DETECTED_ERROR){}
+            message(s),errorType(Literals::BOARD_NOT_DETECTED_ERROR){}
         void raise() const { throw *this; }
         BoardNotDetectedException *clone() const { return new BoardNotDetectedException(*this); }
 
@@ -117,7 +117,7 @@ class BoardNotDetectedException: public QException{
 class BoardNotSetException: public QException{
     public:
         BoardNotSetException(const QString& s):
-            message(s),errorType(CommsProtocol::BOARD_NOT_SET_ERROR){}
+            message(s),errorType(Literals::BOARD_NOT_SET_ERROR){}
         void raise() const { throw *this; }
         BoardNotSetException *clone() const { return new BoardNotSetException(*this); }
 
@@ -128,7 +128,7 @@ class BoardNotSetException: public QException{
 class SketchNotSetException: public QException{
     public:
         SketchNotSetException(const QString& s):
-            message(s),errorType(CommsProtocol::SKETCH_NOT_SET_ERROR){}
+            message(s),errorType(Literals::SKETCH_NOT_SET_ERROR){}
         void raise() const { throw *this; }
         SketchNotSetException *clone() const { return new SketchNotSetException(*this); }
 
@@ -144,7 +144,7 @@ class SketchNotSetException: public QException{
 class FileNotCreatedException: public QException{
     public:
         FileNotCreatedException(const QString& s):
-            message(s),errorType(CommsProtocol::FILE_NOT_CREATED_ERROR){}
+            message(s),errorType(Literals::FILE_NOT_CREATED_ERROR){}
         void raise() const { throw *this; }
         FileNotCreatedException *clone() const { return new FileNotCreatedException(*this); }
 
@@ -159,7 +159,7 @@ class FileNotCreatedException: public QException{
 class DirNotCreatedException: public QException{
     public:
         DirNotCreatedException(const QString& s):
-            message(s),errorType(CommsProtocol::DIR_NOT_CREATED_ERROR){}
+            message(s),errorType(Literals::DIR_NOT_CREATED_ERROR){}
         void raise() const { throw *this; }
         DirNotCreatedException *clone() const { return new DirNotCreatedException(*this); }
 
@@ -174,7 +174,7 @@ class DirNotCreatedException: public QException{
 class SerialPortOpenException: public QException{
     public:
         SerialPortOpenException(const QString& s):
-            message(s),errorType(CommsProtocol::SERIAL_PORT_NOT_OPEN){}
+            message(s),errorType(Literals::SERIAL_PORT_NOT_OPEN){}
         void raise() const { throw *this; }
         SerialPortOpenException *clone() const { return new SerialPortOpenException(*this); }
 
@@ -189,9 +189,24 @@ class SerialPortOpenException: public QException{
 class CannotMoveTmpLibsException: public QException{
     public:
         CannotMoveTmpLibsException(const QString& s):
-            message(s),errorType(CommsProtocol::SERIAL_PORT_NOT_OPEN){}
+            message(s),errorType(Literals::SERIAL_PORT_NOT_OPEN){}
         void raise() const { throw *this; }
         CannotMoveTmpLibsException *clone() const { return new CannotMoveTmpLibsException(*this); }
+
+        const QString message;
+        const QString errorType;
+};
+
+/**
+ * @brief The CannotGetHexFile class
+ * Exception thrown when cannot find hex generated file
+ */
+class HexFileException: public QException{
+    public:
+        HexFileException(const QString& s):
+            message(s),errorType(Literals::CANNOT_GET_HEXFILE){}
+        void raise() const { throw *this; }
+        HexFileException *clone() const { return new HexFileException(*this); }
 
         const QString message;
         const QString errorType;

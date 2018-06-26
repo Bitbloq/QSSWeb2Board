@@ -1,5 +1,5 @@
 #include "githubrestapiclient.h"
-#include "arduinoexceptions.h"
+#include "web2boardexceptions.h"
 
 GitHubRestApiClient::GitHubRestApiClient():QObject()
 {

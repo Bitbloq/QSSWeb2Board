@@ -7,7 +7,7 @@
 #include <QDir>
 #include <QDateTime>
 
-#include "arduinoexceptions.h"
+#include "web2boardexceptions.h"
 #include "arduinohandler.h"
 
 ArduinoHandler::ArduinoHandler():
@@ -309,7 +309,7 @@ QString ArduinoHandler::getHex(){
     qInfo() << "Hex filename: " << hexfilename;
 
     QFile f(hexfilename);
-    if (!f.open(QFile::ReadOnly | QFile::Text)) return QString("");
+    if (!f.open(QFile::ReadOnly | QFile::Text)) throw HexFileException("HEX FILE NOT FOUND");
     QTextStream in(&f);
     QString ret = in.readAll();
     f.close();

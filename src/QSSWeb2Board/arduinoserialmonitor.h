@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QtSerialPort>
 #include <cstdio>
-#include "arduinoexceptions.h"
+#include "web2boardexceptions.h"
 
 QT_FORWARD_DECLARE_CLASS(ArduinoHandler)
 
