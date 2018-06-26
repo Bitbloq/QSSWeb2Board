@@ -34,6 +34,8 @@ public:
      */
     virtual ~ArduinoHandler();
 
+    QString getHex();
+
     /**
      * @brief resetPathsToDefault Sets all paths to their default values
      */
