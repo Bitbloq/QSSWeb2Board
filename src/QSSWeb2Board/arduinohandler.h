@@ -4,7 +4,7 @@
 #include <QObject>
 
 #include "knownboards.h"
-#include "arduinoexceptions.h"
+#include "web2boardexceptions.h"
 #include "arduinoserialmonitor.h"
 
 //forward declararion of classes

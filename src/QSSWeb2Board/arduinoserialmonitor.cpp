@@ -1,6 +1,6 @@
 #include "arduinoserialmonitor.h"
 #include <QtSerialPort>
-#include "arduinoexceptions.h"
+#include "web2boardexceptions.h"
 #include <cstdio>
 
 ArduinoSerialMonitor::ArduinoSerialMonitor(QString portName, int baudrate, QObject* parent): QObject(parent)

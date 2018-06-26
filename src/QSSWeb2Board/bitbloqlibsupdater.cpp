@@ -1,6 +1,6 @@
 #include "bitbloqlibsupdater.h"
 #include "unzipper.h"
-#include "arduinoexceptions.h"
+#include "web2boardexceptions.h"
 
 
 BitbloqLibsUpdater::BitbloqLibsUpdater(QString arduinoDir):

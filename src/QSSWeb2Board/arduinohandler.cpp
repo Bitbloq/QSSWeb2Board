@@ -7,7 +7,7 @@
 #include <QDir>
 #include <QDateTime>
 
-#include "arduinoexceptions.h"
+#include "web2boardexceptions.h"
 #include "arduinohandler.h"
 
 ArduinoHandler::ArduinoHandler():
