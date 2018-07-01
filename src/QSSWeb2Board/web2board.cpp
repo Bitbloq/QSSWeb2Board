@@ -43,7 +43,7 @@ void Web2Board::sendSuccess(QJsonObject const & jsonObj, QJsonValue const & repl
     reply.insert("reply",QJsonValue(replyValue));
     reply.insert("success",QJsonValue(true));
 
-    if(jsonObj.contains("hex")) reply.insert("hex",jsonObj.value("hex"));
+    //if(jsonObj.contains("hex")) reply.insert("hex",jsonObj.value("hex"));
 
     qInfo() << reply ;
     m_pClient->sendTextMessage(QJsonDocument(reply).toJson());
@@ -105,8 +105,8 @@ void Web2Board::processCommands(){
             arduino.setBoardNameID(boardName);
 
             arduino.verify();
-            jsonMessage.insert("hex",arduino.getHex());
-            sendSuccess(jsonMessage, QJsonValue(true));
+            //jsonMessage.insert("hex",arduino.getHex());
+            sendSuccess(jsonMessage, QJsonValue(arduino.getHex()));
 
         }else if (function == Literals::UPLOAD){
             sendVerifying();
