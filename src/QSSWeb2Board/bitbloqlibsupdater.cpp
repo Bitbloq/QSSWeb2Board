@@ -101,9 +101,13 @@ bool BitbloqLibsUpdater::update(){
 
     QFile jsonFile;
     jsonFile.setFileName(__jsonFilePath);
+    qInfo() << "Open " << __jsonFilePath;
     jsonFile.open(QIODevice::WriteOnly | QIODevice::Text);
+    qInfo() << "Delete contents...";
     jsonFile.resize(0); //clear all contents
+    qInfo() << "Write version info: " << QJsonDocument(__localVersionInfo).toJson();
     jsonFile.write(QJsonDocument(__localVersionInfo).toJson());
+    qInfo() << "Close versions file";
     jsonFile.close();
 
     //REMOVE TMP FILES
