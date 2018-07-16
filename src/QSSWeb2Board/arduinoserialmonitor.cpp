@@ -42,5 +42,3 @@ void ArduinoSerialMonitor::readArduino(){
         emit lineReceived(QString(port.readLine()));
     }
 }
-
-

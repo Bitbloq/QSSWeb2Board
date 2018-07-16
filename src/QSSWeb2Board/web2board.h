@@ -26,7 +26,8 @@ public Q_SLOTS:
      * @param message
      */
     void processTextMessage(QString message);
-    void sendIncomingSerialToClient(QString message);
+    void sendIncomingSerialToClient();
+    void feedMessageFromArduinoToBitbloq(QString message);
 
 private:
     void processCommands();
@@ -42,7 +43,11 @@ private:
     QWebSocket *m_pClient;
     QJsonObject jsonMessage;
 
-    int messageID;
+    int __messageID;
+    QString __messageFromArduinoToBitbloq;
+
+    QTimer* __timer;
+    int __timeout;
 
 #if (defined (Q_OS_WIN))
     WindowsArduinoHandler arduino;
