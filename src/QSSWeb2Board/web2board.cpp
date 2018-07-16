@@ -4,11 +4,12 @@
 #include "literals.h"
 #include "bitbloqlibsupdater.h"
 
-Web2Board::Web2Board(QObject *parent):
+Web2Board::Web2Board(int clientID, QObject *parent):
     QObject(parent),
     __messageFromArduinoToBitbloq{QString("")},
     __timer{Q_NULLPTR},
-    __timeout{50}
+    __timeout{50},
+    __buildPathCounter{clientID}
 {
     __timer = new QTimer();
 }
@@ -54,7 +55,7 @@ void Web2Board::sendSuccess(QJsonObject const & jsonObj, QJsonValue const & repl
 
     //if(jsonObj.contains("hex")) reply.insert("hex",jsonObj.value("hex"));
 
-    qInfo() << reply ;
+    //qInfo() << reply ;
     m_pClient->sendTextMessage(QJsonDocument(reply).toJson());
     m_pClient->flush();
 }
@@ -110,12 +111,22 @@ void Web2Board::processCommands(){
             QString sketch = jsonMessage.value("args").toArray().at(0).toString();
             QString boardName = jsonMessage.value("args").toArray().at(1).toString();
 
-            arduino.writeSketch(sketch);
-            arduino.setBoardNameID(boardName);
+            #if (defined (Q_OS_WIN))
+                WindowsArduinoHandler* arduinoLocal = new WindowsArduinoHandler();
+            #elif (defined (Q_OS_LINUX))
+                LinuxArduinoHandler* arduinoLocal = new LinuxArduinoHandler();
+            #elif (defined (Q_OS_MAC))
+                MacArduinoHandler* arduinoLocal = new MacArduinoHandler();
+            #endif
 
-            arduino.verify();
-            //jsonMessage.insert("hex",arduino.getHex());
-            sendSuccess(jsonMessage, QJsonValue(arduino.getHex()));
+            arduinoLocal->writeSketch(sketch);
+            arduinoLocal->setBoardNameID(boardName);
+
+            //arduino.verify();
+            arduinoLocal->asyncVerify( __buildPathCounter);
+
+            QObject::connect(arduinoLocal, SIGNAL(verifyFinished(int)), this, SLOT(verificationFinished(int)));
+
 
         }else if (function == Literals::UPLOAD){
             sendVerifying();
@@ -158,9 +169,9 @@ void Web2Board::processCommands(){
             arduino.setBoardPort(port);
             arduino.openSerialMonitor(baudrate);
 
-//              QObject::connect(arduino.serialMonitor,SIGNAL(lineReceived(QString)),this,SLOT(sendIncomingSerialToClient(QString)));
             QObject::connect(arduino.serialMonitor,SIGNAL(lineReceived(QString)),this,SLOT(feedMessageFromArduinoToBitbloq(QString)));
             QObject::connect(__timer, SIGNAL(timeout()), this, SLOT(sendIncomingSerialToClient()));
+
             __timer->start(__timeout);
 
 
@@ -173,7 +184,6 @@ void Web2Board::processCommands(){
             arduino.setBoardPort(port);
 
             arduino.openSerialMonitor(baudrate);
-//            QObject::connect(arduino.serialMonitor,SIGNAL(lineReceived(QString)),this,SLOT(sendIncomingSerialToClient(QString)));
             QObject::connect(arduino.serialMonitor,SIGNAL(lineReceived(QString)),this,SLOT(feedMessageFromArduinoToBitbloq(QString)));
             QObject::connect(__timer, SIGNAL(timeout()), this, SLOT(sendIncomingSerialToClient()));
             __timer->start(__timeout);
@@ -305,4 +315,64 @@ void Web2Board::sendIncomingSerialToClient(){
     m_pClient->sendTextMessage(QJsonDocument(reply).toJson());
     m_pClient->flush();
     __messageFromArduinoToBitbloq = QString("");
+}
+
+void Web2Board::verificationFinished(int exitCode){
+
+    qInfo() << "Verification Finished. Exit Code: " << exitCode;
+#if (defined (Q_OS_WIN))
+    WindowsArduinoHandler* arduinoLocal = qobject_cast<WindowsArduinoHandler*>(QObject::sender());
+#elif (defined (Q_OS_LINUX))
+    LinuxArduinoHandler* arduinoLocal = qobject_cast<LinuxArduinoHandler*>(QObject::sender());
+#elif (defined (Q_OS_MAC))
+    MacArduinoHandler* arduinoLocal = qobject_cast<MacArduinoHandler*>(QObject::sender());
+#endif
+
+    if(!arduinoLocal) qInfo()<< "Arduino Local is not null";
+
+    QString output = QString(arduinoLocal->proc->readAllStandardError());
+
+    //qInfo() << "output: " << output;
+
+    arduinoLocal->proc->close();
+
+    try{
+        switch(exitCode){
+        case 0:
+            qDebug()<<"Verify OK";
+            break;
+        case 1:
+            throw VerifyException(output);
+            break;
+        case 2:
+            throw VerifyException("Sketch not found");
+            break;
+        case 3:
+            throw VerifyException("Invalid (argument for) commandline option");
+            break;
+        case 4:
+            throw VerifyException("Preference passed to --get-pref does not exist");
+            break;
+        }
+
+        sendSuccess(jsonMessage, QJsonValue(arduinoLocal->getHex()));
+        //QObject::disconnect(arduinoLocal, SIGNAL(verifyFinished(int)), this, SLOT(verificationFinished(int)));
+        if (arduinoLocal) delete arduinoLocal;
+
+    }catch(VerifyException &e){
+        QJsonObject error = makeVerifyError(1,1,"arduino",e.message);
+        sendNotSuccess(jsonMessage,QJsonValue(error));
+        qCritical()<<e.message;
+        //QObject::disconnect(arduinoLocal, SIGNAL(verifyFinished(int)), this, SLOT(verificationFinished(int)));
+        if (arduinoLocal) delete arduinoLocal;
+    }catch(HexFileException &e){
+        QJsonObject replyObject;
+        replyObject.insert("stdErr",QJsonValue(e.message));
+        replyObject.insert("title",e.errorType);
+        sendNotSuccess(jsonMessage,QJsonValue(replyObject));
+        qCritical()<<e.message;qCritical()<<e.message;
+        if (arduinoLocal) delete arduinoLocal;
+    }
+
+
 }

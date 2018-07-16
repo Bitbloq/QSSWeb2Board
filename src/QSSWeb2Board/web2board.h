@@ -16,7 +16,7 @@ class Web2Board: public QObject
     Q_OBJECT
 
 public:
-    Web2Board(QObject *parent = Q_NULLPTR);
+    Web2Board(int clientID, QObject *parent = Q_NULLPTR);
     virtual ~Web2Board();
 
 
@@ -28,6 +28,8 @@ public Q_SLOTS:
     void processTextMessage(QString message);
     void sendIncomingSerialToClient();
     void feedMessageFromArduinoToBitbloq(QString message);
+    void verificationFinished(int exitCode);
+
 
 private:
     void processCommands();
@@ -48,6 +50,8 @@ private:
 
     QTimer* __timer;
     int __timeout;
+
+    int __buildPathCounter;
 
 #if (defined (Q_OS_WIN))
     WindowsArduinoHandler arduino;

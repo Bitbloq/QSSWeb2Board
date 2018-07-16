@@ -7,12 +7,12 @@
 
 QT_USE_NAMESPACE
 
-Web2BoardSocket::Web2BoardSocket(QWebSocket* ws):
+Web2BoardSocket::Web2BoardSocket(QWebSocket* ws, int clientID):
                        m_pWeb2Board{Q_NULLPTR},
                        m_pWebSocket{Q_NULLPTR}
 {
     m_pWebSocket = ws;
-    m_pWeb2Board = new Web2Board();
+    m_pWeb2Board = new Web2Board(clientID);
 
 }
 
@@ -26,8 +26,9 @@ Web2BoardSocket::~Web2BoardSocket(){
 //! [constructor]
 SSLServer::SSLServer(quint16 port, QObject *parent) :
     QObject(parent),
-    m_pWebSocketServer(Q_NULLPTR),
-    m_web2BoardSocketClients()
+    m_pWebSocketServer{Q_NULLPTR},
+    m_web2BoardSocketClients(),
+    __clientID{0}
 {
     m_pWebSocketServer = new QWebSocketServer(QStringLiteral("SSL Echo Server"),
                                               QWebSocketServer::SecureMode,
@@ -71,7 +72,7 @@ SSLServer::~SSLServer()
 //! [onNewConnection]
 void SSLServer::onNewConnection()
 {
-    Web2BoardSocket *pWeb2BoardSocket = new Web2BoardSocket(m_pWebSocketServer->nextPendingConnection());
+    Web2BoardSocket *pWeb2BoardSocket = new Web2BoardSocket(m_pWebSocketServer->nextPendingConnection(), __clientID++);
 
     qDebug() << "Client connected:" << pWeb2BoardSocket->m_pWebSocket->peerName() << pWeb2BoardSocket->m_pWebSocket->origin();
 

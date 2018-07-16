@@ -11,18 +11,22 @@
 QT_FORWARD_DECLARE_CLASS(QProcess);
 QT_FORWARD_DECLARE_CLASS(TestArduinoHandler)
 QT_FORWARD_DECLARE_CLASS(TestBoards)
+QT_FORWARD_DECLARE_CLASS(Web2Board)
 
 /**
  * @brief The ArduinoHandler class
  * It handles all the  actions to be made with Arduino: create sketch, verify, upload, serial communication, etc.
  */
-class ArduinoHandler
+class ArduinoHandler: public QObject
 {
+    Q_OBJECT
+
 public:
 
     ///friend classes for unit testing
     friend TestArduinoHandler;
     friend TestBoards;
+    friend Web2Board;
 
     /**
      * @brief Public default ArduinoHandler Constructor
@@ -81,7 +85,9 @@ public:
      * @brief verify. Verifies a sketch in Arduino for the selected board.
      * @return The exitCode of the verification process
      */
+    void asyncVerify(int buildPathCounter);
     int verify();
+
 
     /**
      * @brief Upload. Verifies and uploads a sketch in Arduino for the selected board.
@@ -201,12 +207,18 @@ protected:
      */
     void eraseExistingBuildFiles() const;
 
+signals:
+    void verifyFinished(int exitCode);
+
 };
 
 /**
  * @brief The LinuxArduinoHandler class for specific functions for linux based systems
  */
 class LinuxArduinoHandler : public ArduinoHandler{
+
+    Q_OBJECT
+
 public:
     LinuxArduinoHandler():ArduinoHandler(){}
     virtual ~LinuxArduinoHandler(){};
@@ -219,6 +231,9 @@ public:
  * @brief The WindowsArduinoHandler class for specific functions for windows based systems
  */
 class WindowsArduinoHandler : public ArduinoHandler{
+
+    Q_OBJECT
+
 public:
     WindowsArduinoHandler():ArduinoHandler(){}
     virtual ~WindowsArduinoHandler(){};
@@ -231,6 +246,9 @@ public:
  * @brief The MacArduinoHandler class for specific functions for Mac OS/X based systems
  */
 class MacArduinoHandler : public ArduinoHandler{
+
+    Q_OBJECT
+
 public:
     MacArduinoHandler():ArduinoHandler(){}
     virtual ~MacArduinoHandler(){};
