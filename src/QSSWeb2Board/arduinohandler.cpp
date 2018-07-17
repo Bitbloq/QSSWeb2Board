@@ -11,6 +11,7 @@
 #include "arduinohandler.h"
 
 ArduinoHandler::ArduinoHandler():
+    QObject(),
     serialMonitor{Q_NULLPTR},
 
     sketchesDefaultBaseDir{(QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_SKETCHES").isEmpty()) ?
@@ -35,6 +36,8 @@ ArduinoHandler::ArduinoHandler():
     setSketchesBaseDir(sketchesDefaultBaseDir);
     proc = new QProcess(); //this is to launch the arduino commands
 
+    connect(proc,SIGNAL(finished(int)),this,SIGNAL(verifyFinished(int)));
+
     if(!QDir().exists(sketchesDefaultBaseDir)){
         QDir().mkdir(sketchesDefaultBaseDir);
     }
@@ -47,6 +50,7 @@ ArduinoHandler::ArduinoHandler():
 
     eraseExistingSketches();
     //eraseExistingBuildFiles();
+
 }
 
 bool ArduinoHandler::openSerialMonitor(int baudrate){
@@ -132,38 +136,6 @@ void ArduinoHandler::eraseExistingSketches() const {
 void ArduinoHandler::eraseExistingBuildFiles() const {
 
     //DOES NOT WORK. CHECK
-
-    QDir dirToClean(buildDefaultDir);
-
-    dirToClean.setNameFilters(QStringList() << "*");
-
-    //remove subdirs
-    dirToClean.setFilter(QDir::Dirs);
-    foreach(const QString &subDir, dirToClean.entryList())
-    {
-        if (subDir != "." && subDir != ".."){
-            QFileInfo dirInfo(buildDefaultDir + subDir + "/");
-            //remove dirs older than one day
-            if(dirInfo.lastModified().addDays(1) <= QDateTime::currentDateTime()){
-                qDebug() << "erasing " + buildDefaultDir + subDir + "/";
-                QDir(sketchesDefaultBaseDir + subDir + "/").removeRecursively();
-            }
-        }
-    }
-
-    //remove files
-    dirToClean.setFilter(QDir::Files);
-    foreach(const QString &file, dirToClean.entryList())
-    {
-        if (file != "." && file != ".."){
-            QFileInfo fileInfo(buildDefaultDir + file);
-            //remove files older than one day
-            if(fileInfo.created().addDays(1) <= QDateTime::currentDateTime()){
-                qDebug() << "erasing " + buildDefaultDir + file;
-                QFile(sketchesDefaultBaseDir + file).remove();
-            }
-        }
-    }
 }
 
 bool ArduinoHandler::writeSketch(QString _sketch, QString _sketchName){
@@ -305,7 +277,7 @@ bool ArduinoHandler::setBoardPort(QString _boardPort){
 
 QString ArduinoHandler::getHex(){
 
-    QString hexfilename = buildPath + "/" + sketchName + ".ino.hex";
+    QString hexfilename = buildPath + sketchName + ".ino.hex";
     qInfo() << "Hex filename: " << hexfilename;
 
     QFile f(hexfilename);
@@ -353,17 +325,23 @@ bool ArduinoHandler::autoDetectBoardPort(){
     return false;
 }
 
+
 int ArduinoHandler::verify(){
 
     QString command = makeVerifyCommand();
 
     //let's verify the sketch
     proc->start(command);
+
+    QObject::connect(proc, SIGNAL(finished(int)), this, SLOT(verificationFinished(int)));
+
     proc->waitForFinished();
 
-    QString output = QString(proc->readAllStandardError());
     int exitCode = proc->exitCode();
+    QString output = QString(proc->readAllStandardError());
     proc->close();
+
+    QObject::disconnect(proc, SIGNAL(finished(int)), this, SLOT(verificationFinished(int, jsonMessage)));
     switch(exitCode){
     case 0:
         qDebug()<<"Verify OK";
@@ -383,6 +361,18 @@ int ArduinoHandler::verify(){
     }
 
     return exitCode;
+}
+
+
+
+void ArduinoHandler::asyncVerify(int buildPathCounter){
+
+    setBuildPath( buildDefaultDir + "../build" + QString::number(buildPathCounter) + "/");
+    qInfo()<< "buildPath: "  << buildDefaultDir;
+    QString command = makeVerifyCommand();
+
+    //let's verify the sketch
+    proc->start(command);
 }
 
 int ArduinoHandler::upload()

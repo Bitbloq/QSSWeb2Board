@@ -21,7 +21,7 @@ class Web2BoardSocket: public QObject{
     Q_OBJECT
 
 public:
-    explicit Web2BoardSocket(QWebSocket *ws);
+    explicit Web2BoardSocket(QWebSocket *ws, int clientID);
     virtual ~Web2BoardSocket();
     Web2Board* m_pWeb2Board; //for managing messages
     QWebSocket* m_pWebSocket;
@@ -45,6 +45,8 @@ private Q_SLOTS:
 private:
     QWebSocketServer *m_pWebSocketServer;
     QList<Web2BoardSocket *> m_web2BoardSocketClients; //list of connected clients
+
+    int __clientID;
 };
 
 
