@@ -93,7 +93,7 @@ void Web2Board::processCommands(){
 
     try{
         if(function == Literals::VERSION){
-            sendSuccess(jsonMessage,QJsonValue("2.1.3"));
+            sendSuccess(jsonMessage,QJsonValue("18.07.17"));
 
         }else if(function == Literals::LIBVERSION){
 
