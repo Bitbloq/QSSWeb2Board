@@ -26,17 +26,41 @@ public Q_SLOTS:
      * @param message
      */
     void processTextMessage(QString message);
+    /**
+     * @brief sendIncomingSerialToClient Send messages coming from Arduino to Bitbloq client
+     */
     void sendIncomingSerialToClient();
+    /**
+     * @brief feedMessageFromArduinoToBitbloq Buffer of messages to be sent.
+     * Messages are not sent as they are received. They are stored in __messageFromArduinoToBitbloq and are sent every __timeout miliseconds
+     * @param message the new message to add to the buffer
+     */
     void feedMessageFromArduinoToBitbloq(QString message);
+
+    /**
+     * @brief verificationFinished it is called when an async verification has finished
+     * @param exitCode
+     */
     void verificationFinished(int exitCode);
 
 
 private:
     void processCommands();
 
+    /**
+     * @brief sendVerifying Sends to Bitbloq the message that the requested verification is in process
+     */
     void sendVerifying();
+    /**
+     * @brief sendUploading Sends to Bitbloq the message that the requested upload is in proccess
+     */
     void sendUploading();
 
+    /**
+     * @brief sendSuccess Sends to Arduino the message that the last requested action has been a success
+     * @param jsonObj Info with the requested action
+     * @param replyValue success reply
+     */
     void sendSuccess(QJsonObject const & jsonObj, QJsonValue const & replyValue);
     void sendNotSuccess(QJsonObject const & jsonObj, QJsonValue const & replyValue);
 
@@ -51,7 +75,7 @@ private:
     QTimer* __timer;
     int __timeout;
 
-    int __buildPathCounter;
+    int __clientID;
 
 #if (defined (Q_OS_WIN))
     WindowsArduinoHandler arduino;

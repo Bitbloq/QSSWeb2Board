@@ -38,6 +38,10 @@ public:
      */
     virtual ~ArduinoHandler();
 
+    /**
+     * @brief getHex returns a string with the hex file resulting of the arduino file compilation
+     * @return a string with the hex file resulting of the arduino file compilation
+     */
     QString getHex();
 
     /**
@@ -82,10 +86,18 @@ public:
 
 
     /**
+     * @brief asyncVerify initiates the compilation of a ino file.
+     * Async verification of a ino file. The process is launched but it does not waits until if finishes.
+     * When verfication is finished verifyFinished signal is triggered.
+     * Build files are stored in a dir "build + buildPathCounter"
+     * @param buildPathCounter
+     */
+    void asyncVerify(int buildPathCounter);
+
+    /**
      * @brief verify. Verifies a sketch in Arduino for the selected board.
      * @return The exitCode of the verification process
      */
-    void asyncVerify(int buildPathCounter);
     int verify();
 
 
@@ -139,9 +151,13 @@ public:
      */
     bool closeSerialMonitor();
 
-public: //public members
-    ArduinoSerialMonitor* serialMonitor;
 
+    ArduinoSerialMonitor* serialMonitor; ///pointer to serial monitor handler
+
+    /**
+     * @brief getArduinoDefaultDir the path where arduino executable should be
+     * @return the path where arduino executable should be
+     */
     QString getArduinoDefaultDir() const;
 
 protected:
@@ -170,9 +186,9 @@ protected:
     QString boardPort; /// the serial port where the board is connected
     QList<QString> verifyErrorsList; /// List of Strings containing verification errors
 
-    const QString sketchesDefaultBaseDir;
-    const QString arduinoDefaultDir;
-    const QString buildDefaultDir;
+    const QString sketchesDefaultBaseDir; /// the absolute path where the sketches to compile are stored
+    const QString arduinoDefaultDir; /// the abslute path where arduino program is located
+    const QString buildDefaultDir; /// the absolute path where the resulting building files are stored
 
     /**
      * @brief makeUploadCommand -> makes the upload command. OS dependant. Virtualized
@@ -185,6 +201,12 @@ protected:
      */
     virtual QString makeVerifyCommand(){return "";};
 
+
+    /**
+     * @brief checkArduinoPath virtual function (implemented on children)
+     * @param arduinoPath
+     * @return
+     */
     virtual bool checkArduinoPath(QString arduinoPath){arduinoPath=""; return false;};
 
     QProcess *proc; ///variable to handle command line commands.
@@ -208,6 +230,10 @@ protected:
     void eraseExistingBuildFiles() const;
 
 signals:
+    /**
+     * @brief verifyFinished Signal emitted with the verification processed is finished
+     * @param exitCode the exit code of the process
+     */
     void verifyFinished(int exitCode);
 
 };

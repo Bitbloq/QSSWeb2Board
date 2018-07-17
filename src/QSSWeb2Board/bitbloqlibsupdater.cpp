@@ -23,10 +23,10 @@ bool BitbloqLibsUpdater::existsNewVersion()
 
     __remoteVersionInfo = __git.getLatestReleaseVersion("bitbloq","bitbloqLibs");
 
-    //if local file does not exist return existing new version
+    //if local file does not exist returns existing new version
     if(!jsonFile.exists()){
         qInfo() << "No version.json file";
-        return true;
+        return true; // new version
     }
 
     jsonFile.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -36,10 +36,10 @@ bool BitbloqLibsUpdater::existsNewVersion()
     __localVersionInfo = QJsonDocument::fromJson(val.toUtf8()).object();
 
 
-    qInfo() << "Current bitbloqLibs version " << __remoteVersionInfo["version"].toString();
+    qInfo() << "Current (remote) bitbloqLibs version " << __remoteVersionInfo["version"].toString();
     qInfo() << "Local bitbloqLibs version " << __localVersionInfo["version"].toString();
 
-    return ( __remoteVersionInfo["version"] != __localVersionInfo["version"] );
+    return ( __remoteVersionInfo["version"] != __localVersionInfo["version"] ); //false if there is a new version
 }
 
 bool BitbloqLibsUpdater::update(){
@@ -53,14 +53,14 @@ bool BitbloqLibsUpdater::update(){
 
     //DOWNLOAD ZIP FILE
     __git.downloadFile(__remoteVersionInfo["zipball_url"].toString(),
-            __tmpDir,
-            "bitbloqLibs.zip",
-            10000);
+            __tmpDir, //store in __tmpDir
+            "bitbloqLibs.zip", //store as bitbloqlibs.zip
+            10000); //10 seconds timeout
 
     //UNCOMPRESS ZIP FILE
     QString zipfilename = __tmpDir + "bitbloqLibs.zip";
 
-    UnZipper::unzip(zipfilename,__tmpDir);
+    UnZipper::unzip(zipfilename,__tmpDir); //unzip zipfile into __tmpDir
 
     //REMOVE FORMER BITBLOQLIBS
     QString arduinoLibrariesDir = __arduinoDir + "libraries";
@@ -79,9 +79,9 @@ bool BitbloqLibsUpdater::update(){
     QDirIterator it(__tmpDir);
     while (it.hasNext()) {
         QString foundDir = it.next();
-        if(foundDir.contains("-bitbloqLibs-"))
+        if(foundDir.contains("-bitbloqLibs-")){
             temp_LibsDir = foundDir;
-
+        }
     }
 
     qInfo() << "TEMP DIR " << temp_LibsDir;
@@ -93,7 +93,7 @@ bool BitbloqLibsUpdater::update(){
 
     qInfo() << "libraries saved to " << arduinoLibrariesDir;
 
-    //If no errors is done
+    //If no errors, the upgrade is done. update local version info
 
     __localVersionInfo.insert("version",__remoteVersionInfo["version"].toString());
     __localVersionInfo.insert("zipball_url",__remoteVersionInfo["zipball_url"].toString());

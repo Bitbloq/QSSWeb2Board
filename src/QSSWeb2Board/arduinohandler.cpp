@@ -136,38 +136,6 @@ void ArduinoHandler::eraseExistingSketches() const {
 void ArduinoHandler::eraseExistingBuildFiles() const {
 
     //DOES NOT WORK. CHECK
-
-    QDir dirToClean(buildDefaultDir);
-
-    dirToClean.setNameFilters(QStringList() << "*");
-
-    //remove subdirs
-    dirToClean.setFilter(QDir::Dirs);
-    foreach(const QString &subDir, dirToClean.entryList())
-    {
-        if (subDir != "." && subDir != ".."){
-            QFileInfo dirInfo(buildDefaultDir + subDir + "/");
-            //remove dirs older than one day
-            if(dirInfo.lastModified().addDays(1) <= QDateTime::currentDateTime()){
-                qDebug() << "erasing " + buildDefaultDir + subDir + "/";
-                QDir(sketchesDefaultBaseDir + subDir + "/").removeRecursively();
-            }
-        }
-    }
-
-    //remove files
-    dirToClean.setFilter(QDir::Files);
-    foreach(const QString &file, dirToClean.entryList())
-    {
-        if (file != "." && file != ".."){
-            QFileInfo fileInfo(buildDefaultDir + file);
-            //remove files older than one day
-            if(fileInfo.created().addDays(1) <= QDateTime::currentDateTime()){
-                qDebug() << "erasing " + buildDefaultDir + file;
-                QFile(sketchesDefaultBaseDir + file).remove();
-            }
-        }
-    }
 }
 
 bool ArduinoHandler::writeSketch(QString _sketch, QString _sketchName){

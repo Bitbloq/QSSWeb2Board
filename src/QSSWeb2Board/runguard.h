@@ -5,7 +5,7 @@
 #include <QSharedMemory>
 #include <QSystemSemaphore>
 
-
+//This class avoids to run QSSWeb2Board if there is an instance already running
 class RunGuard
 {
 

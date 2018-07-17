@@ -9,7 +9,7 @@ Web2Board::Web2Board(int clientID, QObject *parent):
     __messageFromArduinoToBitbloq{QString("")},
     __timer{Q_NULLPTR},
     __timeout{50},
-    __buildPathCounter{clientID}
+    __clientID{clientID}
 {
     __timer = new QTimer();
 }
@@ -123,7 +123,7 @@ void Web2Board::processCommands(){
             arduinoLocal->setBoardNameID(boardName);
 
             //arduino.verify();
-            arduinoLocal->asyncVerify( __buildPathCounter);
+            arduinoLocal->asyncVerify( __clientID);
 
             QObject::connect(arduinoLocal, SIGNAL(verifyFinished(int)), this, SLOT(verificationFinished(int)));
 
