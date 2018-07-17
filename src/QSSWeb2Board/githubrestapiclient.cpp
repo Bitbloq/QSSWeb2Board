@@ -50,7 +50,7 @@ QJsonDocument GitHubRestApiClient::get(const QUrl &url, const QString &header, i
 
 bool GitHubRestApiClient::saveToDisk(const QString & dir, QString &filename, QIODevice *data)
 {
-    qInfo() << QString ("Saving to " + dir + "/" + filename);
+    qInfo() << QString ("Saving to " + dir + filename);
     if(!QDir().exists(dir)){
         QDir().mkdir(dir);
     }
@@ -79,33 +79,49 @@ bool GitHubRestApiClient::saveToDisk(const QString & dir, QString &filename, QIO
 
 QString GitHubRestApiClient::downloadFile(QString url, QString path, QString filename, int timeout){
 
-    qInfo() << "Downloading " << url;
-    const QUrl qurl(url);
-    qInfo() << url;
-
-    QNetworkRequest request(qurl);
-    //github redirects the request, so this attribute must be set to true, otherwise retuns nothing
-    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
     QNetworkAccessManager manager;
-    QNetworkReply * reply = manager.get(request);
+    QVariant possibleRedirectUrl;
+    QNetworkReply * reply;
 
+    QUrl qurl;
+    qurl.setUrl(url);
 
-    _timeout=false;
-    _timer->start(timeout);
+    //we check if there is any redirect to follow it
+    //from Qt 5.6 redirects can be automatically followed by setting
+    //request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+    //here is done automatically becaus of Ubuntu 16.04 Qt version (5.5)
 
-    //if download takes more time that set on timeout cancel download
-    while(!_timeout){
-        qApp->processEvents();
-        if(reply->isFinished()) break;
-    }
+    do{
+        qInfo() <<"Downloading " << qurl;
 
-    _timeout = false;
+        QNetworkRequest request(qurl);
+        reply = manager.get(request);
+
+        qInfo() << "waiting to finish...";
+
+        _timeout=false;
+        _timer->start(timeout);
+
+        //if download takes more time that set on timeout cancel download
+        while(!_timeout){
+            qApp->processEvents();
+            if(reply->isFinished()) break;
+        }
+
+        _timeout = false;
+
+        qInfo() << "finished!";
+
+        possibleRedirectUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
+        qurl = possibleRedirectUrl.toUrl();
+        qInfo() << qurl;
+
+    }while(possibleRedirectUrl.isValid());
+
 
     if(reply->isFinished()){
         if (reply->error()) {
-                fprintf(stderr, "Download of %s failed: %s\n",
-                        qurl.toEncoded().constData(),
-                        qPrintable(reply->errorString()));
+                qInfo() << "Download of "<< qurl.toEncoded().constData() << " failed: " << qPrintable(reply->errorString());
                 return "";
         }else{
             saveToDisk(path, filename,reply);

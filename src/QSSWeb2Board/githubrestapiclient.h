@@ -40,9 +40,6 @@ public:
     QString downloadFile(QString url, QString path, QString filename, int timeout=5000);
 
 private:
-    QUrl _url;
-    QNetworkRequest* _request;
-
     QJsonDocument get(const QUrl & url, const QString & header, int timeout);
     bool saveToDisk(const QString &dir, QString &filename, QIODevice *data);
 

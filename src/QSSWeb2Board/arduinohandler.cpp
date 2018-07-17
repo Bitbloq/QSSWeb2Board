@@ -333,15 +333,12 @@ int ArduinoHandler::verify(){
     //let's verify the sketch
     proc->start(command);
 
-    QObject::connect(proc, SIGNAL(finished(int)), this, SLOT(verificationFinished(int)));
-
     proc->waitForFinished();
 
     int exitCode = proc->exitCode();
     QString output = QString(proc->readAllStandardError());
     proc->close();
 
-    QObject::disconnect(proc, SIGNAL(finished(int)), this, SLOT(verificationFinished(int, jsonMessage)));
     switch(exitCode){
     case 0:
         qDebug()<<"Verify OK";

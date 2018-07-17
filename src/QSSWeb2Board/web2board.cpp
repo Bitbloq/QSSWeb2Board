@@ -53,7 +53,6 @@ void Web2Board::sendSuccess(QJsonObject const & jsonObj, QJsonValue const & repl
     reply.insert("reply",QJsonValue(replyValue));
     reply.insert("success",QJsonValue(true));
 
-    //if(jsonObj.contains("hex")) reply.insert("hex",jsonObj.value("hex"));
 
     //qInfo() << reply ;
     m_pClient->sendTextMessage(QJsonDocument(reply).toJson());
@@ -93,7 +92,7 @@ void Web2Board::processCommands(){
 
     try{
         if(function == Literals::VERSION){
-            sendSuccess(jsonMessage,QJsonValue("2.1.3"));
+            sendSuccess(jsonMessage,QJsonValue("18.07.17"));
 
         }else if(function == Literals::LIBVERSION){
 
@@ -356,14 +355,13 @@ void Web2Board::verificationFinished(int exitCode){
         }
 
         sendSuccess(jsonMessage, QJsonValue(arduinoLocal->getHex()));
-        //QObject::disconnect(arduinoLocal, SIGNAL(verifyFinished(int)), this, SLOT(verificationFinished(int)));
+
         if (arduinoLocal) delete arduinoLocal;
 
     }catch(VerifyException &e){
         QJsonObject error = makeVerifyError(1,1,"arduino",e.message);
         sendNotSuccess(jsonMessage,QJsonValue(error));
         qCritical()<<e.message;
-        //QObject::disconnect(arduinoLocal, SIGNAL(verifyFinished(int)), this, SLOT(verificationFinished(int)));
         if (arduinoLocal) delete arduinoLocal;
     }catch(HexFileException &e){
         QJsonObject replyObject;
