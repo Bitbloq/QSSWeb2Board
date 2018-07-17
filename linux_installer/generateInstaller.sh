@@ -85,7 +85,7 @@ cp -fr qssweb2board_2.0-template ${packageDir}
 
 echo "Downloading arduino_BQ_Linux_${ARCH}.zip"
 cd ${packageDir}/opt/QSSWeb2Board/res/
-wget https://github.com/bitbloq/QSSWeb2Board/releases/download/18.04.16/arduino1.8.5_BQ_Linux_${ARCH}.zip
+wget https://github.com/bitbloq/QSSWeb2Board/releases/download/18.07.17/arduino1.8.5_BQ_Linux_${ARCH}.zip
 unzip arduino1.8.5_BQ_Linux_${ARCH}.zip > /dev/null
 rm arduino1.8.5_BQ_Linux_${ARCH}.zip > /dev/null
 cd -
@@ -102,9 +102,9 @@ mkdir build
 cd build > /dev/null
 
 echo "running qmake on ../../src/QSSWeb2Board/QSSWeb2Board.pro"
-qmake ../../src/QSSWeb2Board/QSSWeb2Board.pro > /dev/null
+qmake ../../src/QSSWeb2Board/QSSWeb2Board.pro
 echo "running make..."
-make > /dev/null
+make 
 cd ${baseDir}
 
 #copy application into packageDir
