@@ -26,7 +26,6 @@ public:
     ///friend classes for unit testing
     friend TestArduinoHandler;
     friend TestBoards;
-    friend Web2Board;
 
     /**
      * @brief Public default ArduinoHandler Constructor
@@ -92,7 +91,7 @@ public:
      * Build files are stored in a dir "build + buildPathCounter"
      * @param buildPathCounter
      */
-    void asyncVerify(int buildPathCounter);
+    int asyncVerify(int buildPathCounter);
 
     /**
      * @brief verify. Verifies a sketch in Arduino for the selected board.
