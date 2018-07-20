@@ -52,10 +52,15 @@ bool BitbloqLibsUpdater::update(){
     }
 
     //DOWNLOAD ZIP FILE
-    __git.downloadFile(__remoteVersionInfo["zipball_url"].toString(),
+    if(! __git.downloadFile(__remoteVersionInfo["zipball_url"].toString(),
             __tmpDir, //store in __tmpDir
             "bitbloqLibs.zip", //store as bitbloqlibs.zip
-            10000); //10 seconds timeout
+            20000) //20 seconds timeout
+            )
+    {
+        qInfo() << "TimeOut Downloading Libs";
+        throw GetTimeOutException("TimeOut Downloading Libs");
+    }
 
     //UNCOMPRESS ZIP FILE
     QString zipfilename = __tmpDir + "bitbloqLibs.zip";

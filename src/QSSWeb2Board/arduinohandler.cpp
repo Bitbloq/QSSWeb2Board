@@ -333,6 +333,7 @@ int ArduinoHandler::verify(){
     //let's verify the sketch
     proc->start(command);
 
+    //blocker instruction, it blocks program until proc is finished.
     proc->waitForFinished();
 
     int exitCode = proc->exitCode();
@@ -362,14 +363,44 @@ int ArduinoHandler::verify(){
 
 
 
-void ArduinoHandler::asyncVerify(int buildPathCounter){
+int ArduinoHandler::asyncVerify(int buildPathCounter){
 
     setBuildPath( buildDefaultDir + "../build" + QString::number(buildPathCounter) + "/");
-    qInfo()<< "buildPath: "  << buildDefaultDir;
+
+    qInfo()<< "buildPath (async): "  << buildPath;
     QString command = makeVerifyCommand();
 
     //let's verify the sketch
     proc->start(command);
+
+    //non blocker envent loop
+    QEventLoop eventLoop;
+    QObject::connect(proc, SIGNAL(finished(int, QProcess::ExitStatus)), &eventLoop, SLOT(quit()));
+    eventLoop.exec();
+
+    int exitCode = proc->exitCode();
+    QString output = QString(proc->readAllStandardError());
+    proc->close();
+
+    switch(exitCode){
+    case 0:
+        qDebug()<<"Verify OK";
+        break;
+    case 1:
+        throw VerifyException(output, verifyErrorsList);
+        break;
+    case 2:
+        throw VerifyException("Sketch not found");
+        break;
+    case 3:
+        throw VerifyException("Invalid (argument for) commandline option");
+        break;
+    case 4:
+        throw VerifyException("Preference passed to --get-pref does not exist");
+        break;
+    }
+
+    return exitCode;
 }
 
 int ArduinoHandler::upload()

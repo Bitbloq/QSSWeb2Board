@@ -37,13 +37,6 @@ public Q_SLOTS:
      */
     void feedMessageFromArduinoToBitbloq(QString message);
 
-    /**
-     * @brief verificationFinished it is called when an async verification has finished
-     * @param exitCode
-     */
-    void verificationFinished(int exitCode);
-
-
 private:
     void processCommands();
 
