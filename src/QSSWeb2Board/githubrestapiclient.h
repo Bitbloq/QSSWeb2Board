@@ -37,7 +37,7 @@ public:
      * @param timeout timeout to succeed
      * @return
      */
-    QString downloadFile(QString url, QString path, QString filename, int timeout=5000);
+    bool downloadFile(QString url, QString path, QString filename, int timeout=5000);
 
 private:
     QJsonDocument get(const QUrl & url, const QString & header, int timeout);

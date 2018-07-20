@@ -77,7 +77,7 @@ bool GitHubRestApiClient::saveToDisk(const QString & dir, QString &filename, QIO
 
 
 
-QString GitHubRestApiClient::downloadFile(QString url, QString path, QString filename, int timeout){
+bool GitHubRestApiClient::downloadFile(QString url, QString path, QString filename, int timeout){
 
     QNetworkAccessManager manager;
     QVariant possibleRedirectUrl;
@@ -122,13 +122,16 @@ QString GitHubRestApiClient::downloadFile(QString url, QString path, QString fil
     if(reply->isFinished()){
         if (reply->error()) {
                 qInfo() << "Download of "<< qurl.toEncoded().constData() << " failed: " << qPrintable(reply->errorString());
-                return "";
+                //return "";
+                return false;
         }else{
             saveToDisk(path, filename,reply);
-            return filename;
+            return true;
+            //return filename;
         }
     }else{
-        return "";
+        return false;
+        //return "";
     }
 }
 

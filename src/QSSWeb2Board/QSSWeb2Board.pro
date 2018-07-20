@@ -9,6 +9,8 @@ QT -= gui
 
 CONFIG += c++11
 CONFIG += console
+CONFIG += static
+
 
 
 TARGET = QSSWeb2Board
