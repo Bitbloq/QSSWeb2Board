@@ -38,29 +38,28 @@ public Q_SLOTS:
     void feedMessageFromArduinoToBitbloq(QString message);
 
 private:
-    void processCommands();
+    void processCommands(QJsonObject msg);
 
     /**
      * @brief sendVerifying Sends to Bitbloq the message that the requested verification is in process
      */
-    void sendVerifying();
+    void sendVerifying(QJsonObject msg);
     /**
      * @brief sendUploading Sends to Bitbloq the message that the requested upload is in proccess
      */
-    void sendUploading();
+    void sendUploading(QJsonObject msg);
 
     /**
      * @brief sendSuccess Sends to Arduino the message that the last requested action has been a success
      * @param jsonObj Info with the requested action
      * @param replyValue success reply
      */
-    void sendSuccess(QJsonValue const & replyValue);
-    void sendNotSuccess(QJsonValue const & replyValue);
+    void sendSuccess(QJsonObject msg, QJsonValue const & replyValue);
+    void sendNotSuccess(QJsonObject msg, QJsonValue const & replyValue);
 
     QJsonObject makeVerifyError(int column, int line, QString file, QString error);
 
     QWebSocket *m_pClient;
-    QJsonObject receivedJSONMessage;
 
     int __messageID;
     QString __messageFromArduinoToBitbloq;

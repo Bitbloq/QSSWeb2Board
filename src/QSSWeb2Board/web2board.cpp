@@ -22,10 +22,10 @@ void Web2Board::feedMessageFromArduinoToBitbloq(QString message){
     __messageFromArduinoToBitbloq += message;
 }
 
-void Web2Board::sendVerifying(){
+void Web2Board::sendVerifying(QJsonObject msg){
     QJsonObject reply;
-    reply.insert("ID",receivedJSONMessage.value("ID").toInt());
-    reply.insert("hub",receivedJSONMessage.value("hub").toString());
+    reply.insert("ID",msg.value("ID").toInt());
+    reply.insert("hub",msg.value("hub").toString());
     reply.insert("function",QJsonValue(Literals::VERIFYING));
     reply.insert("args",QJsonValue(QJsonArray()));
 
@@ -33,10 +33,10 @@ void Web2Board::sendVerifying(){
     m_pClient->flush();
 }
 
-void Web2Board::sendUploading(){
+void Web2Board::sendUploading(QJsonObject msg){
     QJsonObject reply;
-    reply.insert("ID",receivedJSONMessage.value("ID").toInt());
-    reply.insert("hub",receivedJSONMessage.value("hub").toString());
+    reply.insert("ID",msg.value("ID").toInt());
+    reply.insert("hub",msg.value("hub").toString());
     reply.insert("function",QJsonValue(Literals::UPLOADING));
     reply.insert("args",QJsonValue(QJsonArray({arduino.getBoardPort()})));
 
@@ -44,13 +44,13 @@ void Web2Board::sendUploading(){
     m_pClient->flush();
 }
 
-void Web2Board::sendSuccess(QJsonValue const & replyValue){
+void Web2Board::sendSuccess(QJsonObject msg, QJsonValue const & replyValue){
     QJsonObject reply;
 
-    reply.insert("ID",receivedJSONMessage.value("ID").toInt());
-    qInfo() << "Send success ID: " << receivedJSONMessage.value("ID").toInt();
-    reply.insert("hub",receivedJSONMessage.value("hub").toString());
-    reply.insert("function",receivedJSONMessage.value("function").toString());
+    reply.insert("ID",msg.value("ID").toInt());
+    qInfo() << "Send success ID: " << msg.value("ID").toInt();
+    reply.insert("hub",msg.value("hub").toString());
+    reply.insert("function",msg.value("function").toString());
     reply.insert("reply",QJsonValue(replyValue));
     reply.insert("success",QJsonValue(true));
 
@@ -60,12 +60,12 @@ void Web2Board::sendSuccess(QJsonValue const & replyValue){
     m_pClient->flush();
 }
 
-void Web2Board::sendNotSuccess(QJsonValue const & replyValue){
+void Web2Board::sendNotSuccess(QJsonObject msg, QJsonValue const & replyValue){
     QJsonObject reply;
 
-    reply.insert("ID",receivedJSONMessage.value("ID").toInt());
-    reply.insert("hub",receivedJSONMessage.value("hub").toString());
-    reply.insert("function",receivedJSONMessage.value("function").toString());
+    reply.insert("ID",msg.value("ID").toInt());
+    reply.insert("hub",msg.value("hub").toString());
+    reply.insert("function",msg.value("function").toString());
     reply.insert("reply",QJsonValue(replyValue));
     reply.insert("success",QJsonValue(false));
 
@@ -85,18 +85,28 @@ QJsonObject Web2Board::makeVerifyError(int column, int line, QString file, QStri
 
 
 
-void Web2Board::processCommands(){
+void Web2Board::processCommands(QJsonObject msg){
 
 
-    qInfo() << "received: " << QJsonDocument(receivedJSONMessage).toJson();
-    __messageID = receivedJSONMessage.value("ID").toInt();
+    if(!msg.contains("ID")){
+        qCritical() << "Wrong message: No ID" ;
+        return; ///invalid message
+    }
+
+    qInfo() << "received: " << QJsonDocument(msg).toJson();
+    __messageID = msg.value("ID").toInt();
     qInfo() << "Message ID: " << __messageID;
 
-    QString function = receivedJSONMessage.value("function").toString();
+    if(! msg.contains("function")){
+        qCritical() << "Discarded message: No Function" ;
+        return; ///invalid message
+    }
+
+    QString function = msg.value("function").toString();
 
     try{
         if(function == Literals::VERSION){
-            sendSuccess(QJsonValue("18.08.14"));
+            sendSuccess(msg, QJsonValue("18.08.14"));
 
         }else if(function == Literals::LIBVERSION){
 
@@ -107,25 +117,25 @@ void Web2Board::processCommands(){
             }
 
 
-            sendSuccess(QJsonValue());
+            sendSuccess(msg, QJsonValue());
 
         }else if(function == Literals::VERIFY){
-            sendVerifying();
+            sendVerifying(msg);
             //write skectch stored in jsonMessage.value("args").toArray().at(0)
-            QString sketch = receivedJSONMessage.value("args").toArray().at(0).toString();
-            QString boardName = receivedJSONMessage.value("args").toArray().at(1).toString();
+            QString sketch = msg.value("args").toArray().at(0).toString();
+            QString boardName = msg.value("args").toArray().at(1).toString();
 
             arduino.writeSketch(sketch);
             arduino.setBoardNameID(boardName);
             //non-blocking verify
             arduino.asyncVerify(__clientID);
-            sendSuccess( QJsonValue(arduino.getHex()));
+            sendSuccess(msg,  QJsonValue(arduino.getHex()));
 
         }else if (function == Literals::UPLOAD){
-            sendVerifying();
+            sendVerifying(msg);
 
-            QString sketch = receivedJSONMessage.value("args").toArray().at(0).toString();
-            QString boardName = receivedJSONMessage.value("args").toArray().at(1).toString();
+            QString sketch = msg.value("args").toArray().at(0).toString();
+            QString boardName = msg.value("args").toArray().at(1).toString();
 
             arduino.writeSketch(sketch);
             arduino.setBoardNameID(boardName);
@@ -135,30 +145,30 @@ void Web2Board::processCommands(){
             arduino.closeSerialMonitor(); //just in case it was opened
 
             arduino.autoDetectBoardPort();
-            sendUploading();
+            sendUploading(msg);
             arduino.upload();
 
-            sendSuccess(QJsonValue(arduino.getBoardPort()));
+            sendSuccess(msg, QJsonValue(arduino.getBoardPort()));
 
         }else if (function == Literals::FINDBOARDPORT){
-            QString boardName = receivedJSONMessage.value("args").toArray().at(0).toString();
+            QString boardName = msg.value("args").toArray().at(0).toString();
 
             arduino.setBoardNameID(boardName);
             arduino.autoDetectBoardPort();
 
 
-            sendSuccess(QJsonValue(arduino.getBoardPort()));
+            sendSuccess(msg, QJsonValue(arduino.getBoardPort()));
 
         }else if (function == Literals::SUBSCRIBETOPORT){
-            QString port = receivedJSONMessage.value("args").toArray().at(0).toString();
+            QString port = msg.value("args").toArray().at(0).toString();
 
             arduino.setBoardPort(port);
 
-            sendSuccess(QJsonValue(true));
+            sendSuccess(msg, QJsonValue(true));
 
         }else if (function == Literals::OPENSERIALMONITOR){
-            QString port = receivedJSONMessage.value("args").toArray().at(0).toString();
-            int baudrate = receivedJSONMessage.value("args").toArray().at(1).toInt();
+            QString port = msg.value("args").toArray().at(0).toString();
+            int baudrate = msg.value("args").toArray().at(1).toInt();
 
             arduino.setBoardPort(port);
             arduino.openSerialMonitor(baudrate);
@@ -169,11 +179,11 @@ void Web2Board::processCommands(){
             __timer->start(__timeout);
 
 
-            sendSuccess(QJsonValue(true));
+            sendSuccess(msg, QJsonValue(true));
 
         }else if (function == Literals::CHANGEBAUDRATE){
-            QString port = receivedJSONMessage.value("args").toArray().at(0).toString();
-            int baudrate = receivedJSONMessage.value("args").toArray().at(1).toInt();
+            QString port = msg.value("args").toArray().at(0).toString();
+            int baudrate = msg.value("args").toArray().at(1).toInt();
 
             arduino.setBoardPort(port);
 
@@ -183,7 +193,7 @@ void Web2Board::processCommands(){
             __timer->start(__timeout);
 
 
-            sendSuccess(QJsonValue(true));
+            sendSuccess(msg, QJsonValue(true));
 
         }else if (function == Literals::CLOSESERIALMONITOR){
 
@@ -191,13 +201,13 @@ void Web2Board::processCommands(){
             QObject::disconnect(__timer, SIGNAL(timeout()), this, SLOT(sendIncomingSerialToClient()));
             arduino.closeSerialMonitor();
 
-            sendSuccess(QJsonValue(true));
+            sendSuccess(msg, QJsonValue(true));
 
         }else if (function == Literals::SENDSERIAL){
-            QString msg = receivedJSONMessage.value("args").toArray().at(1).toString();
-            qDebug() << "Sending to Arduino: " << msg;
-            arduino.serialMonitor->sendToArduino(msg);
-            sendSuccess(QJsonValue());
+            QString serial_msg = msg.value("args").toArray().at(1).toString();
+            qDebug() << "Sending to Arduino: " << serial_msg;
+            arduino.serialMonitor->sendToArduino(serial_msg);
+            sendSuccess(msg, QJsonValue());
 
         }else{
             //UNKNOWN MESSAGE
@@ -206,75 +216,75 @@ void Web2Board::processCommands(){
         QJsonObject replyObject;
         replyObject.insert("stdErr",QJsonValue(e.message));
         replyObject.insert("title",e.errorType);
-        sendNotSuccess(QJsonValue(replyObject));
+        sendNotSuccess(msg, QJsonValue(replyObject));
         qCritical()<<e.message;
     }catch(DirNotCreatedException &e){
         QJsonObject replyObject;
         replyObject.insert("stdErr",QJsonValue(e.message));
         replyObject.insert("title",e.errorType);
-        sendNotSuccess(QJsonValue(replyObject));
+        sendNotSuccess(msg, QJsonValue(replyObject));
         qCritical()<<e.message;
     }catch(BoardNotKnownException &e){
         QJsonObject replyObject;
         replyObject.insert("stdErr",QJsonValue(e.message));
         replyObject.insert("title",e.errorType);
-        sendNotSuccess(QJsonValue(replyObject));
+        sendNotSuccess(msg, QJsonValue(replyObject));
         qCritical()<<e.message;
     }catch(FileNotFoundException &e){
         QJsonObject replyObject;
         replyObject.insert("stdErr",QJsonValue(e.message));
         replyObject.insert("title",e.errorType);
-        sendNotSuccess(QJsonValue(replyObject));
+        sendNotSuccess(msg, QJsonValue(replyObject));
         qCritical()<<e.message;
     }catch(BoardNotDetectedException &e){
         QJsonObject replyObject;
         replyObject.insert("stdErr",QJsonValue(e.message));
         replyObject.insert("title",e.errorType);
-        sendNotSuccess(QJsonValue(replyObject));
+        sendNotSuccess(msg, QJsonValue(replyObject));
         qCritical()<<e.message;
     }catch(BoardNotSetException &e){
         QJsonObject replyObject;
         replyObject.insert("stdErr",QJsonValue(e.message));
         replyObject.insert("title",e.errorType);
-        sendNotSuccess(QJsonValue(replyObject));
+        sendNotSuccess(msg, QJsonValue(replyObject));
         qCritical()<<e.message;
     }catch(SketchNotSetException &e){
         QJsonObject replyObject;
         replyObject.insert("stdErr",QJsonValue(e.message));
         replyObject.insert("title",e.errorType);
-        sendNotSuccess(QJsonValue(replyObject));
+        sendNotSuccess(msg, QJsonValue(replyObject));
         qCritical()<<e.message;
     }catch(UploadException &e){
         QJsonObject replyObject;
         replyObject.insert("stdErr",QJsonValue(e.message));
         replyObject.insert("title",e.errorType);
-        sendNotSuccess(QJsonValue(replyObject));
+        sendNotSuccess(msg, QJsonValue(replyObject));
         qCritical()<<e.message;
     }catch(VerifyException &e){
         QJsonObject error = makeVerifyError(1,1,"arduino",e.message);
-        sendNotSuccess(QJsonValue(error));
+        sendNotSuccess(msg, QJsonValue(error));
         qCritical()<<e.message;
     }catch(ArduinoNotFoundException &e){
         QJsonObject error = makeVerifyError(1,1,"arduino",e.message);
-        sendNotSuccess(QJsonValue(error));
+        sendNotSuccess(msg, QJsonValue(error));
         qCritical()<<e.message;
     }catch(CannotMoveTmpLibsException &e){
         QJsonObject replyObject;
         replyObject.insert("stdErr",QJsonValue(e.message));
         replyObject.insert("title",e.errorType);
-        sendNotSuccess(QJsonValue(replyObject));
+        sendNotSuccess(msg, QJsonValue(replyObject));
         qCritical()<<e.message;
     }catch(GetTimeOutException &e){
         QJsonObject replyObject;
         replyObject.insert("stdErr",QJsonValue(e.message));
         replyObject.insert("title",e.errorType);
-        sendNotSuccess(QJsonValue(replyObject));
+        sendNotSuccess(msg, QJsonValue(replyObject));
         qCritical()<<e.message;qCritical()<<e.message;
     }catch(HexFileException &e){
         QJsonObject replyObject;
         replyObject.insert("stdErr",QJsonValue(e.message));
         replyObject.insert("title",e.errorType);
-        sendNotSuccess(QJsonValue(replyObject));
+        sendNotSuccess(msg, QJsonValue(replyObject));
         qCritical()<<e.message;qCritical()<<e.message;
     }
 }
@@ -293,13 +303,8 @@ void Web2Board::processTextMessage(QString message)
     if(message.startsWith("setBitbloqLibsVersion")){
         //INIT LEGACY MESSAGE
         m_pClient->sendTextMessage("{}");
-    }else if(!rmessage.contains("ID")){
-        qInfo() << "unexpected message (without ID)";
-        return;
     }else{
-        qInfo() << "ID: " << rmessage.value("ID").toInt();
-        receivedJSONMessage = rmessage;
-        processCommands();
+        processCommands(rmessage);
     }
 }
 
