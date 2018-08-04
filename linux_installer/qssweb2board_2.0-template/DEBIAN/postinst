@@ -23,15 +23,18 @@ export QSSWEB2BOARD_BUILD=${QSSWEB2BOARD_TMP}build/
 export QSSWEB2BOARD_ARDUINO=${installDir}/res/arduino/
 export QSSWEB2BOARD_KNOWNBOARDS=${QSSWEB2BOARD_ARDUINO}libraries/knownboards.json
 
+mkdir $QSSWEB2BOARD_TMP
 chown root:qssweb2board -R ${installDir}
 #chown root:qssweb2board -R $QSSWEB2BOARD_SKETCHES
 #chown root:qssweb2board -R $QSSWEB2BOARD_BUILD
 #chown root:qssweb2board $QSSWEB2BOARD_KNOWNBOARDS
 #chown root:qssweb2board -R $QSSWEB2BOARD_ARDUINO
 
-chmod g+x ${installDir}/QSSWeb2Board
+chmod g+x ${installDir}
 chmod g+x ${QSSWEB2BOARD_ARDUINO}arduino
-chmod g+w -R $QSSWEB2BOARD_TMP
+
+chmod g+xw -R $QSSWEB2BOARD_TMP
+
 chmod g+r -R $QSSWEB2BOARD_ARDUINO
 chmod g+wx -R ${QSSWEB2BOARD_ARDUINO}hardware/tools/avr/*
 chmod g+w -R ${QSSWEB2BOARD_ARDUINO}libraries/
