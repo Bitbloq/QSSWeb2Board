@@ -295,6 +295,12 @@ void Web2Board::handleTextMessage(QString message)
 {
     m_pClient = qobject_cast<QWebSocket *>(sender());
 
+    if(message.startsWith("setBitbloqLibsVersion")){
+        //INIT LEGACY MESSAGE
+        m_pClient->sendTextMessage("{}");
+        return;
+    }
+
     QJsonDocument rdocmessage = QJsonDocument::fromJson(message.toUtf8());
     if (rdocmessage.isNull() || rdocmessage.isEmpty()){
         qCritical() << "Invalid JSON message received: " << message;
@@ -305,12 +311,7 @@ void Web2Board::handleTextMessage(QString message)
 
     qDebug() << "Received JSON: " << QJsonDocument(rmessage).toJson();
 
-    if(message.startsWith("setBitbloqLibsVersion")){
-        //INIT LEGACY MESSAGE
-        m_pClient->sendTextMessage("{}");
-    }else{
-        handleMessage(rmessage);
-    }
+    handleMessage(rmessage);
 }
 
 void Web2Board::sendIncomingSerialToClient(){
