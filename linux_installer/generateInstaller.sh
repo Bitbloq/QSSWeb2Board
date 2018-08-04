@@ -90,6 +90,8 @@ unzip arduino1.8.5_BQ_Linux_${ARCH}.zip > /dev/null
 rm arduino1.8.5_BQ_Linux_${ARCH}.zip > /dev/null
 cd -
 
+#copy knownBoards
+cp knownBoards.json ${packageDir}/opt/QSSWeb2Board/res/arduino/libraries/
 
 #build application
 baseDir=$(pwd)
@@ -115,6 +117,14 @@ sed -i -e "s/###ARCH###/${ARCH}/g" ${packageDir}/DEBIAN/control
 #build deb package
 dpkg --build ${packageDir}
 
+#mv package to deb subdirectory
+if [ -d deb ]; then
+  rm -fr deb
+fi
+
+mkdir deb
+mv ${packageDir}.deb ./deb/
+
 #create install script
 
 cp install-template.sh installer-${packageDir}.sh
@@ -122,14 +132,17 @@ sed -i -e "s/###OS###/${OS}/g" installer-${packageDir}.sh
 sed -i -e "s/###VERSION###/${VER}/g" installer-${packageDir}.sh
 sed -i -e "s/###ARCH###/${BITS}/g" installer-${packageDir}.sh
 
-sed -i -e "s/###INSTALL_COMMAND###/sudo dpkg -i ${packageDir}.deb/g" installer-${packageDir}.sh
+sed -i -e "s/###INSTALL_COMMAND###/sudo gdebi .\/deb\/${packageDir}.deb/g" installer-${packageDir}.sh
 
-zip -r installer-${packageDir}.zip ${packageDir}.deb installer-${packageDir}.sh
+zip -r installer-${packageDir}.zip ./deb/${packageDir}.deb installer-${packageDir}.sh
 
+#remove all temp files
 
+rm installer-${packageDir}.sh
 cd ${baseDir}
 cd build
 make clean
 cd ${baseDir}
 rm -fr build
 rm -fr ${packageDir}
+rm -fr deb

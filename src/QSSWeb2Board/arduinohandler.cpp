@@ -15,7 +15,7 @@ ArduinoHandler::ArduinoHandler():
     serialMonitor{Q_NULLPTR},
 
     sketchesDefaultBaseDir{(QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_SKETCHES").isEmpty()) ?
-                              QCoreApplication::applicationDirPath() + "/res/sketches/" :
+                              QCoreApplication::applicationDirPath() + "/tmp/sketches/" :
                                QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_SKETCHES")},
 
     arduinoDefaultDir{(QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_ARDUINO").isEmpty()) ?
@@ -23,20 +23,20 @@ ArduinoHandler::ArduinoHandler():
                            QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_ARDUINO")},
 
     buildDefaultDir{(QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_BUILD").isEmpty()) ?
-                        QCoreApplication::applicationDirPath() + "/res/build/" :
+                        QCoreApplication::applicationDirPath() + "/tmp/build/" :
                          QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_BUILD")},
-    proc{Q_NULLPTR},
 
     arduinoBoards{ (QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_KNOWNBOARDS").isEmpty()) ?
-                      QCoreApplication::applicationDirPath() + "/res/knownboards.json" :
-                       QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_KNOWNBOARDS")}
+                      QCoreApplication::applicationDirPath() + "/res/arduino/libraries/knownboards.json" :
+                       QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_KNOWNBOARDS")},
+
+    tmpDir{(QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_TMP").isEmpty()) ?
+                     QCoreApplication::applicationDirPath() + "/tmp/" :
+                      QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_TMP")}
 
 {
-    qsrand(QDateTime::currentMSecsSinceEpoch()); //seed for initializing randomstrings
+    qsrand(uint(QDateTime::currentMSecsSinceEpoch())); //seed for initializing randomstrings
     setSketchesBaseDir(sketchesDefaultBaseDir);
-    proc = new QProcess(); //this is to launch the arduino commands
-
-    connect(proc,SIGNAL(finished(int)),this,SIGNAL(verifyFinished(int)));
 
     if(!QDir().exists(sketchesDefaultBaseDir)){
         QDir().mkdir(sketchesDefaultBaseDir);
@@ -88,10 +88,6 @@ bool ArduinoHandler::closeSerialMonitor(){
 }
 
 ArduinoHandler::~ArduinoHandler(){
-    //free memory from pointers
-    if(proc){
-        delete proc;
-    }
 
     if(serialMonitor){
         delete serialMonitor;
@@ -253,7 +249,7 @@ bool ArduinoHandler::setBoardNameID(QString s){
     s = s.trimmed().simplified();
     if (arduinoBoards[s].isUndefined()){
         throw BoardNotKnownException("BOARD NOT KNOWN: " + s);
-        return false;
+
     }else{
         boardNameID=s;
         return true;
@@ -322,7 +318,7 @@ bool ArduinoHandler::autoDetectBoardPort(){
 
     throw BoardNotDetectedException("BOARD NOT DETECTED: " + boardNameID);
     //board name not connected to the computer
-    return false;
+
 }
 
 
@@ -330,6 +326,7 @@ int ArduinoHandler::verify(){
 
     QString command = makeVerifyCommand();
 
+    QProcess *proc = new QProcess();
     //let's verify the sketch
     proc->start(command);
 
@@ -340,22 +337,20 @@ int ArduinoHandler::verify(){
     QString output = QString(proc->readAllStandardError());
     proc->close();
 
+    delete proc;
+
     switch(exitCode){
     case 0:
         qDebug()<<"Verify OK";
         break;
     case 1:
         throw VerifyException(output, verifyErrorsList);
-        break;
     case 2:
         throw VerifyException("Sketch not found");
-        break;
     case 3:
         throw VerifyException("Invalid (argument for) commandline option");
-        break;
     case 4:
         throw VerifyException("Preference passed to --get-pref does not exist");
-        break;
     }
 
     return exitCode;
@@ -365,11 +360,12 @@ int ArduinoHandler::verify(){
 
 int ArduinoHandler::asyncVerify(int buildPathCounter){
 
-    setBuildPath( buildDefaultDir + "../build" + QString::number(buildPathCounter) + "/");
+    setBuildPath( tmpDir + "../build" + QString::number(buildPathCounter) + "/");
 
     qInfo()<< "buildPath (async): "  << buildPath;
     QString command = makeVerifyCommand();
 
+    QProcess* proc = new QProcess;
     //let's verify the sketch
     proc->start(command);
 
@@ -382,22 +378,20 @@ int ArduinoHandler::asyncVerify(int buildPathCounter){
     QString output = QString(proc->readAllStandardError());
     proc->close();
 
+    delete proc;
+
     switch(exitCode){
     case 0:
         qDebug()<<"Verify OK";
         break;
     case 1:
         throw VerifyException(output, verifyErrorsList);
-        break;
     case 2:
         throw VerifyException("Sketch not found");
-        break;
     case 3:
         throw VerifyException("Invalid (argument for) commandline option");
-        break;
     case 4:
         throw VerifyException("Preference passed to --get-pref does not exist");
-        break;
     }
 
     return exitCode;
@@ -405,6 +399,8 @@ int ArduinoHandler::asyncVerify(int buildPathCounter){
 
 int ArduinoHandler::upload()
 {
+
+    QProcess *proc = new QProcess();
     //makeUploadCommand creates the load command to execute
     proc->start(makeUploadCommand());
     proc->waitForFinished(30000); //-1 means there is no time out
@@ -412,22 +408,21 @@ int ArduinoHandler::upload()
     QString errorOutput(proc->readAllStandardError());
     int exitCode = proc->exitCode();
     proc->close();
+
+    delete proc;
+
     switch(exitCode){
     case 0:
         qDebug()<<"Upload OK";
         break;
     case 1:
         throw UploadException(errorOutput);
-        break;
     case 2:
         throw UploadException("Sketch not found");
-        break;
     case 3:
         throw UploadException("Invalid (argument for) commandline option");
-        break;
     case 4:
         throw UploadException("Preference passed to --get-pref does not exist");
-        break;
     }
 
     return exitCode;

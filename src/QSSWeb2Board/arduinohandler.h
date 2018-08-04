@@ -8,7 +8,6 @@
 #include "arduinoserialmonitor.h"
 
 //forward declararion of classes
-QT_FORWARD_DECLARE_CLASS(QProcess);
 QT_FORWARD_DECLARE_CLASS(TestArduinoHandler)
 QT_FORWARD_DECLARE_CLASS(TestBoards)
 QT_FORWARD_DECLARE_CLASS(Web2Board)
@@ -193,12 +192,12 @@ protected:
      * @brief makeUploadCommand -> makes the upload command. OS dependant. Virtualized
      * @return upload command
      */
-    virtual QString makeUploadCommand(){return "";};
+    virtual QString makeUploadCommand(){return "";}
     /**
      * @brief makeVerifyCommand -> makes the verify command. OS dependant. Virtualized
      * @return verify command
      */
-    virtual QString makeVerifyCommand(){return "";};
+    virtual QString makeVerifyCommand(){return "";}
 
 
     /**
@@ -206,11 +205,10 @@ protected:
      * @param arduinoPath
      * @return
      */
-    virtual bool checkArduinoPath(QString arduinoPath){arduinoPath=""; return false;};
-
-    QProcess *proc; ///variable to handle command line commands.
+    virtual bool checkArduinoPath(QString arduinoPath){arduinoPath=""; return false;}
 
     KnownBoards arduinoBoards; ///object holding known boards with their vendorID and productID
+    const QString tmpDir;
 
     /**
      * @brief createRandomString. Creates a random string of 12 characters
@@ -228,13 +226,6 @@ protected:
      */
     void eraseExistingBuildFiles() const;
 
-signals:
-    /**
-     * @brief verifyFinished Signal emitted with the verification processed is finished
-     * @param exitCode the exit code of the process
-     */
-    void verifyFinished(int exitCode);
-
 };
 
 /**
@@ -246,7 +237,7 @@ class LinuxArduinoHandler : public ArduinoHandler{
 
 public:
     LinuxArduinoHandler():ArduinoHandler(){}
-    virtual ~LinuxArduinoHandler(){};
+    virtual ~LinuxArduinoHandler(){}
     virtual QString makeUploadCommand();
     virtual QString makeVerifyCommand();
     virtual bool checkArduinoPath(QString arduinoPath);
@@ -261,7 +252,7 @@ class WindowsArduinoHandler : public ArduinoHandler{
 
 public:
     WindowsArduinoHandler():ArduinoHandler(){}
-    virtual ~WindowsArduinoHandler(){};
+    virtual ~WindowsArduinoHandler(){}
     virtual QString makeUploadCommand();
     virtual QString makeVerifyCommand();
     virtual bool checkArduinoPath(QString arduinoPath);
@@ -276,7 +267,7 @@ class MacArduinoHandler : public ArduinoHandler{
 
 public:
     MacArduinoHandler():ArduinoHandler(){}
-    virtual ~MacArduinoHandler(){};
+    virtual ~MacArduinoHandler(){}
     virtual QString makeUploadCommand();
     virtual QString makeVerifyCommand();
     virtual bool checkArduinoPath(QString arduinoPath);
