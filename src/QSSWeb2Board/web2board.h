@@ -25,7 +25,7 @@ public Q_SLOTS:
      * @brief processTextMessage. Public slot to process messages received from client thorugh wss
      * @param message
      */
-    void processTextMessage(QString message);
+    void handleTextMessage(QString message);
     /**
      * @brief sendIncomingSerialToClient Send messages coming from Arduino to Bitbloq client
      */
@@ -35,10 +35,10 @@ public Q_SLOTS:
      * Messages are not sent as they are received. They are stored in __messageFromArduinoToBitbloq and are sent every __timeout miliseconds
      * @param message the new message to add to the buffer
      */
-    void feedMessageFromArduinoToBitbloq(QString message);
+    void byteArrayFromArduinoToBitbloq(const QByteArray & bA);
 
 private:
-    void processCommands(QJsonObject msg);
+    void handleMessage(QJsonObject msg);
 
     /**
      * @brief sendVerifying Sends to Bitbloq the message that the requested verification is in process
@@ -62,7 +62,7 @@ private:
     QWebSocket *m_pClient;
 
     int __messageID;
-    QString __messageFromArduinoToBitbloq;
+    QByteArray __byteArrayFromArduinoToBitbloq;
 
     QTimer* __timer;
     int __timeout;

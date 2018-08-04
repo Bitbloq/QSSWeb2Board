@@ -76,7 +76,7 @@ void SSLServer::onNewConnection()
 
     qDebug() << "Client connected:" << pWeb2BoardSocket->m_pWebSocket->peerName() << pWeb2BoardSocket->m_pWebSocket->origin();
 
-    connect(pWeb2BoardSocket->m_pWebSocket, &QWebSocket::textMessageReceived, pWeb2BoardSocket->m_pWeb2Board, &Web2Board::processTextMessage);
+    connect(pWeb2BoardSocket->m_pWebSocket, &QWebSocket::textMessageReceived, pWeb2BoardSocket->m_pWeb2Board, &Web2Board::handleTextMessage);
     connect(pWeb2BoardSocket->m_pWebSocket, &QWebSocket::disconnected, this, &SSLServer::socketDisconnected);
 
     m_web2BoardSocketClients << pWeb2BoardSocket;

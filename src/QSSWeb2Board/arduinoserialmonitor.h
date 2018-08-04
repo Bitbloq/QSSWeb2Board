@@ -60,7 +60,7 @@ signals:
      * @brief lineReceived Signal emitted when a line is received through serial port
      * @param line the received string line
      */
-    void lineReceived(QString line);
+    void dataReceived(const QByteArray & data);
 
 
 protected:

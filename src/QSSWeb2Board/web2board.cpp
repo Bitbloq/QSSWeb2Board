@@ -6,7 +6,7 @@
 
 Web2Board::Web2Board(int clientID, QObject *parent):
     QObject(parent),
-    __messageFromArduinoToBitbloq{QString("")},
+    __byteArrayFromArduinoToBitbloq{QByteArray()},
     __timer{Q_NULLPTR},
     __timeout{50},
     __clientID{clientID}
@@ -18,8 +18,8 @@ Web2Board::~Web2Board(){
     if(__timer) delete __timer;
 }
 
-void Web2Board::feedMessageFromArduinoToBitbloq(QString message){
-    __messageFromArduinoToBitbloq += message;
+void Web2Board::byteArrayFromArduinoToBitbloq(const QByteArray & bA){
+    __byteArrayFromArduinoToBitbloq.append(bA);
 }
 
 void Web2Board::sendVerifying(QJsonObject msg){
@@ -85,7 +85,7 @@ QJsonObject Web2Board::makeVerifyError(int column, int line, QString file, QStri
 
 
 
-void Web2Board::processCommands(QJsonObject msg){
+void Web2Board::handleMessage(QJsonObject msg){
 
 
     if(!msg.contains("ID")){
@@ -173,7 +173,7 @@ void Web2Board::processCommands(QJsonObject msg){
             arduino.setBoardPort(port);
             arduino.openSerialMonitor(baudrate);
 
-            QObject::connect(arduino.serialMonitor,SIGNAL(lineReceived(QString)),this,SLOT(feedMessageFromArduinoToBitbloq(QString)));
+            QObject::connect(arduino.serialMonitor,SIGNAL(dataReceived(const QByteArray &)),this,SLOT(byteArrayFromArduinoToBitbloq(const QByteArray &)));
             QObject::connect(__timer, SIGNAL(timeout()), this, SLOT(sendIncomingSerialToClient()));
 
             __timer->start(__timeout);
@@ -291,26 +291,31 @@ void Web2Board::processCommands(QJsonObject msg){
 
 
 
-void Web2Board::processTextMessage(QString message)
+void Web2Board::handleTextMessage(QString message)
 {
     m_pClient = qobject_cast<QWebSocket *>(sender());
 
-    QJsonObject rmessage = QJsonDocument::fromJson(message.toUtf8()).object();
+    QJsonDocument rdocmessage = QJsonDocument::fromJson(message.toUtf8());
+    if (rdocmessage.isNull() || rdocmessage.isEmpty()){
+        qCritical() << "Invalid JSON message received: " << message;
+        return;
+    }
 
-    qInfo() << "RECEIVED MESSAGE " << message;
-    qInfo() << "JSON: " << QJsonDocument(rmessage).toJson();
+    QJsonObject rmessage = rdocmessage.object();
+
+    qDebug() << "Received JSON: " << QJsonDocument(rmessage).toJson();
 
     if(message.startsWith("setBitbloqLibsVersion")){
         //INIT LEGACY MESSAGE
         m_pClient->sendTextMessage("{}");
     }else{
-        processCommands(rmessage);
+        handleMessage(rmessage);
     }
 }
 
 void Web2Board::sendIncomingSerialToClient(){
 
-    if(__messageFromArduinoToBitbloq.isEmpty()) return;
+    if(__byteArrayFromArduinoToBitbloq.isEmpty()) return;
 
     __messageID++;
 
@@ -319,9 +324,9 @@ void Web2Board::sendIncomingSerialToClient(){
     reply.insert("ID",__messageID);
     reply.insert("hub","SerialMonitorHub");
     reply.insert("function","received");
-    reply.insert("args",QJsonValue(QJsonArray({arduino.getBoardPort(),__messageFromArduinoToBitbloq})));
+    reply.insert("args",QJsonValue(QJsonArray({arduino.getBoardPort(),QString(__byteArrayFromArduinoToBitbloq)})));
     m_pClient->sendTextMessage(QJsonDocument(reply).toJson());
     m_pClient->flush();
-    __messageFromArduinoToBitbloq = QString("");
+    __byteArrayFromArduinoToBitbloq.clear();
 }
 
