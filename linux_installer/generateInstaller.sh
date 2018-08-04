@@ -75,7 +75,7 @@ while true; do
 done
 
 
-packageDir=qssweb2board_2.0-1${OS}${VER}_${ARCH}
+packageDir=qssweb2board_2.0-2${OS}${VER}_${ARCH}
 
 #create packageDir form template
 rm -fr ${packageDir}
