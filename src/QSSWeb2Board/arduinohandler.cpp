@@ -360,7 +360,7 @@ int ArduinoHandler::verify(){
 
 int ArduinoHandler::asyncVerify(int buildPathCounter){
 
-    setBuildPath( tmpDir + "../build" + QString::number(buildPathCounter) + "/");
+    setBuildPath( tmpDir + "build" + QString::number(buildPathCounter) + "/");
 
     qInfo()<< "buildPath (async): "  << buildPath;
     QString command = makeVerifyCommand();

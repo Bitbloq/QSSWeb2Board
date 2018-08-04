@@ -39,7 +39,7 @@ chmod g+r -R $QSSWEB2BOARD_ARDUINO
 chmod g+wx -R ${QSSWEB2BOARD_ARDUINO}hardware/tools/avr/*
 chmod g+w -R ${QSSWEB2BOARD_ARDUINO}libraries/
 chmod g+w -R $QSSWEB2BOARD_TMP
-chmod g+w ${installDir}/res/
+chmod g+w ${installDir}/res/*
 chmod g+w ${QSSWEB2BOARD_ARDUINO}
 
 #require reboot
