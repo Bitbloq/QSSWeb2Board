@@ -123,7 +123,6 @@ QString ArduinoHandler::createRandomString() const{
     return randomString;
 }
 
-
 void ArduinoHandler::eraseExistingSketches() const {
     QDir dirToClean(sketchesDefaultBaseDir);
 
@@ -143,9 +142,9 @@ void ArduinoHandler::eraseExistingSketches() const {
 }
 
 void ArduinoHandler::eraseExistingBuildFiles() const {
-
-    //DOES NOT WORK. CHECK
+//TODO
 }
+
 
 bool ArduinoHandler::writeSketch(QString _sketch, QString _sketchName){
     //remove tail white spaces and retrun cartridges

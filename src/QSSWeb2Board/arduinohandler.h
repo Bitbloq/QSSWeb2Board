@@ -227,6 +227,11 @@ protected:
      */
     void eraseExistingBuildFiles() const;
 
+    /**
+     * @brief eraseTempDir
+     */
+    void eraseTempDir() const;
+
 };
 
 /**
