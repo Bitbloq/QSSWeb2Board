@@ -87,6 +87,8 @@ QJsonObject Web2Board::makeVerifyError(int column, int line, QString file, QStri
 
 void Web2Board::processCommands(){
 
+
+    qInfo() << "received: " << QJsonDocument(receivedJSONMessage).toJson();
     __messageID = receivedJSONMessage.value("ID").toInt();
     qInfo() << "Message ID: " << __messageID;
 
@@ -283,11 +285,20 @@ void Web2Board::processTextMessage(QString message)
 {
     m_pClient = qobject_cast<QWebSocket *>(sender());
 
+    QJsonObject rmessage = QJsonDocument::fromJson(message.toUtf8()).object();
+
+    qInfo() << "RECEIVED MESSAGE " << message;
+    qInfo() << "JSON: " << QJsonDocument(rmessage).toJson();
+
     if(message.startsWith("setBitbloqLibsVersion")){
         //INIT LEGACY MESSAGE
         m_pClient->sendTextMessage("{}");
+    }else if(!rmessage.contains("ID")){
+        qInfo() << "unexpected message (without ID)";
+        return;
     }else{
-        receivedJSONMessage = QJsonDocument::fromJson(message.toUtf8()).object();
+        qInfo() << "ID: " << rmessage.value("ID").toInt();
+        receivedJSONMessage = rmessage;
         processCommands();
     }
 }
