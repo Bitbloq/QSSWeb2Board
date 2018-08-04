@@ -54,13 +54,13 @@ private:
      * @param jsonObj Info with the requested action
      * @param replyValue success reply
      */
-    void sendSuccess(QJsonObject const & jsonObj, QJsonValue const & replyValue);
-    void sendNotSuccess(QJsonObject const & jsonObj, QJsonValue const & replyValue);
+    void sendSuccess(QJsonValue const & replyValue);
+    void sendNotSuccess(QJsonValue const & replyValue);
 
     QJsonObject makeVerifyError(int column, int line, QString file, QString error);
 
     QWebSocket *m_pClient;
-    QJsonObject jsonMessage;
+    QJsonObject receivedJSONMessage;
 
     int __messageID;
     QString __messageFromArduinoToBitbloq;
