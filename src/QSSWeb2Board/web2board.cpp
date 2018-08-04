@@ -99,6 +99,7 @@ void Web2Board::processCommands(){
             BitbloqLibsUpdater libs(arduino.getArduinoDefaultDir());
             if (libs.existsNewVersion()){
                 libs.update();
+                arduino.updateArduinoBoards();
             }
 
 

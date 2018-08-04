@@ -41,6 +41,7 @@ class KnownBoards
 {
 public:
     KnownBoards(QString jsonFileName);
+    void setKnownBoards(QString jsonFilename);
     JsonBoard operator[](const QString& boardName);
 
 private:

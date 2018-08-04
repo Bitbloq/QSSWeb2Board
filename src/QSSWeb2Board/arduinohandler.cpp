@@ -14,25 +14,25 @@ ArduinoHandler::ArduinoHandler():
     QObject(),
     serialMonitor{Q_NULLPTR},
 
-    sketchesDefaultBaseDir{(QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_SKETCHES").isEmpty()) ?
-                              QCoreApplication::applicationDirPath() + "/tmp/sketches/" :
+    sketchesDefaultBaseDir{QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_SKETCHES").isEmpty() ?
+                               QCoreApplication::applicationDirPath() + "/tmp/sketches/" :
                                QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_SKETCHES")},
 
-    arduinoDefaultDir{(QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_ARDUINO").isEmpty()) ?
-                          QCoreApplication::applicationDirPath() + "/res/arduino/" :
-                           QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_ARDUINO")},
+    arduinoDefaultDir{QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_ARDUINO").isEmpty() ?
+                               QCoreApplication::applicationDirPath() + "/res/arduino/" :
+                               QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_ARDUINO")},
 
     buildDefaultDir{(QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_BUILD").isEmpty()) ?
-                        QCoreApplication::applicationDirPath() + "/tmp/build/" :
-                         QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_BUILD")},
+                               QCoreApplication::applicationDirPath() + "/tmp/build/" :
+                               QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_BUILD")},
 
-    arduinoBoards{ (QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_KNOWNBOARDS").isEmpty()) ?
-                      QCoreApplication::applicationDirPath() + "/res/arduino/libraries/knownboards.json" :
-                       QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_KNOWNBOARDS")},
+    arduinoBoards{QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_KNOWNBOARDS").isEmpty() ?
+                               QCoreApplication::applicationDirPath() + "/res/arduino/libraries/knownboards.json" :
+                               QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_KNOWNBOARDS")},
 
     tmpDir{(QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_TMP").isEmpty()) ?
-                     QCoreApplication::applicationDirPath() + "/tmp/" :
-                      QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_TMP")}
+                               QCoreApplication::applicationDirPath() + "/tmp/" :
+                               QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_TMP")}
 
 {
     qsrand(uint(QDateTime::currentMSecsSinceEpoch())); //seed for initializing randomstrings
@@ -46,11 +46,23 @@ ArduinoHandler::ArduinoHandler():
         QDir().mkdir(buildDefaultDir);
     }
 
+   if(!QDir().exists(tmpDir)){
+       QDir().mkdir(tmpDir);
+   }
+
 
 
     eraseExistingSketches();
     //eraseExistingBuildFiles();
 
+}
+
+void ArduinoHandler::updateArduinoBoards(){
+    QString jsonFile{ QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_KNOWNBOARDS").isEmpty() ?
+                                   QCoreApplication::applicationDirPath() + "/res/arduino/libraries/knownboards.json" :
+                                   QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_KNOWNBOARDS") };
+
+    arduinoBoards.setKnownBoards(jsonFile);
 }
 
 bool ArduinoHandler::openSerialMonitor(int baudrate){
@@ -75,6 +87,7 @@ bool ArduinoHandler::openSerialMonitor(int baudrate){
 
 
 }
+
 
 bool ArduinoHandler::closeSerialMonitor(){
 

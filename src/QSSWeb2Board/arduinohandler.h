@@ -36,6 +36,7 @@ public:
      */
     virtual ~ArduinoHandler();
 
+    void updateArduinoBoards();
     /**
      * @brief getHex returns a string with the hex file resulting of the arduino file compilation
      * @return a string with the hex file resulting of the arduino file compilation
