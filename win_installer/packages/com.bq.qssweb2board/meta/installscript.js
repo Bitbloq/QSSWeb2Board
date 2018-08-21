@@ -40,11 +40,6 @@ Component.prototype.registerApp = function(){
     if (systemInfo.productType === "windows"){
         try{
             component.addElevatedOperation("GlobalConfig",
-            "\\HKEY_CLASSES_ROOT\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\MuiCache", 
-            "C:\\QSSWeb2Board\\QSSWeb2Board.exe.FriendlyAppName", 
-            "QSSWeb2Board.exe");
-            
-            component.addElevatedOperation("GlobalConfig",
             "\\HKEY_CLASSES_ROOT\\QSSWeb2Board", 
             "@", 
             "URL:Bitbloq Protocol");
