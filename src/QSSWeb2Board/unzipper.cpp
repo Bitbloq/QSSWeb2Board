@@ -8,7 +8,7 @@ UnZipper::UnZipper()
 
 }
 
-void UnZipper::unzip(QString filename, QString targetdir){
+int UnZipper::unzip(QString filename, QString targetdir){
 #if (defined (Q_OS_WIN))
     QString command = QCoreApplication::applicationDirPath() + "/unzip/bin/unzip.exe -o " + filename + " -d " + targetdir;
 #elif (defined (Q_OS_LINUX))
@@ -21,6 +21,8 @@ void UnZipper::unzip(QString filename, QString targetdir){
     QProcess proc;
     proc.start(command);
     proc.waitForFinished();
-    qInfo() << proc.exitCode();
+    int exitCode = proc.exitCode();
+    qInfo() << "exit Code" << exitCode;
     proc.close();
+    return exitCode;
 }
