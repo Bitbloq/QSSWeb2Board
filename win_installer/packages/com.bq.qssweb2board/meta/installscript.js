@@ -40,23 +40,23 @@ Component.prototype.registerApp = function(){
     if (systemInfo.productType === "windows"){
         try{
             component.addElevatedOperation("GlobalConfig",
-            "\\HKEY_CLASSES_ROOT\\QSSWeb2Board", 
-            "@", 
+            "HKEY_CLASSES_ROOT\\QSSWeb2Board", 
+            "Default", 
             "URL:Bitbloq Protocol");
 
             component.addElevatedOperation("GlobalConfig",
-            "\\HKEY_CLASSES_ROOT\\QSSWeb2Board", 
+            "HKEY_CLASSES_ROOT\\QSSWeb2Board", 
             "URL Protocol", 
             "");
 
             component.addElevatedOperation("GlobalConfig",
-            "\\HKEY_CLASSES_ROOT\\QSSWeb2Board\\shell", 
-            "@", 
+            "HKEY_CLASSES_ROOT\\QSSWeb2Board\\shell", 
+            "Default", 
             "open");
 
             component.addElevatedOperation("GlobalConfig",
-            "\\HKEY_CLASSES_ROOT\\QSSWeb2Board\\shell\\open\\command", 
-            "@", 
+            "HKEY_CLASSES_ROOT\\QSSWeb2Board\\shell\\open\\command", 
+            "Default", 
             "C:\\QSSWeb2Board\\QSSWeb2Board.exe");
 
         } catch (e){
