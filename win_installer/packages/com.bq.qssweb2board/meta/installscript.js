@@ -34,12 +34,40 @@ Component.prototype.createOperations = function()
 }
 
 Component.prototype.registerApp = function(){
-	try{
-		// call the base create operations function
-		//component.addElevatedOperation("GlobalConfig", "company", "Application", "mykey", "myvalue");
-	} catch (e){
-		print(e);
-	}
+
+    console.log("Component.prototype.registerApp");
+    
+    if (systemInfo.productType === "windows"){
+        try{
+            component.addElevatedOperation("GlobalConfig",
+            "\\HKEY_CLASSES_ROOT\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\MuiCache", 
+            "C:\\QSSWeb2Board\\QSSWeb2Board.exe.FriendlyAppName", 
+            "QSSWeb2Board.exe");
+            
+            component.addElevatedOperation("GlobalConfig",
+            "\\HKEY_CLASSES_ROOT\\QSSWeb2Board", 
+            "@", 
+            "URL:Bitbloq Protocol");
+
+            component.addElevatedOperation("GlobalConfig",
+            "\\HKEY_CLASSES_ROOT\\QSSWeb2Board", 
+            "URL Protocol", 
+            "");
+
+            component.addElevatedOperation("GlobalConfig",
+            "\\HKEY_CLASSES_ROOT\\QSSWeb2Board\\shell", 
+            "@", 
+            "open");
+
+            component.addElevatedOperation("GlobalConfig",
+            "\\HKEY_CLASSES_ROOT\\QSSWeb2Board\\shell\\open\\command", 
+            "@", 
+            "C:\\QSSWeb2Board\\QSSWeb2Board.exe");
+
+        } catch (e){
+            print(e);
+        }
+    }
 }
 
 Component.prototype.createShortcuts = function()
