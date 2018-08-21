@@ -47,6 +47,7 @@ bool BitbloqLibsUpdater::update(){
     qInfo() << "Updating to new version";
 
     //CREATE TMP DIR IF IT DOES NOT EXIST
+    qInfo()<< "Temp Dir: " << __tmpDir;
     if(!QDir(__tmpDir).exists()){
         QDir().mkdir(__tmpDir);
     }
@@ -65,14 +66,12 @@ bool BitbloqLibsUpdater::update(){
     //UNCOMPRESS ZIP FILE
     QString zipfilename = __tmpDir + "bitbloqLibs.zip";
 
-    UnZipper::unzip(zipfilename,__tmpDir); //unzip zipfile into __tmpDir
+    if(UnZipper::unzip(zipfilename,__tmpDir) == 0){
+        qInfo() << "Succesfully Unzipped";
+    }else{
+        throw CannotMoveTmpLibsException("Cannot unzip file");
+    }; //unzip zipfile into __tmpDir
 
-    //REMOVE FORMER BITBLOQLIBS
-    QString arduinoLibrariesDir = __arduinoDir + "libraries";
-    qInfo()  << "Removing former libs version " << arduinoLibrariesDir;
-    QDir(arduinoLibrariesDir).removeRecursively();
-
-    qInfo() << "Removed "  << arduinoLibrariesDir;
 
 
 
@@ -89,7 +88,20 @@ bool BitbloqLibsUpdater::update(){
         }
     }
 
-    qInfo() << "TEMP DIR " << temp_LibsDir;
+
+    if(temp_LibsDir.isEmpty()){
+        throw CannotMoveTmpLibsException("Cannot find unzipped dir");
+    }else{
+        qInfo() << "TEMP DIR " << temp_LibsDir;
+    }
+
+    //REMOVE FORMER BITBLOQLIBS
+    QString arduinoLibrariesDir = __arduinoDir + "libraries";
+    qInfo()  << "Removing former libs version " << arduinoLibrariesDir;
+    QDir(arduinoLibrariesDir).removeRecursively();
+
+    qInfo() << "Removed "  << arduinoLibrariesDir;
+
 
     QDir dir;
     if( !dir.rename(temp_LibsDir,arduinoLibrariesDir) ){

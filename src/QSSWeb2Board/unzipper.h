@@ -7,7 +7,7 @@ class UnZipper
 {
 public:
     UnZipper();
-    static void unzip(QString filename, QString targetdir);
+    static int unzip(QString filename, QString targetdir);
 };
 
 #endif // UNZIPPER_H
