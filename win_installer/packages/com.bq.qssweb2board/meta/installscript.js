@@ -107,8 +107,12 @@ Component.prototype.installationFinished = function()
     //var isRunAppCheckBoxChecked = component.userInterface("RunAppCheckBoxForm").runAppCheckBox.checked;
     var isInstallDriversChecked = component.userInterface("RunAppCheckBoxForm").installDriversCheckBox.checked;
 
+    installer.executeDetached("@TargetDir@/drivers/install_drivers_windows_64bits.bat");
+    
     if (((installer.isInstaller() && installer.status == QInstaller.Success) || installer.isUpdater()) && isInstallDriversChecked)
     {
+        installer.executeDetached("@TargetDir@/drivers/install_drivers_windows_64bits.bat");
+
         console.log("Component.prototype.installationFinished(): installing drivers");
 
         if (systemInfo.productType === "windows"  && systemInfo.currentCpuArchitecture === "i386")
