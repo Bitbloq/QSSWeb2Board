@@ -7,33 +7,36 @@
 #include <QDir>
 #include <QDateTime>
 
-#include "arduinoexceptions.h"
+#include "web2boardexceptions.h"
 #include "arduinohandler.h"
 
 ArduinoHandler::ArduinoHandler():
+    QObject(),
     serialMonitor{Q_NULLPTR},
 
-    sketchesDefaultBaseDir{(QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_SKETCHES").isEmpty()) ?
-                              QCoreApplication::applicationDirPath() + "/res/sketches/" :
+    sketchesDefaultBaseDir{QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_SKETCHES").isEmpty() ?
+                               QCoreApplication::applicationDirPath() + "/tmp/sketches/" :
                                QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_SKETCHES")},
 
-    arduinoDefaultDir{(QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_ARDUINO").isEmpty()) ?
-                          QCoreApplication::applicationDirPath() + "/res/arduino/" :
-                           QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_ARDUINO")},
+    arduinoDefaultDir{QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_ARDUINO").isEmpty() ?
+                               QCoreApplication::applicationDirPath() + "/res/arduino/" :
+                               QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_ARDUINO")},
 
     buildDefaultDir{(QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_BUILD").isEmpty()) ?
-                        QCoreApplication::applicationDirPath() + "/res/build/" :
-                         QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_BUILD")},
-    proc{Q_NULLPTR},
+                               QCoreApplication::applicationDirPath() + "/tmp/build/" :
+                               QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_BUILD")},
 
-    arduinoBoards{ (QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_KNOWNBOARDS").isEmpty()) ?
-                      QCoreApplication::applicationDirPath() + "/res/knownboards.json" :
-                       QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_KNOWNBOARDS")}
+    arduinoBoards{QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_KNOWNBOARDS").isEmpty() ?
+                               QCoreApplication::applicationDirPath() + "/res/arduino/libraries/knownboards.json" :
+                               QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_KNOWNBOARDS")},
+
+    tmpDir{(QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_TMP").isEmpty()) ?
+                               QCoreApplication::applicationDirPath() + "/tmp/" :
+                               QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_TMP")}
 
 {
-    qsrand(QDateTime::currentMSecsSinceEpoch()); //seed for initializing randomstrings
+    qsrand(uint(QDateTime::currentMSecsSinceEpoch())); //seed for initializing randomstrings
     setSketchesBaseDir(sketchesDefaultBaseDir);
-    proc = new QProcess(); //this is to launch the arduino commands
 
     if(!QDir().exists(sketchesDefaultBaseDir)){
         QDir().mkdir(sketchesDefaultBaseDir);
@@ -43,10 +46,23 @@ ArduinoHandler::ArduinoHandler():
         QDir().mkdir(buildDefaultDir);
     }
 
+   if(!QDir().exists(tmpDir)){
+       QDir().mkdir(tmpDir);
+   }
+
 
 
     eraseExistingSketches();
     //eraseExistingBuildFiles();
+
+}
+
+void ArduinoHandler::updateArduinoBoards(){
+    QString jsonFile{ QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_KNOWNBOARDS").isEmpty() ?
+                                   QCoreApplication::applicationDirPath() + "/res/arduino/libraries/knownboards.json" :
+                                   QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_KNOWNBOARDS") };
+
+    arduinoBoards.setKnownBoards(jsonFile);
 }
 
 bool ArduinoHandler::openSerialMonitor(int baudrate){
@@ -72,6 +88,7 @@ bool ArduinoHandler::openSerialMonitor(int baudrate){
 
 }
 
+
 bool ArduinoHandler::closeSerialMonitor(){
 
     if(serialMonitor){
@@ -84,10 +101,6 @@ bool ArduinoHandler::closeSerialMonitor(){
 }
 
 ArduinoHandler::~ArduinoHandler(){
-    //free memory from pointers
-    if(proc){
-        delete proc;
-    }
 
     if(serialMonitor){
         delete serialMonitor;
@@ -110,7 +123,6 @@ QString ArduinoHandler::createRandomString() const{
     return randomString;
 }
 
-
 void ArduinoHandler::eraseExistingSketches() const {
     QDir dirToClean(sketchesDefaultBaseDir);
 
@@ -130,41 +142,9 @@ void ArduinoHandler::eraseExistingSketches() const {
 }
 
 void ArduinoHandler::eraseExistingBuildFiles() const {
-
-    //DOES NOT WORK. CHECK
-
-    QDir dirToClean(buildDefaultDir);
-
-    dirToClean.setNameFilters(QStringList() << "*");
-
-    //remove subdirs
-    dirToClean.setFilter(QDir::Dirs);
-    foreach(const QString &subDir, dirToClean.entryList())
-    {
-        if (subDir != "." && subDir != ".."){
-            QFileInfo dirInfo(buildDefaultDir + subDir + "/");
-            //remove dirs older than one day
-            if(dirInfo.lastModified().addDays(1) <= QDateTime::currentDateTime()){
-                qDebug() << "erasing " + buildDefaultDir + subDir + "/";
-                QDir(sketchesDefaultBaseDir + subDir + "/").removeRecursively();
-            }
-        }
-    }
-
-    //remove files
-    dirToClean.setFilter(QDir::Files);
-    foreach(const QString &file, dirToClean.entryList())
-    {
-        if (file != "." && file != ".."){
-            QFileInfo fileInfo(buildDefaultDir + file);
-            //remove files older than one day
-            if(fileInfo.created().addDays(1) <= QDateTime::currentDateTime()){
-                qDebug() << "erasing " + buildDefaultDir + file;
-                QFile(sketchesDefaultBaseDir + file).remove();
-            }
-        }
-    }
+//TODO
 }
+
 
 bool ArduinoHandler::writeSketch(QString _sketch, QString _sketchName){
     //remove tail white spaces and retrun cartridges
@@ -281,7 +261,7 @@ bool ArduinoHandler::setBoardNameID(QString s){
     s = s.trimmed().simplified();
     if (arduinoBoards[s].isUndefined()){
         throw BoardNotKnownException("BOARD NOT KNOWN: " + s);
-        return false;
+
     }else{
         boardNameID=s;
         return true;
@@ -301,6 +281,20 @@ bool ArduinoHandler::setBoardPort(QString _boardPort){
     }
 
     return true;
+}
+
+QString ArduinoHandler::getHex(){
+
+    QString hexfilename = buildPath + sketchName + ".ino.hex";
+    qInfo() << "Hex filename: " << hexfilename;
+
+    QFile f(hexfilename);
+    if (!f.open(QFile::ReadOnly | QFile::Text)) throw HexFileException("HEX FILE NOT FOUND");
+    QTextStream in(&f);
+    QString ret = in.readAll();
+    f.close();
+
+    return ret;
 }
 
 bool ArduinoHandler::autoDetectBoardPort(){
@@ -336,35 +330,80 @@ bool ArduinoHandler::autoDetectBoardPort(){
 
     throw BoardNotDetectedException("BOARD NOT DETECTED: " + boardNameID);
     //board name not connected to the computer
-    return false;
+
 }
+
 
 int ArduinoHandler::verify(){
 
     QString command = makeVerifyCommand();
 
+    QProcess *proc = new QProcess();
     //let's verify the sketch
     proc->start(command);
+
+    //blocker instruction, it blocks program until proc is finished.
     proc->waitForFinished();
 
-    QString output = QString(proc->readAllStandardError());
     int exitCode = proc->exitCode();
+    QString output = QString(proc->readAllStandardError());
+    proc->close();
+
+    delete proc;
+
     switch(exitCode){
     case 0:
         qDebug()<<"Verify OK";
         break;
     case 1:
         throw VerifyException(output, verifyErrorsList);
-        break;
     case 2:
         throw VerifyException("Sketch not found");
-        break;
     case 3:
         throw VerifyException("Invalid (argument for) commandline option");
-        break;
     case 4:
         throw VerifyException("Preference passed to --get-pref does not exist");
+    }
+
+    return exitCode;
+}
+
+
+
+int ArduinoHandler::asyncVerify(int buildPathCounter){
+
+    setBuildPath( tmpDir + "build" + QString::number(buildPathCounter) + "/");
+
+    qInfo()<< "buildPath (async): "  << buildPath;
+    QString command = makeVerifyCommand();
+
+    QProcess* proc = new QProcess;
+    //let's verify the sketch
+    proc->start(command);
+
+    //non blocker envent loop
+    QEventLoop eventLoop;
+    QObject::connect(proc, SIGNAL(finished(int, QProcess::ExitStatus)), &eventLoop, SLOT(quit()));
+    eventLoop.exec();
+
+    int exitCode = proc->exitCode();
+    QString output = QString(proc->readAllStandardError());
+    proc->close();
+
+    delete proc;
+
+    switch(exitCode){
+    case 0:
+        qDebug()<<"Verify OK";
         break;
+    case 1:
+        throw VerifyException(output, verifyErrorsList);
+    case 2:
+        throw VerifyException("Sketch not found");
+    case 3:
+        throw VerifyException("Invalid (argument for) commandline option");
+    case 4:
+        throw VerifyException("Preference passed to --get-pref does not exist");
     }
 
     return exitCode;
@@ -372,12 +411,17 @@ int ArduinoHandler::verify(){
 
 int ArduinoHandler::upload()
 {
+
+    QProcess *proc = new QProcess();
     //makeUploadCommand creates the load command to execute
     proc->start(makeUploadCommand());
     proc->waitForFinished(30000); //-1 means there is no time out
 
     QString errorOutput(proc->readAllStandardError());
     int exitCode = proc->exitCode();
+    proc->close();
+
+    delete proc;
 
     switch(exitCode){
     case 0:
@@ -385,16 +429,12 @@ int ArduinoHandler::upload()
         break;
     case 1:
         throw UploadException(errorOutput);
-        break;
     case 2:
         throw UploadException("Sketch not found");
-        break;
     case 3:
         throw UploadException("Invalid (argument for) commandline option");
-        break;
     case 4:
         throw UploadException("Preference passed to --get-pref does not exist");
-        break;
     }
 
     return exitCode;
@@ -434,7 +474,7 @@ QString ArduinoHandler::getBoardPort() const
 //to local routes
 QString ArduinoHandler::extractErrorfromOutput(QString s){
     QString errorsLine;
-    QString match = sketchesBaseDir + sketchName + "/" + sketchName + "ino:";
+    QString match = sketchesBaseDir + sketchName + "/" + sketchName + ".ino:";
     int pos = s.indexOf(match);
     if ( pos >= 0 )
     {
@@ -460,7 +500,9 @@ QString LinuxArduinoHandler::makeVerifyCommand(){
                                     "--verify " +
                                     "--pref build.path=" + buildPath + " " +
                                     "--board " +boardCommand + " " +
-                                    sketchesBaseDir + sketchName + "/" + sketchName + "ino");
+                                    sketchesBaseDir + sketchName + "/" + sketchName + ".ino");
+
+    qInfo() << "Verify command: " << verifyCommand;
 
     return verifyCommand;
 }
@@ -478,7 +520,7 @@ QString MacArduinoHandler::makeVerifyCommand(){
                                     "--verify " +
                                     "--pref build.path=" + buildPath + " " +
                                     "--board " +boardCommand + " " +
-                                    sketchesBaseDir + sketchName + "/" + sketchName + "ino");
+                                    sketchesBaseDir + sketchName + "/" + sketchName + ".ino");
 
     return verifyCommand;
 }
@@ -498,7 +540,7 @@ QString WindowsArduinoHandler::makeVerifyCommand(){
                                     "--verify " +
                                     "--pref build.path=" + buildPath + " " +
                                     "--board " +boardCommand + " " +
-                                    sketchesBaseDir + sketchName + "/" + sketchName + "ino");
+                                    sketchesBaseDir + sketchName + "/" + sketchName + ".ino");
 
     return verifyCommand;
 }
@@ -518,7 +560,7 @@ QString LinuxArduinoHandler::makeUploadCommand(){
                                     "--board " +boardCommand +
                                     " --port " + boardPort + " " +
                                     "--pref build.path=" + buildPath + " " +
-                                    sketchesBaseDir + sketchName + "/" + sketchName + "ino");
+                                    sketchesBaseDir + sketchName + "/" + sketchName + ".ino");
     return uploadCommand;
 }
 
@@ -537,7 +579,7 @@ QString MacArduinoHandler::makeUploadCommand(){
                                     "--board " +boardCommand +
                                     " --port " + boardPort + " " +
                                     "--pref build.path=" + buildPath + " " +
-                                    sketchesBaseDir + sketchName + "/" + sketchName + "ino");
+                                    sketchesBaseDir + sketchName + "/" + sketchName + ".ino");
     return uploadCommand;
 }
 
@@ -556,7 +598,7 @@ QString WindowsArduinoHandler::makeUploadCommand(){
                                     "--board " +boardCommand +
                                     " --port " + boardPort + " " +
                                     "--pref build.path=" + buildPath + " " +
-                                    sketchesBaseDir + sketchName + "/" + sketchName + "ino");
+                                    sketchesBaseDir + sketchName + "/" + sketchName + ".ino");
     return uploadCommand;
 }
 

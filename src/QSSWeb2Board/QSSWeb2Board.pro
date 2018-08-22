@@ -11,6 +11,7 @@ CONFIG += c++11
 CONFIG += console
 
 
+
 TARGET = QSSWeb2Board
 CONFIG += console
 CONFIG -= app_bundle
@@ -19,15 +20,16 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     arduinohandler.cpp \
-    arduinoexceptions.cpp \
     sslserver.cpp \
     web2board.cpp \
-    commsprotocol.cpp \
     arduinoserialmonitor.cpp \
     runguard.cpp \
     knownboards.cpp \
     githubrestapiclient.cpp \
-    bitbloqlibsupdater.cpp
+    bitbloqlibsupdater.cpp \
+    unzipper.cpp \
+    web2boardexceptions.cpp \
+    literals.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -43,14 +45,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 HEADERS += \
     arduinohandler.h \
     knownboards.h \
-    arduinoexceptions.h \
     sslserver.h \
     web2board.h \
-    commsprotocol.h \
     arduinoserialmonitor.h \
     runguard.h \
     githubrestapiclient.h \
-    bitbloqlibsupdater.h
+    bitbloqlibsupdater.h \
+    unzipper.h \
+    web2boardexceptions.h \
+    literals.h
+
+
+
 
 DISTFILES += \
     res/knownboards.json

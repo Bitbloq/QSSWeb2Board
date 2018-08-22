@@ -6,6 +6,10 @@
 
 KnownBoards::KnownBoards(QString jsonFileName)
 {
+    setKnownBoards(jsonFileName);
+}
+
+void KnownBoards::setKnownBoards(QString jsonFileName){
     qInfo() << "json FileName: " << jsonFileName;
     QFile jsonFile;
     jsonFile.setFileName(jsonFileName);

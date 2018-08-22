@@ -34,12 +34,35 @@ Component.prototype.createOperations = function()
 }
 
 Component.prototype.registerApp = function(){
-	try{
-		// call the base create operations function
-		//component.addElevatedOperation("GlobalConfig", "company", "Application", "mykey", "myvalue");
-	} catch (e){
-		print(e);
-	}
+
+    console.log("Component.prototype.registerApp");
+    
+    if (systemInfo.productType === "windows"){
+        try{
+            component.addElevatedOperation("GlobalConfig",
+            "HKEY_CLASSES_ROOT\\QSSWeb2Board", 
+            "Default", 
+            "URL:Bitbloq Protocol");
+
+            component.addElevatedOperation("GlobalConfig",
+            "HKEY_CLASSES_ROOT\\QSSWeb2Board", 
+            "URL Protocol", 
+            "");
+
+            component.addElevatedOperation("GlobalConfig",
+            "HKEY_CLASSES_ROOT\\QSSWeb2Board\\shell", 
+            "Default", 
+            "open");
+
+            component.addElevatedOperation("GlobalConfig",
+            "HKEY_CLASSES_ROOT\\QSSWeb2Board\\shell\\open\\command", 
+            "Default", 
+            "C:\\QSSWeb2Board\\QSSWeb2Board.exe");
+
+        } catch (e){
+            print(e);
+        }
+    }
 }
 
 Component.prototype.createShortcuts = function()
@@ -50,11 +73,11 @@ Component.prototype.createShortcuts = function()
     {
         if (component.userInterface("ShortcutCheckBoxForm").shortcutCheckBox.checked)
         {
-            component.addElevatedOperation("CreateShortcut", "@TargetDir@/QSSWeb2Board.exe", "@DesktopDir@/QSSWeb2Board.lnk", "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/qssweb2board.ico");
+            component.addElevatedOperation("CreateShortcut", "@TargetDir@/QSSWeb2Board.exe", "@DesktopDir@/QSSWeb2Board.lnk", "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/res/qssweb2board.ico");
         }
 
-        component.addElevatedOperation("CreateShortcut", "@TargetDir@/QSSWeb2Board.exe", "@StartMenuDir@/QSSWeb2Board.lnk", "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/qssweb2board.ico");
-        component.addElevatedOperation("CreateShortcut", "@TargetDir@/QSSWeb2Board.exe", "@TargetDir@/QSSWeb2Board.lnk", "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/qssweb2board.ico");
+        component.addElevatedOperation("CreateShortcut", "@TargetDir@/QSSWeb2Board.exe", "@StartMenuDir@/QSSWeb2Board.lnk", "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/res/qssweb2board.ico");
+        component.addElevatedOperation("CreateShortcut", "@TargetDir@/QSSWeb2Board.exe", "@TargetDir@/QSSWeb2Board.lnk", "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/res/qssweb2board.ico");
 
     }
 }
@@ -81,8 +104,23 @@ Component.prototype.installationFinished = function()
 {
     console.log("Component.prototype.installationFinished");
 
-    var isRunAppCheckBoxChecked = component.userInterface("RunAppCheckBoxForm").runAppCheckBox.checked;
+    //var isRunAppCheckBoxChecked = component.userInterface("RunAppCheckBoxForm").runAppCheckBox.checked;
+    var isInstallDriversChecked = component.userInterface("RunAppCheckBoxForm").installDriversCheckBox.checked;
 
+    if (((installer.isInstaller() && installer.status == QInstaller.Success) || installer.isUpdater()) && isInstallDriversChecked)
+    {
+        console.log("Component.prototype.installationFinished(): installing drivers");
+
+        if (systemInfo.productType === "windows"  && systemInfo.currentCpuArchitecture === "i386")
+        {
+            installer.executeDetached("@TargetDir@/drivers/install_drivers_windows_32bits.bat");
+        }
+        else if(systemInfo.productType === "windows"  && systemInfo.currentCpuArchitecture === "x86_64" )
+        {
+            installer.executeDetached("@TargetDir@/drivers/install_drivers_windows_64bits.bat");
+        }
+    }
+/*
     if (((installer.isInstaller() && installer.status == QInstaller.Success) || installer.isUpdater()) && isRunAppCheckBoxChecked)
     {
         console.log("Component.prototype.installationFinished(): executing app");
@@ -92,6 +130,7 @@ Component.prototype.installationFinished = function()
             installer.executeDetached("@TargetDir@/QSSWeb2Board.exe");
         }
     }
+    */
 }
 
 changeLicenseLabels = function()

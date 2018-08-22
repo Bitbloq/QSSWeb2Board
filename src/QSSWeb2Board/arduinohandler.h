@@ -4,20 +4,22 @@
 #include <QObject>
 
 #include "knownboards.h"
-#include "arduinoexceptions.h"
+#include "web2boardexceptions.h"
 #include "arduinoserialmonitor.h"
 
 //forward declararion of classes
-QT_FORWARD_DECLARE_CLASS(QProcess);
 QT_FORWARD_DECLARE_CLASS(TestArduinoHandler)
 QT_FORWARD_DECLARE_CLASS(TestBoards)
+QT_FORWARD_DECLARE_CLASS(Web2Board)
 
 /**
  * @brief The ArduinoHandler class
  * It handles all the  actions to be made with Arduino: create sketch, verify, upload, serial communication, etc.
  */
-class ArduinoHandler
+class ArduinoHandler: public QObject
 {
+    Q_OBJECT
+
 public:
 
     ///friend classes for unit testing
@@ -33,6 +35,13 @@ public:
      * @brief Default virtual ~ArduinoHandler Destructor
      */
     virtual ~ArduinoHandler();
+
+    void updateArduinoBoards();
+    /**
+     * @brief getHex returns a string with the hex file resulting of the arduino file compilation
+     * @return a string with the hex file resulting of the arduino file compilation
+     */
+    QString getHex();
 
     /**
      * @brief resetPathsToDefault Sets all paths to their default values
@@ -76,10 +85,20 @@ public:
 
 
     /**
+     * @brief asyncVerify initiates the compilation of a ino file.
+     * Async verification of a ino file. The process is launched but it does not waits until if finishes.
+     * When verfication is finished verifyFinished signal is triggered.
+     * Build files are stored in a dir "build + buildPathCounter"
+     * @param buildPathCounter
+     */
+    int asyncVerify(int buildPathCounter);
+
+    /**
      * @brief verify. Verifies a sketch in Arduino for the selected board.
      * @return The exitCode of the verification process
      */
     int verify();
+
 
     /**
      * @brief Upload. Verifies and uploads a sketch in Arduino for the selected board.
@@ -131,9 +150,13 @@ public:
      */
     bool closeSerialMonitor();
 
-public: //public members
-    ArduinoSerialMonitor* serialMonitor;
 
+    ArduinoSerialMonitor* serialMonitor; ///pointer to serial monitor handler
+
+    /**
+     * @brief getArduinoDefaultDir the path where arduino executable should be
+     * @return the path where arduino executable should be
+     */
     QString getArduinoDefaultDir() const;
 
 protected:
@@ -162,26 +185,31 @@ protected:
     QString boardPort; /// the serial port where the board is connected
     QList<QString> verifyErrorsList; /// List of Strings containing verification errors
 
-    const QString sketchesDefaultBaseDir;
-    const QString arduinoDefaultDir;
-    const QString buildDefaultDir;
+    const QString sketchesDefaultBaseDir; /// the absolute path where the sketches to compile are stored
+    const QString arduinoDefaultDir; /// the abslute path where arduino program is located
+    const QString buildDefaultDir; /// the absolute path where the resulting building files are stored
 
     /**
      * @brief makeUploadCommand -> makes the upload command. OS dependant. Virtualized
      * @return upload command
      */
-    virtual QString makeUploadCommand(){return "";};
+    virtual QString makeUploadCommand(){return "";}
     /**
      * @brief makeVerifyCommand -> makes the verify command. OS dependant. Virtualized
      * @return verify command
      */
-    virtual QString makeVerifyCommand(){return "";};
+    virtual QString makeVerifyCommand(){return "";}
 
-    virtual bool checkArduinoPath(QString arduinoPath){arduinoPath=""; return false;};
 
-    QProcess *proc; ///variable to handle command line commands.
+    /**
+     * @brief checkArduinoPath virtual function (implemented on children)
+     * @param arduinoPath
+     * @return
+     */
+    virtual bool checkArduinoPath(QString arduinoPath){arduinoPath=""; return false;}
 
     KnownBoards arduinoBoards; ///object holding known boards with their vendorID and productID
+    const QString tmpDir;
 
     /**
      * @brief createRandomString. Creates a random string of 12 characters
@@ -199,15 +227,23 @@ protected:
      */
     void eraseExistingBuildFiles() const;
 
+    /**
+     * @brief eraseTempDir
+     */
+    void eraseTempDir() const;
+
 };
 
 /**
  * @brief The LinuxArduinoHandler class for specific functions for linux based systems
  */
 class LinuxArduinoHandler : public ArduinoHandler{
+
+    Q_OBJECT
+
 public:
     LinuxArduinoHandler():ArduinoHandler(){}
-    virtual ~LinuxArduinoHandler(){};
+    virtual ~LinuxArduinoHandler(){}
     virtual QString makeUploadCommand();
     virtual QString makeVerifyCommand();
     virtual bool checkArduinoPath(QString arduinoPath);
@@ -217,9 +253,12 @@ public:
  * @brief The WindowsArduinoHandler class for specific functions for windows based systems
  */
 class WindowsArduinoHandler : public ArduinoHandler{
+
+    Q_OBJECT
+
 public:
     WindowsArduinoHandler():ArduinoHandler(){}
-    virtual ~WindowsArduinoHandler(){};
+    virtual ~WindowsArduinoHandler(){}
     virtual QString makeUploadCommand();
     virtual QString makeVerifyCommand();
     virtual bool checkArduinoPath(QString arduinoPath);
@@ -229,9 +268,12 @@ public:
  * @brief The MacArduinoHandler class for specific functions for Mac OS/X based systems
  */
 class MacArduinoHandler : public ArduinoHandler{
+
+    Q_OBJECT
+
 public:
     MacArduinoHandler():ArduinoHandler(){}
-    virtual ~MacArduinoHandler(){};
+    virtual ~MacArduinoHandler(){}
     virtual QString makeUploadCommand();
     virtual QString makeVerifyCommand();
     virtual bool checkArduinoPath(QString arduinoPath);

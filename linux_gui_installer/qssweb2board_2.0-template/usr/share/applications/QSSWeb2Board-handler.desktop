@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=2.0.0
+Type=Application
+Icon=/opt/QSSWeb2Board/res/qssweb2board.ico
+Exec=/opt/QSSWeb2Board/QSSWeb2Board
+StartupNotify=true
+Terminal=false
+Categories=Utility;X-XFCE;X-Xfce-Toplevel
+MineType=x-scheme-handler/vnc
+Comment=Launch QSSWeb2Board
+Name=QSSWeb2Board Launcher
+Name[en_US]=QSSWeb2Board

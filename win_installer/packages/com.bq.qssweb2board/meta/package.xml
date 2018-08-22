@@ -3,8 +3,8 @@
     <DisplayName>QSSWeb2Board</DisplayName>
     <Name>com.bq.qssweb2board</Name>
     <Description>Install QSSWeb2Board for Bitbloq</Description>
-    <Version>2.0.0</Version>
-    <ReleaseDate>2018-06-12</ReleaseDate>
+    <Version>2.0.0-3</Version>
+    <ReleaseDate>2018-09-01</ReleaseDate>
     <Script>installscript.js</Script>
     <Licenses>
         <License name="MIT" file="license.txt" />

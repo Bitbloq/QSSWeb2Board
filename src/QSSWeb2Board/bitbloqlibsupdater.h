@@ -7,15 +7,17 @@
 class BitbloqLibsUpdater
 {
 public:
-    BitbloqLibsUpdater();
+    BitbloqLibsUpdater(QString arduinoDir);
     bool existsNewVersion();
     bool update();
 
 private:
-    GitHubRestApiClient __git;
-    QJsonObject __localVersionInfo;
-    QJsonObject __remoteVersionInfo;
-    QString __jsonFilePath;
+    GitHubRestApiClient __git; ///client of the Github API repository
+    QJsonObject __localVersionInfo; ///info of bitbloq libs stored locally
+    QJsonObject __remoteVersionInfo; ///info of bitbloqlibs stored remotelly
+    QString __jsonFilePath; ///absolute path to the json file storing local version info
+    QString __arduinoDir; ///absolute path to arduino installation
+    QString __tmpDir; ///absolute path to temp files to store transient data.
 };
 
 #endif // BITBLOQLIBSUPDATER_H

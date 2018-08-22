@@ -18,3 +18,5 @@ QT Secure Web Socket for compiling and loading online generated Arduino code int
   
     qmake QSSWeb2Board.pro
     make
+
+Enjoy!

@@ -9,10 +9,21 @@
 
 #include "runguard.h"
 #include "sslserver.h"
+#include "unzipper.h"
 
 
 int main(int argc, char *argv[])
 {
+  /*  QApplication a(argc, argv);
+
+    LinuxArduinoHandler arduino;
+    qInfo() << "Arduino Default dir: " << arduino.getArduinoDefaultDir();
+    BitbloqLibsUpdater libs(arduino.getArduinoDefaultDir());
+    if (libs.existsNewVersion()){
+        libs.update();
+    }
+
+    */
     RunGuard guard( "asdfghjkl" );
     if( !guard.tryToRun() ){
         qInfo() << "Another instance of QSSWeb2Board is running";
@@ -20,7 +31,6 @@ int main(int argc, char *argv[])
     }
 
     QApplication a(argc, argv);
-
 
     //System Tray Icon
 
@@ -38,5 +48,6 @@ int main(int argc, char *argv[])
 
     SSLServer server(9867);
     Q_UNUSED(server);
+
     return a.exec();
 }

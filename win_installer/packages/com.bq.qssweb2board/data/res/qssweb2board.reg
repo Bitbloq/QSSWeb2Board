@@ -1,0 +1,15 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\qssweb2board]
+@="URL:Bitbloq Protocol"
+"URL Protocol"=""
+
+
+[HKEY_CLASSES_ROOT\qssweb2board\shell]
+@="open"
+
+[HKEY_CLASSES_ROOT\qssweb2board\shell\open]
+
+
+[HKEY_CLASSES_ROOT\qssweb2board\shell\open\command]
+@="C:\\QSSWeb2Board\\QSSWeb2Board.exe"

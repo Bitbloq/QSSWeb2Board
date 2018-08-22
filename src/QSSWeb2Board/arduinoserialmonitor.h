@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QtSerialPort>
 #include <cstdio>
-#include "arduinoexceptions.h"
+#include "web2boardexceptions.h"
 
 QT_FORWARD_DECLARE_CLASS(ArduinoHandler)
 
@@ -60,7 +60,7 @@ signals:
      * @brief lineReceived Signal emitted when a line is received through serial port
      * @param line the received string line
      */
-    void lineReceived(QString line);
+    void dataReceived(const QByteArray & data);
 
 
 protected:

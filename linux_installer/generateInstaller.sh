@@ -75,7 +75,7 @@ while true; do
 done
 
 
-packageDir=qssweb2board_2.0-1${OS}${VER}_${ARCH}
+packageDir=qssweb2board_2.0-2${OS}${VER}_${ARCH}
 
 #create packageDir form template
 rm -fr ${packageDir}
@@ -85,11 +85,13 @@ cp -fr qssweb2board_2.0-template ${packageDir}
 
 echo "Downloading arduino_BQ_Linux_${ARCH}.zip"
 cd ${packageDir}/opt/QSSWeb2Board/res/
-wget https://github.com/avalero/QSSWeb2Board/releases/download/18.16.4/arduino1.8.5_BQ_Linux_${ARCH}.zip
+wget https://github.com/bitbloq/QSSWeb2Board/releases/download/18.07.17/arduino1.8.5_BQ_Linux_${ARCH}.zip
 unzip arduino1.8.5_BQ_Linux_${ARCH}.zip > /dev/null
 rm arduino1.8.5_BQ_Linux_${ARCH}.zip > /dev/null
 cd -
 
+#copy knownBoards
+cp knownBoards.json ${packageDir}/opt/QSSWeb2Board/res/arduino/libraries/
 
 #build application
 baseDir=$(pwd)
@@ -102,9 +104,9 @@ mkdir build
 cd build > /dev/null
 
 echo "running qmake on ../../src/QSSWeb2Board/QSSWeb2Board.pro"
-qmake ../../src/QSSWeb2Board/QSSWeb2Board.pro > /dev/null
+qmake ../../src/QSSWeb2Board/QSSWeb2Board.pro
 echo "running make..."
-make > /dev/null
+make 
 cd ${baseDir}
 
 #copy application into packageDir
@@ -115,6 +117,14 @@ sed -i -e "s/###ARCH###/${ARCH}/g" ${packageDir}/DEBIAN/control
 #build deb package
 dpkg --build ${packageDir}
 
+#mv package to deb subdirectory
+if [ -d deb ]; then
+  rm -fr deb
+fi
+
+mkdir deb
+mv ${packageDir}.deb ./deb/
+
 #create install script
 
 cp install-template.sh installer-${packageDir}.sh
@@ -122,14 +132,17 @@ sed -i -e "s/###OS###/${OS}/g" installer-${packageDir}.sh
 sed -i -e "s/###VERSION###/${VER}/g" installer-${packageDir}.sh
 sed -i -e "s/###ARCH###/${BITS}/g" installer-${packageDir}.sh
 
-sed -i -e "s/###INSTALL_COMMAND###/sudo dpkg -i ${packageDir}.deb/g" installer-${packageDir}.sh
+sed -i -e "s/###INSTALL_COMMAND###/sudo gdebi .\/deb\/${packageDir}.deb/g" installer-${packageDir}.sh
 
-zip -r installer-${packageDir}.zip ${packageDir}.deb installer-${packageDir}.sh
+zip -r installer-${packageDir}.zip ./deb/${packageDir}.deb installer-${packageDir}.sh
 
+#remove all temp files
 
+rm installer-${packageDir}.sh
 cd ${baseDir}
 cd build
 make clean
 cd ${baseDir}
 rm -fr build
 rm -fr ${packageDir}
+rm -fr deb
