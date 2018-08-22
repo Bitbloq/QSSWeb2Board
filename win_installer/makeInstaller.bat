@@ -1,1 +1,2 @@
+copy ..\src\build-QSSWeb2Board-Desktop_Qt_5_11_0_MinGW_32bit-Release\release\QSSWeb2Board.exe packages\com.bq.qssweb2board\data\
 C:\Qt\Tools\QtInstallerFramework\3.0\bin\binarycreator.exe -c config\config.xml -p packages QSSWeb2Board_Windows_Installer.exe
