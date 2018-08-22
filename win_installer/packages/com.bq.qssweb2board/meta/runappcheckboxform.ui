@@ -15,9 +15,9 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QCheckBox" name="runAppCheckBox">
+    <widget class="QCheckBox" name="installDriversCheckBox">
      <property name="text">
-      <string>Run QSSWeb2Board</string>
+      <string>Install Drivers</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -27,6 +27,19 @@
      </property>
     </widget>
    </item>
+   <!--<item>
+    <widget class="QCheckBox" name="runAppCheckBox">
+     <property name="text">
+      <string>Run QSSWeb2Board</string>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+     <property name="tristate">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>-->
   </layout>
  </widget>
  <resources/>
