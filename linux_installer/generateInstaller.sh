@@ -120,6 +120,9 @@ cp build/QSSWeb2Board ${packageDir}/opt/QSSWeb2Board/
 
 sed -i -e "s/###ARCH###/${ARCH}/g" ${packageDir}/DEBIAN/control
 sed -i -e "s/###VERSION###/${version}/g" ${packageDir}/DEBIAN/control
+sed -i -e "s/###VERSION###/${version}/g" ./config/config-template.xml
+cp ./config/config-template.xml ./config/config.xml
+
 
 echo "Creating script installer..."
 #build deb package
@@ -149,8 +152,8 @@ sed -i -e "s/###ARCH###/${BITS}/g" gui-installer-${packageDir}.sh
 
 sed -i -e "s/###INSTALL_COMMAND###/sudo gdebi --non-interactive \${mydir}\/deb\/${packageDir}.deb/g" gui-installer-${packageDir}.sh
 
-sed -i -e "s/###GUI_INSTALLER###/gui-installer-${packageDir}.sh/g" ./package/meta/installscript-template.js
-cp ./package/meta/installscript-template.js ./package/meta/installscript.js
+sed -i -e "s/###GUI_INSTALLER###/gui-installer-${packageDir}.sh/g" ./packages/com.bq.qssweb2board/meta/installscript-template.js
+cp ./packages/com.bq.qssweb2board/meta/installscript-template.js ./packages/com.bq.qssweb2board/meta/installscript.js
 
 zip -r installer-${packageDir}.zip ./deb/${packageDir}.deb installer-${packageDir}.sh
 
@@ -158,7 +161,7 @@ mv ./deb ./packages/com.bq.qssweb2board/data
 mv gui-installer-${packageDir}.sh ./packages/com.bq.qssweb2board/data
 
 echo "Creating GUI installer..."
-binarycreator -c config/config.xml -p packages graphical-installer-${packageDir}
+binarycreator -c ./config/config.xml -p packages graphical-installer-${packageDir}
 chmod a+x graphical-installer-${packageDir}
 
 
@@ -172,3 +175,5 @@ cd ${baseDir}
 rm -fr build
 rm -fr ${packageDir}
 rm -fr ./packages/com.bq.qssweb2board/data/*
+rm ./packages/com.bq.qssweb2board/meta/installscript.js
+rm ./config/config.xml

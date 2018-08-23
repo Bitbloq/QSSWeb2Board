@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Installer>
 	<Name>QSSWeb2Board</Name>
-	<Version>18.09.01</Version>
+	<Version>###VERSION###</Version>
 	<Title>QSSWeb2Board</Title>
 	<Publisher>Bitbloq</Publisher>
 	<ProductUrl>bitbloq.bq.com</ProductUrl>
