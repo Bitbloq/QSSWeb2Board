@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ -z "${1}" ];then
+	echo "PLEASE INTRODUCE VERSION"
+    exit
+else
+	version=${1}
+fi
 
 #INSTALL dependencies
 
@@ -52,16 +58,16 @@ i*86)
     ;;
 esac
 
-if [ -z "${1}" ];then
+if [ -z "${2}" ];then
 	echo "No OS introduced"
 else
-	OS=${1}
+	OS=${2}
 fi
 
-if [ -z "${2}" ];then
+if [ -z "${3}" ];then
 	echo "No VERSION introduced"
 else
-	VER=${2}
+	VER=${3}
 fi
 
 echo "Creando instalador para ${OS} ${VER} ${ARCH}"
@@ -75,7 +81,7 @@ while true; do
 done
 
 
-packageDir=qssweb2board_2.0-2${OS}${VER}_${ARCH}
+packageDir=qssweb2board_${version}${OS}${VER}_${ARCH}
 
 #create packageDir form template
 rm -fr ${packageDir}
@@ -113,7 +119,9 @@ cd ${baseDir}
 cp build/QSSWeb2Board ${packageDir}/opt/QSSWeb2Board/
 
 sed -i -e "s/###ARCH###/${ARCH}/g" ${packageDir}/DEBIAN/control
+sed -i -e "s/###VERSION###/${version}/g" ${packageDir}/DEBIAN/control
 
+echo "Creating script installer..."
 #build deb package
 dpkg --build ${packageDir}
 
@@ -134,7 +142,22 @@ sed -i -e "s/###ARCH###/${BITS}/g" installer-${packageDir}.sh
 
 sed -i -e "s/###INSTALL_COMMAND###/sudo gdebi .\/deb\/${packageDir}.deb/g" installer-${packageDir}.sh
 
+cp install-template-gui.sh gui-installer-${packageDir}.sh
+sed -i -e "s/###OS###/${OS}/g" gui-installer-${packageDir}.sh
+sed -i -e "s/###VERSION###/${VER}/g" gui-installer-${packageDir}.sh
+sed -i -e "s/###ARCH###/${BITS}/g" gui-installer-${packageDir}.sh
+
+sed -i -e "s/###INSTALL_COMMAND###/sudo gdebi .\/deb\/${packageDir}.deb/g" gui-installer-${packageDir}.sh
+
 zip -r installer-${packageDir}.zip ./deb/${packageDir}.deb installer-${packageDir}.sh
+
+mv ./deb ./packages/com.bq.qssweb2board/data 
+mv gui-installer-${packageDir}.sh ./packages/com.bq.qssweb2board/data
+
+echo "Creating GUI installer..."
+binarycreator -c config/config.xml -p packages graphical-installer-${packageDir}
+chmod a+x graphical-installer-${packageDir}
+
 
 #remove all temp files
 
@@ -145,4 +168,4 @@ make clean
 cd ${baseDir}
 rm -fr build
 rm -fr ${packageDir}
-rm -fr deb
+rm -fr ./packages/com.bq.qssweb2board/data/*
