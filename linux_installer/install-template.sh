@@ -12,6 +12,8 @@ while true; do
     esac
 done
 
+mydir="${0%/*}"
+
 #install dependencies
 sudo apt-get update
 

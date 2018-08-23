@@ -147,7 +147,7 @@ sed -i -e "s/###OS###/${OS}/g" gui-installer-${packageDir}.sh
 sed -i -e "s/###VERSION###/${VER}/g" gui-installer-${packageDir}.sh
 sed -i -e "s/###ARCH###/${BITS}/g" gui-installer-${packageDir}.sh
 
-sed -i -e "s/###INSTALL_COMMAND###/sudo gdebi .\/deb\/${packageDir}.deb/g" gui-installer-${packageDir}.sh
+sed -i -e "s/###INSTALL_COMMAND###/sudo gdebi --non-interactive \${mydir}\/deb\/${packageDir}.deb/g" installer-${packageDir}.sh
 
 zip -r installer-${packageDir}.zip ./deb/${packageDir}.deb installer-${packageDir}.sh
 
