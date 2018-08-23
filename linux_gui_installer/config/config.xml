@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Installer>
 	<Name>QSSWeb2Board</Name>
-	<Version>18.08.01</Version>
+	<Version>18.09.01</Version>
 	<Title>QSSWeb2Board</Title>
 	<Publisher>Bitbloq</Publisher>
 	<ProductUrl>bitbloq.bq.com</ProductUrl>
 	<StartMenuDir>Bitbloq</StartMenuDir>
-	<TargetDir>/home/avalero/opt/QSSWeb2Board</TargetDir>
+	<TargetDir>/tmp/QSSWeb2Board</TargetDir>
 	<AllowSpaceInPath>false</AllowSpaceInPath>
 	<InstallerApplicationIcon>qssweb2board</InstallerApplicationIcon>
 	<InstallerWindowIcon>qssweb2board</InstallerWindowIcon>

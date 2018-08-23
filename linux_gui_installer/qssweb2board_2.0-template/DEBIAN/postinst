@@ -1,0 +1,55 @@
+#!/bin/sh
+# postinst script for QSSWeb2Board
+
+#Add mime type to defaults (if not alrady present)
+grep -q -F 'x-scheme-handler/qssweb2board=QSSWeb2Board-handler.desktop' /usr/share/applications/defaults.list || echo "x-scheme-handler/qssweb2board=QSSWeb2Board-handler.desktop" >> /usr/share/applications/defaults.list
+
+#Create app group and add user
+addgroup qssweb2board
+
+#Add all "non-system" users to groups dialout and qssweb2board
+awk -F: '($3>=1000)&&($1!="nobody"){system ("adduser " $1 " dialout")}' /etc/passwd 
+awk -F: '($3>=1000)&&($1!="nobody"){system ("adduser " $1 " qssweb2board")}' /etc/passwd 
+
+#Env variables
+installDir=/opt/QSSWeb2Board
+
+echo "Install Dir: ${installDir}"
+
+export PATH=$PATH:${installDir}/
+export QSSWEB2BOARD_TMP=${installDir}/tmp/
+export QSSWEB2BOARD_SKETCHES=${QSSWEB2BOARD_TMP}sketches/
+export QSSWEB2BOARD_BUILD=${QSSWEB2BOARD_TMP}build/
+export QSSWEB2BOARD_ARDUINO=${installDir}/res/arduino/
+export QSSWEB2BOARD_KNOWNBOARDS=${QSSWEB2BOARD_ARDUINO}libraries/knownboards.json
+
+if [ -d $QSSWEB2BOARD_TMP ]; then
+  rm -fr $QSSWEB2BOARD_TMP
+  mkdir $QSSWEB2BOARD_TMP
+else
+  mkdir $QSSWEB2BOARD_TMP
+fi
+
+
+chown root:qssweb2board -R ${installDir}
+#chown root:qssweb2board -R $QSSWEB2BOARD_SKETCHES
+#chown root:qssweb2board -R $QSSWEB2BOARD_BUILD
+#chown root:qssweb2board $QSSWEB2BOARD_KNOWNBOARDS
+#chown root:qssweb2board -R $QSSWEB2BOARD_ARDUINO
+
+chmod g+x ${installDir}
+chmod g+x ${QSSWEB2BOARD_ARDUINO}arduino
+
+chmod g+xw -R $QSSWEB2BOARD_TMP
+
+chmod g+r -R $QSSWEB2BOARD_ARDUINO
+chmod g+wx -R ${QSSWEB2BOARD_ARDUINO}hardware/tools/avr/*
+chmod g+w -R ${QSSWEB2BOARD_ARDUINO}libraries/
+chmod g+w -R $QSSWEB2BOARD_TMP
+chmod g+w ${installDir}/res/*
+chmod g+w ${QSSWEB2BOARD_ARDUINO}
+
+#require reboot
+/usr/share/update-notifier/notify-reboot-required
+echo 'Installation finished ---- Please Reboot (Required)'
+echo 'Instalación finalizada ---- ES NECESARIO REINICIAR EL ORDENADOR'

@@ -20,7 +20,7 @@ Controller.prototype.IntroductionPageCallback = function()
     if ( installer.isInstaller())
     {
         currentPage.title = "QSSWeb2Board Installer"
-        currentPage.MessageLabel.text = "Welcome to QSSWeb2Board installer.\n\nThis installer will guide you through the software installation needed to use Bitbloq with QSSWeb2Board.\n\n QSSWeb2Board will be installed in C:\QSSWeb2Board .";
+        currentPage.MessageLabel.text = "Welcome to QSSWeb2Board installer.\n\nThis installer will guide you through the software installation needed to use Bitbloq with QSSWeb2Board.\n\n QSSWeb2Board will be installed in /opt/QSSWeb2Board/ .";
     }
 }
 

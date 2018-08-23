@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if [ -z "${1}" ];then
+	echo "PLEASE INTRODUCE VERSION"
+    exit
+else
+	version=${1}
+fi
+
 #INSTALL dependencies
 
 echo "Instalando dependencias..."
@@ -51,16 +58,18 @@ i*86)
     ;;
 esac
 
-if [ -z "${1}" ];then
-	echo "No OS introduced"
-else
-	OS=${1}
-fi
+
 
 if [ -z "${2}" ];then
+	echo "No OS introduced"
+else
+	OS=${2}
+fi
+
+if [ -z "${3}" ];then
 	echo "No VERSION introduced"
 else
-	VER=${2}
+	VER=${3}
 fi
 
 echo "Creando instalador para ${OS} ${VER} ${ARCH}"
@@ -73,28 +82,27 @@ while true; do
     esac
 done
 
-packageName=installer-qssweb2board_2.0-3${OS}${VER}_${ARCH}
+
+packageDir=qssweb2board_${version}${OS}${VER}_${ARCH}
 
 #create packageDir form template
-packageDir=./packages/com.bq.qssweb2board/data
-echo "package dir ${packageDir}"
-
 rm -fr ${packageDir}
 cp -fr qssweb2board_2.0-template ${packageDir}
-
 
 #Download arduino BQ version
 
 echo "Downloading arduino_BQ_Linux_${ARCH}.zip"
-cd ${packageDir}/res/
+cd ${packageDir}/opt/QSSWeb2Board/res/
 wget https://github.com/bitbloq/QSSWeb2Board/releases/download/18.07.17/arduino1.8.5_BQ_Linux_${ARCH}.zip
 unzip arduino1.8.5_BQ_Linux_${ARCH}.zip > /dev/null
 rm arduino1.8.5_BQ_Linux_${ARCH}.zip > /dev/null
 cd -
 
+#copy knownBoards
+cp knownBoards.json ${packageDir}/opt/QSSWeb2Board/res/arduino/libraries/
+
 #build application
 baseDir=$(pwd)
-
 
 if [ -d build ]; then
   rm -fr build
@@ -110,13 +118,46 @@ make
 cd ${baseDir}
 
 #copy application into packageDir
-cp build/QSSWeb2Board ${packageDir}
+cp build/QSSWeb2Board ${packageDir}/opt/QSSWeb2Board/
 
-echo "QSSWeb2Board copied to ${packageDir}"
+sed -i -e "s/###ARCH###/${ARCH}/g" ${packageDir}/DEBIAN/control
+
+#build deb package
+dpkg --build ${packageDir}
+
+#mv package to deb subdirectory
+if [ -d deb ]; then
+  rm -fr deb
+fi
+
+mkdir deb
+mv ${packageDir}.deb ./deb/
+
+#create install script
+
+cp install-template.sh installer-${packageDir}.sh
+sed -i -e "s/###OS###/${OS}/g" installer-${packageDir}.sh
+sed -i -e "s/###VERSION###/${VER}/g" installer-${packageDir}.sh
+sed -i -e "s/###ARCH###/${BITS}/g" installer-${packageDir}.sh
+
+sed -i -e "s/###INSTALL_COMMAND###/sudo gdebi --non-interactive \${mydir}\/deb\/${packageDir}.deb/g" installer-${packageDir}.sh
+
+mv ./deb ./packages/com.bq.qssweb2board/data 
+mv installer-${packageDir}.sh ./packages/com.bq.qssweb2board/data
 
 #make installer
 echo "Creating installer..."
-binarycreator -c config/config.xml -p packages ${packageName}_Installer
-chmod a+x ${packageName}_Installer
+binarycreator -c config/config.xml -p packages graphical-installer-${packageDir}
+chmod a+x graphical-installer-${packageDir}
 
+#remove all temp files
+
+echo "Removing temp files"
+cd ${baseDir}
+cd build
+make clean
+cd ${baseDir}
 rm -fr build
+rm -fr ${packageDir}
+rm -fr ./packages/com.bq.qssweb2board/data/*
+
