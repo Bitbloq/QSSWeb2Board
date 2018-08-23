@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+	<Name>QSSWeb2Board</Name>
+	<Version>18.09.01</Version>
+	<Title>QSSWeb2Board</Title>
+	<Publisher>Bitbloq</Publisher>
+	<ProductUrl>bitbloq.bq.com</ProductUrl>
+	<StartMenuDir>Bitbloq</StartMenuDir>
+	<TargetDir>/tmp/QSSWeb2Board</TargetDir>
+	<AllowSpaceInPath>false</AllowSpaceInPath>
+	<InstallerApplicationIcon>qssweb2board</InstallerApplicationIcon>
+	<InstallerWindowIcon>qssweb2board</InstallerWindowIcon>
+	<Logo>qssweb2board.png</Logo>
+    <WizardStyle>Modern</WizardStyle>
+    <ControlScript>controller.js</ControlScript>
+	
+</Installer>
+

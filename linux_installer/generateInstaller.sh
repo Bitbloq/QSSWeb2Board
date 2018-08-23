@@ -140,14 +140,17 @@ sed -i -e "s/###OS###/${OS}/g" installer-${packageDir}.sh
 sed -i -e "s/###VERSION###/${VER}/g" installer-${packageDir}.sh
 sed -i -e "s/###ARCH###/${BITS}/g" installer-${packageDir}.sh
 
-sed -i -e "s/###INSTALL_COMMAND###/sudo gdebi .\/deb\/${packageDir}.deb/g" installer-${packageDir}.sh
+sed -i -e "s/###INSTALL_COMMAND###/sudo gdebi --non-interactive \${mydir}\/deb\/${packageDir}.deb/g" installer-${packageDir}.sh
 
 cp install-template-gui.sh gui-installer-${packageDir}.sh
 sed -i -e "s/###OS###/${OS}/g" gui-installer-${packageDir}.sh
 sed -i -e "s/###VERSION###/${VER}/g" gui-installer-${packageDir}.sh
 sed -i -e "s/###ARCH###/${BITS}/g" gui-installer-${packageDir}.sh
 
-sed -i -e "s/###INSTALL_COMMAND###/sudo gdebi --non-interactive \${mydir}\/deb\/${packageDir}.deb/g" installer-${packageDir}.sh
+sed -i -e "s/###INSTALL_COMMAND###/sudo gdebi --non-interactive \${mydir}\/deb\/${packageDir}.deb/g" gui-installer-${packageDir}.sh
+
+sed -i -e "s/###GUI_INSTALLER###/gui-installer-${packageDir}.sh/g" ./package/meta/installscript-template.js
+cp ./package/meta/installscript-template.js ./package/meta/installscript.js
 
 zip -r installer-${packageDir}.zip ./deb/${packageDir}.deb installer-${packageDir}.sh
 

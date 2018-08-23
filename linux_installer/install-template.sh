@@ -19,6 +19,7 @@ sudo apt-get update
 
 sudo apt-get install gdebi
 
+mydir="${0%/*}"
 ###INSTALL_COMMAND###
 
 #CLEAR SCREEN
