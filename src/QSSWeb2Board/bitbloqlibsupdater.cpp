@@ -19,13 +19,13 @@ bool BitbloqLibsUpdater::existsNewVersion()
     //local versions are stored in local file
     QFile jsonFile;
     jsonFile.setFileName(__jsonFilePath);
-    qInfo() << "Versions file " << __jsonFilePath;
+    qDebug() << "Versions file " << __jsonFilePath;
 
     __remoteVersionInfo = __git.getLatestReleaseVersion("bitbloq","bitbloqLibs");
 
     //if local file does not exist returns existing new version
     if(!jsonFile.exists()){
-        qInfo() << "No version.json file";
+        qDebug() << "No version.json file";
         return true; // new version
     }
 
@@ -36,18 +36,18 @@ bool BitbloqLibsUpdater::existsNewVersion()
     __localVersionInfo = QJsonDocument::fromJson(val.toUtf8()).object();
 
 
-    qInfo() << "Current (remote) bitbloqLibs version " << __remoteVersionInfo["version"].toString();
-    qInfo() << "Local bitbloqLibs version " << __localVersionInfo["version"].toString();
+    qDebug() << "Current (remote) bitbloqLibs version " << __remoteVersionInfo["version"].toString();
+    qDebug() << "Local bitbloqLibs version " << __localVersionInfo["version"].toString();
 
     return ( __remoteVersionInfo["version"] != __localVersionInfo["version"] ); //false if there is a new version
 }
 
 bool BitbloqLibsUpdater::update(){
 
-    qInfo() << "Updating to new version";
+    qInfo() << "Updating bitbloq libraries to new version";
 
     //CREATE TMP DIR IF IT DOES NOT EXIST
-    qInfo()<< "Temp Dir: " << __tmpDir;
+    qDebug()<< "Temp Dir: " << __tmpDir;
     if(!QDir(__tmpDir).exists()){
         QDir().mkdir(__tmpDir);
     }
@@ -59,7 +59,7 @@ bool BitbloqLibsUpdater::update(){
             20000) //20 seconds timeout
             )
     {
-        qInfo() << "TimeOut Downloading Libs";
+        qDebug() << "TimeOut Downloading Libs";
         throw GetTimeOutException("TimeOut Downloading Libs");
     }
 
@@ -67,7 +67,7 @@ bool BitbloqLibsUpdater::update(){
     QString zipfilename = __tmpDir + "bitbloqLibs.zip";
 
     if(UnZipper::unzip(zipfilename,__tmpDir) == 0){
-        qInfo() << "Succesfully Unzipped";
+        qDebug() << "Succesfully Unzipped";
     }else{
         throw CannotMoveTmpLibsException("Cannot unzip file");
     }; //unzip zipfile into __tmpDir
@@ -92,15 +92,15 @@ bool BitbloqLibsUpdater::update(){
     if(temp_LibsDir.isEmpty()){
         throw CannotMoveTmpLibsException("Cannot find unzipped dir");
     }else{
-        qInfo() << "TEMP DIR " << temp_LibsDir;
+        qDebug() << "TEMP DIR " << temp_LibsDir;
     }
 
     //REMOVE FORMER BITBLOQLIBS
     QString arduinoLibrariesDir = __arduinoDir + "libraries";
-    qInfo()  << "Removing former libs version " << arduinoLibrariesDir;
+    qDebug()  << "Removing former libs version " << arduinoLibrariesDir;
     QDir(arduinoLibrariesDir).removeRecursively();
 
-    qInfo() << "Removed "  << arduinoLibrariesDir;
+    qDebug() << "Removed "  << arduinoLibrariesDir;
 
 
     QDir dir;
@@ -108,7 +108,7 @@ bool BitbloqLibsUpdater::update(){
       throw CannotMoveTmpLibsException("Cannot move libraries to " + arduinoLibrariesDir);
     }
 
-    qInfo() << "libraries saved to " << arduinoLibrariesDir;
+    qDebug() << "libraries saved to " << arduinoLibrariesDir;
 
     //If no errors, the upgrade is done. update local version info
 
@@ -118,13 +118,13 @@ bool BitbloqLibsUpdater::update(){
 
     QFile jsonFile;
     jsonFile.setFileName(__jsonFilePath);
-    qInfo() << "Open " << __jsonFilePath;
+    qDebug() << "Open " << __jsonFilePath;
     jsonFile.open(QIODevice::WriteOnly | QIODevice::Text);
-    qInfo() << "Delete contents...";
+    qDebug() << "Delete contents...";
     jsonFile.resize(0); //clear all contents
-    qInfo() << "Write version info: " << QJsonDocument(__localVersionInfo).toJson();
+    qDebug() << "Write version info: " << QJsonDocument(__localVersionInfo).toJson();
     jsonFile.write(QJsonDocument(__localVersionInfo).toJson());
-    qInfo() << "Close versions file";
+    qDebug() << "Close versions file";
     jsonFile.close();
 
     //REMOVE TMP FILES

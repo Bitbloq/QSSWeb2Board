@@ -14,16 +14,6 @@
 
 int main(int argc, char *argv[])
 {
-  /*  QApplication a(argc, argv);
-
-    LinuxArduinoHandler arduino;
-    qInfo() << "Arduino Default dir: " << arduino.getArduinoDefaultDir();
-    BitbloqLibsUpdater libs(arduino.getArduinoDefaultDir());
-    if (libs.existsNewVersion()){
-        libs.update();
-    }
-
-    */
     RunGuard guard( "asdfghjkl" );
     if( !guard.tryToRun() ){
         qInfo() << "Another instance of QSSWeb2Board is running";
