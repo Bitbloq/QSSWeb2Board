@@ -35,7 +35,7 @@ Component.prototype.createOperations = function()
 
 Component.prototype.install = function()
 {
-    component.addElevatedOperation("Execute", "sh", "@TargetDir@/gui-installer-qssweb2board_2.0-5Ubuntu18.04_amd64.sh.sh")
+    component.addElevatedOperation("Execute", "sh", "@TargetDir@/###GUI_INSTALLER###")
 }
 
 Component.prototype.installationFinishedPageIsShown = function()
