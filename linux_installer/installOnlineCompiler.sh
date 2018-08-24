@@ -121,8 +121,6 @@ if [ -d deb ]; then
   rm -fr deb
 fi
 
-mv ${packageDir}.deb
-
 echo "Installing Online Compiler".
 
 gdebi --non-interactive QSSWeb2BoardOnlineCompiler.deb
