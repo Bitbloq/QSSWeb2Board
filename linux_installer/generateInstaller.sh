@@ -142,7 +142,7 @@ mv ${packageDir}.deb ./deb/
 
 cp install-template.sh installer-${packageDir}.sh
 sed -i -e "s/###OS###/${OS}/g" installer-${packageDir}.sh
-sed -i -e "s/###VERSION###/${VER}/g" installls
+sed -i -e "s/###VERSION###/${VER}/g" installer-${packageDir}.sh
 er-${packageDir}.sh
 sed -i -e "s/###ARCH###/${BITS}/g" installer-${packageDir}.sh
 
