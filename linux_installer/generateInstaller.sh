@@ -127,11 +127,6 @@ echo "Creating script installer..."
 #build deb package
 dpkg --build ${packageDir}
 
-#mv package to deb subdirectory
-if [ -d deb ]; then
-  rm -fr deb
-fi
-
 mkdir deb
 mv ${packageDir}.deb ./deb/
 

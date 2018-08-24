@@ -116,11 +116,6 @@ sed -i -e "s/###VERSION###/${version}/g" ${packageDir}/DEBIAN/control
 #build deb package
 dpkg --build ${packageDir}
 
-#mv package to deb subdirectory
-if [ -d deb ]; then
-  rm -fr deb
-fi
-
 echo "Installing Online Compiler".
 
 gdebi --non-interactive QSSWeb2BoardOnlineCompiler.deb
