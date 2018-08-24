@@ -30,12 +30,12 @@ SSLServer::SSLServer(quint16 port, QObject *parent) :
     m_web2BoardSocketClients(),
     __clientID{0}
 {
-    m_pWebSocketServer = new QWebSocketServer(QStringLiteral("SSL Echo Server"),
+    m_pWebSocketServer = new QWebSocketServer(QStringLiteral("SSL Web2Board Server"),
                                               QWebSocketServer::SecureMode,
                                               parent);
     QSslConfiguration sslConfiguration;
 
-#ifdef ONLINE_COMPILER
+#if (defined (ONLINE_COMPILER))
     QFile certFile(QStringLiteral(":/res/wildcard.bq.com.crt"));
     QFile keyFile(QStringLiteral(":/res/wildcard.bq.com.key"));
 #else
@@ -57,10 +57,10 @@ SSLServer::SSLServer(quint16 port, QObject *parent) :
 
     if (m_pWebSocketServer->listen(QHostAddress::Any, port))
     {
-        qInfo() << "================================================";
-        qInfo() << "SSL Web2Board Server listening on port" << port;
-        qInfo() << "DO NOT CLOSE WINDOW// NO CERRAR VENTANA" << port;
-        qInfo() << "================================================";
+        qInfo() << "======================================================";
+        qInfo() << "  SSL Web2Board Server listening on port" << port;
+        qInfo() << "  DO NOT CLOSE THIS WINDOW // NO CIERRES ESTA VENTANA";
+        qInfo() << "======================================================";
 
         connect(m_pWebSocketServer, &QWebSocketServer::newConnection,
                 this, &SSLServer::onNewConnection);
