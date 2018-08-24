@@ -22,8 +22,27 @@ int main(int argc, char *argv[])
         return 0;
     }
 
+
+    /************* ONLY FOR ONLINE COMPILER ****************/
 #ifdef ONLINE_COMPILER
+
     qInfo() << "Online Compiler QSSWeb2Board" ;
+    QCoreApplication a(argc, argv);
+
+#if (defined (Q_OS_WIN))
+    WindowsArduinoHandler arduino;
+#elif (defined (Q_OS_LINUX))
+    LinuxArduinoHandler arduino;
+#elif (defined (Q_OS_MAC))
+    MacArduinoHandler arduino;
+#endif
+
+    BitbloqLibsUpdater libs(arduino.getArduinoDefaultDir());
+    if (libs.existsNewVersion()){
+        //qInfo() << "Updating bitbloqLibs";
+        libs.update();
+    }
+    /************* END OF ONLINE COMPILER ****************/
 
 #else
     QApplication a(argc, argv);

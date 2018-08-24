@@ -34,8 +34,14 @@ SSLServer::SSLServer(quint16 port, QObject *parent) :
                                               QWebSocketServer::SecureMode,
                                               parent);
     QSslConfiguration sslConfiguration;
+
+#ifdef ONLINE_COMPILER
+    QFile certFile(QStringLiteral(":/res/wildcard.bq.com.crt"));
+    QFile keyFile(QStringLiteral(":/res/wildcard.bq.com.key"));
+#else
     QFile certFile(QStringLiteral(":/res/www.web2board.es.crt"));
     QFile keyFile(QStringLiteral(":/res/www.web2board.es.key"));
+#endif
     certFile.open(QIODevice::ReadOnly);
     keyFile.open(QIODevice::ReadOnly);
     QSslCertificate certificate(&certFile, QSsl::Pem);
