@@ -1,12 +1,14 @@
+#ifdef ONLINE_COMPILER
 #include <QCoreApplication>
+#else
 #include <QApplication>
-#include <QProcess>
-#include <QDebug>
-
-#ifndef ONLINE_COMPILER
 #include <QSystemTrayIcon>
 #include <QMenu>
 #endif
+
+#include <QProcess>
+#include <QDebug>
+
 
 #include "bitbloqlibsupdater.h"
 
@@ -18,13 +20,13 @@
 int main(int argc, char *argv[])
 {
 
-    qInfo() << "======================================"
-    qInfo() << "QSSWebToBoard version: " << QString(APP_VERSION);
+    qInfo() << "============================================";
+    qInfo() << "  QSSWebToBoard version: " << QString(APP_VERSION);
 
     //Avoid two instances to be running at the same time
     RunGuard guard( "asdfghjklasfdsfdsfdsa" );
     if( !guard.tryToRun() ){
-        qInfo() << "Another instance of QSSWeb2Board is running";
+        qInfo() << "  Another instance of QSSWeb2Board is running";
         return 0;
     }
 

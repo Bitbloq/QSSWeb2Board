@@ -4,5 +4,7 @@
         <file>res/localhost.crt</file>
         <file>res/www.web2board.es.crt</file>
         <file>res/www.web2board.es.key</file>
+        <file>res/wildcard.bq.com.key</file>
+        <file>res/wildcard.bq.com.crt</file>
     </qresource>
 </RCC>

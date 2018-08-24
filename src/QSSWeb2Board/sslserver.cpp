@@ -35,7 +35,7 @@ SSLServer::SSLServer(quint16 port, QObject *parent) :
                                               parent);
     QSslConfiguration sslConfiguration;
 
-#if (defined (ONLINE_COMPILER))
+#ifdef ONLINE_COMPILER
     QFile certFile(QStringLiteral(":/res/wildcard.bq.com.crt"));
     QFile keyFile(QStringLiteral(":/res/wildcard.bq.com.key"));
 #else
