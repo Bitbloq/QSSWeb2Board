@@ -14,6 +14,7 @@
 
 int main(int argc, char *argv[])
 {
+    qInfo() << "QSSWebToBoard version: " << APP_VERSION;
     RunGuard guard( "asdfghjkl" );
     if( !guard.tryToRun() ){
         qInfo() << "Another instance of QSSWeb2Board is running";
