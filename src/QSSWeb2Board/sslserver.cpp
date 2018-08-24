@@ -36,9 +36,9 @@ SSLServer::SSLServer(quint16 port, QObject *parent) :
     QSslConfiguration sslConfiguration;
 
 #ifdef ONLINE_COMPILER
-    qInfo() << "Cert: wildcard.bq.com";
-    QFile certFile(QStringLiteral(":/res/wildcard.bq.com.crt"));
-    QFile keyFile(QStringLiteral(":/res/wildcard.bq.com.key"));
+    qInfo() << "Cert: star_bq_com";
+    QFile certFile(QStringLiteral(":/res/star_bq_com.crt"));
+    QFile keyFile(QStringLiteral(":/res/star_bq_com.key"));
 #else
     qInfo() << "Cert: www.web2board.es";
     QFile certFile(QStringLiteral(":/res/www.web2board.es.crt"));
