@@ -11,6 +11,7 @@ fi
 
 echo "Instalando dependencias..."
 sudo apt-get update > /dev/null
+sudo apt-get upgrade 
 sudo apt-get install qt5-qmake qt5-default libqt5websockets5-dev libqt5serialport5-dev build-essential zip unzip
 
 #GET VERSION AND NAME OF OS
