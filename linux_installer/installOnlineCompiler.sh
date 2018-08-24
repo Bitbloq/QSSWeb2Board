@@ -102,7 +102,7 @@ mkdir build
 cd build > /dev/null
 
 echo "running qmake on ../../src/QSSWeb2Board/QSSWeb2Board.pro"
-qmake ../../src/QSSWeb2Board/QSSWeb2Board.pro "ONLINE_COMPILER=true"
+qmake ../../src/QSSWeb2Board/QSSWeb2Board.pro "ONLINE_COMPILER=true" CONFIG+=debug
 echo "running make..."
 make 
 cd ${baseDir}
