@@ -18,6 +18,7 @@
 int main(int argc, char *argv[])
 {
 
+    qInfo() << "======================================"
     qInfo() << "QSSWebToBoard version: " << QString(APP_VERSION);
 
     //Avoid two instances to be running at the same time
@@ -46,7 +47,7 @@ int main(int argc, char *argv[])
 
     BitbloqLibsUpdater libs(arduino.getArduinoDefaultDir());
     if (libs.existsNewVersion()){
-        //qInfo() << "Updating bitbloqLibs";
+        qInfo() << "Updating bitbloqLibs";
         libs.update();
     }
 

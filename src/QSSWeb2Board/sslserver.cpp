@@ -57,8 +57,11 @@ SSLServer::SSLServer(quint16 port, QObject *parent) :
 
     if (m_pWebSocketServer->listen(QHostAddress::Any, port))
     {
+        qInfo() << "================================================";
         qInfo() << "SSL Web2Board Server listening on port" << port;
         qInfo() << "DO NOT CLOSE WINDOW// NO CERRAR VENTANA" << port;
+        qInfo() << "================================================";
+
         connect(m_pWebSocketServer, &QWebSocketServer::newConnection,
                 this, &SSLServer::onNewConnection);
         connect(m_pWebSocketServer, &QWebSocketServer::sslErrors,

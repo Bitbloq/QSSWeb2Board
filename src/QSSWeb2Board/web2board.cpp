@@ -54,8 +54,6 @@ void Web2Board::sendSuccess(QJsonObject msg, QJsonValue const & replyValue){
     reply.insert("reply",QJsonValue(replyValue));
     reply.insert("success",QJsonValue(true));
 
-
-    //qInfo() << reply ;
     m_pClient->sendTextMessage(QJsonDocument(reply).toJson());
     m_pClient->flush();
 }

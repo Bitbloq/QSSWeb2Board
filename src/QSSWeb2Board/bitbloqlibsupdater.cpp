@@ -114,10 +114,10 @@ bool BitbloqLibsUpdater::update(){
 #if (defined (Q_OS_LINUX))
     QProcess proc;
     QString command = "chmod -R 777 " + arduinoLibrariesDir;
-    qInfo() << "permissions command: "<< command;
+    qDebug() << "permissions command: "<< command;
     proc.start(command);
     proc.waitForFinished();
-    qInfo() << "changed premissions exit code: " << proc.exitCode();
+    qDebug() << "changed premissions exit code: " << proc.exitCode();
 #endif
     //If no errors, the upgrade is done. update local version info
 
