@@ -25,6 +25,11 @@ TEMPLATE = app
 DEFINES += QT_DEPRECATED_WARNINGS
 DEFINES += APP_VERSION=$${VERSION}
 
+if(!isEmpty(ONLINE_COMPILER)){
+  message("Building for online compiler")
+  DEFINES += ONLINE_COMPILER
+}
+
 
 
 SOURCES += main.cpp \

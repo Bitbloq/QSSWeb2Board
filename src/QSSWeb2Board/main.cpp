@@ -14,6 +14,7 @@
 
 int main(int argc, char *argv[])
 {
+
     qInfo() << "QSSWebToBoard version: " << APP_VERSION;
     RunGuard guard( "asdfghjkl" );
     if( !guard.tryToRun() ){
@@ -21,6 +22,10 @@ int main(int argc, char *argv[])
         return 0;
     }
 
+#ifdef ONLINE_COMPILER
+    qInfo() << "Online Compiler QSSWeb2Board" ;
+
+#else
     QApplication a(argc, argv);
 
     //System Tray Icon
@@ -36,6 +41,8 @@ int main(int argc, char *argv[])
     menu->addAction(quitAction);
     trayIcon.setContextMenu(menu);
     trayIcon.show();
+#endif
+
 
     SSLServer server(9867);
     Q_UNUSED(server);
