@@ -59,10 +59,10 @@ int main(int argc, char *argv[])
 
     QSystemTrayIcon trayIcon(&a);
     trayIcon.setIcon(QIcon(QCoreApplication::applicationDirPath() + "/res/qssweb2board.ico"));
-    trayIcon.setToolTip("Web2Board");
+    trayIcon.setToolTip(QString("QSSWeb2Board ") + QString(APP_VERSION));
 
     QMenu * menu = new QMenu();
-    QAction * quitAction = new QAction("Close Web2Board", menu);
+    QAction * quitAction = new QAction("Close QSSWeb2Board", menu);
     QObject::connect(quitAction, SIGNAL(triggered()), QApplication::instance(), SLOT(quit()));
 
     menu->addAction(quitAction);

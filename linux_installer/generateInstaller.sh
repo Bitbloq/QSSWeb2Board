@@ -97,9 +97,6 @@ unzip arduino1.8.5_BQ_Linux_${ARCH}.zip > /dev/null
 rm arduino1.8.5_BQ_Linux_${ARCH}.zip > /dev/null
 cd -
 
-#copy knownBoards
-cp knownBoards.json ${packageDir}/opt/QSSWeb2Board/res/arduino/libraries/
-
 #build application
 baseDir=$(pwd)
 
@@ -143,7 +140,6 @@ mv ${packageDir}.deb ./deb/
 cp install-template.sh installer-${packageDir}.sh
 sed -i -e "s/###OS###/${OS}/g" installer-${packageDir}.sh
 sed -i -e "s/###VERSION###/${VER}/g" installer-${packageDir}.sh
-er-${packageDir}.sh
 sed -i -e "s/###ARCH###/${BITS}/g" installer-${packageDir}.sh
 
 sed -i -e "s/###INSTALL_COMMAND###/sudo gdebi --non-interactive \${mydir}\/deb\/${packageDir}.deb/g" installer-${packageDir}.sh
