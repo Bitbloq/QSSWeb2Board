@@ -107,7 +107,7 @@ void Web2Board::handleMessage(QJsonObject msg){
 
     try{
         if(function == Literals::VERSION){
-            sendSuccess(msg, QJsonValue(QString::number(APP_VERSION)));
+            sendSuccess(msg, QJsonValue(QString(APP_VERSION)));
 
         }else if(function == Literals::LIBVERSION){
 

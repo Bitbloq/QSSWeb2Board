@@ -1,13 +1,13 @@
-VERSION=18.9
+VERSION_MAJOR=3
+VERSION_MINOR=0
+VERSION_REVISION=0
+
+message("QSSWeb2Board $${VERSION_MAJOR}.$${VERSION_MINOR}.$${VERSION_REVISION}")
 
 QT += core \
       serialport \
       websockets \
-      testlib \
       network \
-      widgets
-
-QT -= gui
 
 CONFIG += c++11
 CONFIG += console
@@ -23,11 +23,18 @@ TEMPLATE = app
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
-DEFINES += APP_VERSION=$${VERSION}
 
+# App Version
+DEFINES += APP_VERSION=\\\"$${VERSION_MAJOR}.$${VERSION_MINOR}.$${VERSION_REVISION}\\\"
+
+#Check wether is online or local compiler
 if(!isEmpty(ONLINE_COMPILER)){
   message("Building for online compiler")
   DEFINES += ONLINE_COMPILER
+  QT -= gui
+} else {
+  message("Building for local compiler")
+  QT += widgets
 }
 
 

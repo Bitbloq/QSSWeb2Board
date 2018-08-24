@@ -2,8 +2,11 @@
 #include <QApplication>
 #include <QProcess>
 #include <QDebug>
+
+#ifndef ONLINE_COMPILER
 #include <QSystemTrayIcon>
 #include <QMenu>
+#endif
 
 #include "bitbloqlibsupdater.h"
 
@@ -15,8 +18,10 @@
 int main(int argc, char *argv[])
 {
 
-    qInfo() << "QSSWebToBoard version: " << APP_VERSION;
-    RunGuard guard( "asdfghjkl" );
+    qInfo() << "QSSWebToBoard version: " << QString(APP_VERSION);
+
+    //Avoid two instances to be running at the same time
+    RunGuard guard( "asdfghjklasfdsfdsfdsa" );
     if( !guard.tryToRun() ){
         qInfo() << "Another instance of QSSWeb2Board is running";
         return 0;
@@ -28,6 +33,8 @@ int main(int argc, char *argv[])
 
     qInfo() << "Online Compiler QSSWeb2Board" ;
     QCoreApplication a(argc, argv);
+
+    //Update libraries every time QSSWeb2Board is launched
 
 #if (defined (Q_OS_WIN))
     WindowsArduinoHandler arduino;
@@ -42,6 +49,7 @@ int main(int argc, char *argv[])
         //qInfo() << "Updating bitbloqLibs";
         libs.update();
     }
+
     /************* END OF ONLINE COMPILER ****************/
 
 #else
