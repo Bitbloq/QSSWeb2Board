@@ -35,8 +35,7 @@ if(!isEmpty(ONLINE_COMPILER)){
   QT -= gui
 } else {
   message("Building for local compiler")
-    RESOURCES += localsslcertificates.qrc
-
+  RESOURCES += localsslcertificates.qrc
   QT += widgets
 }
 
