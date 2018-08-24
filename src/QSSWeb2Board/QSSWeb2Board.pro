@@ -30,10 +30,13 @@ DEFINES += APP_VERSION=\\\"$${VERSION_MAJOR}.$${VERSION_MINOR}.$${VERSION_REVISI
 #Check wether is online or local compiler
 if(!isEmpty(ONLINE_COMPILER)){
   message("Building for online compiler")
+  RESOURCES += onlinesslcertificates.qrc
   DEFINES += ONLINE_COMPILER
   QT -= gui
 } else {
   message("Building for local compiler")
+    RESOURCES += localsslcertificates.qrc
+
   QT += widgets
 }
 
@@ -77,5 +80,4 @@ HEADERS += \
 DISTFILES += \
     res/knownboards.json
 
-RESOURCES += \
-    sslcertificates.qrc
+

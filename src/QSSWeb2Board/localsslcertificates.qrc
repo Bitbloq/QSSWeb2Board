@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/www.web2board.es.crt</file>
+        <file>res/www.web2board.es.key</file>
+    </qresource>
+</RCC>

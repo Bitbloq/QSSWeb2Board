@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/wildcard.bq.com.key</file>
+        <file>res/wildcard.bq.com.crt</file>
+    </qresource>
+</RCC>
