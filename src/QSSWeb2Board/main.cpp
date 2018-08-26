@@ -30,6 +30,8 @@ int main(int argc, char *argv[])
         return 0;
     }
 
+    //Clean tmp file
+
 
     /************* ONLY FOR ONLINE COMPILER ****************/
 #ifdef ONLINE_COMPILER
@@ -73,6 +75,19 @@ int main(int argc, char *argv[])
     trayIcon.show();
 #endif
 
+
+    //Clean temp files
+
+    QString tmpDirPath{(QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_TMP").isEmpty()) ?
+                    QCoreApplication::applicationDirPath() + "/tmp/" :
+                    QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_TMP")};
+
+    QDir tmpDir{tmpDirPath};
+    if(tmpDir.exists()){
+        qInfo() << "Cleaning temp dir: " << tmpDirPath;
+        tmpDir.removeRecursively();
+        QDir().mkdir(tmpDirPath);
+    }
 
     SSLServer server(9867);
     Q_UNUSED(server);

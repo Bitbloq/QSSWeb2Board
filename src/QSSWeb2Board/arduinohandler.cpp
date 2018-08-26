@@ -50,11 +50,6 @@ ArduinoHandler::ArduinoHandler():
        QDir().mkdir(tmpDir);
    }
 
-
-
-    eraseExistingSketches();
-    //eraseExistingBuildFiles();
-
 }
 
 void ArduinoHandler::updateArduinoBoards(){
