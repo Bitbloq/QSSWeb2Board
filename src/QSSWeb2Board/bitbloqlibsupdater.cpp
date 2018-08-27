@@ -4,11 +4,12 @@
 
 
 BitbloqLibsUpdater::BitbloqLibsUpdater(QString arduinoDir):
-    __jsonFilePath{QCoreApplication::applicationDirPath() + "/res/versions.json"},
     __arduinoDir{arduinoDir},
     __tmpDir{(QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_TMP").isEmpty()) ?
                               QCoreApplication::applicationDirPath() + "/tmp/" :
-                               QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_TMP")}
+                               QProcessEnvironment::systemEnvironment().value("QSSWEB2BOARD_TMP")},
+    __arduinoLibrariesDir{__arduinoDir + "libraries/"},
+    __jsonFilePath{__arduinoLibrariesDir + "versions.json"}
 
 {
 
@@ -96,45 +97,52 @@ bool BitbloqLibsUpdater::update(){
     }
 
     //REMOVE FORMER BITBLOQLIBS
-    QString arduinoLibrariesDir = __arduinoDir + "libraries";
-    qDebug()  << "Removing former libs version " << arduinoLibrariesDir;
-    QDir(arduinoLibrariesDir).removeRecursively();
 
-    qDebug() << "Removed "  << arduinoLibrariesDir;
+    qDebug()  << "Removing former libs version " << __arduinoLibrariesDir;
+    QDir(__arduinoLibrariesDir).removeRecursively();
+
+    qDebug() << "Removed "  << __arduinoLibrariesDir;
 
 
     QDir dir;
-    if( !dir.rename(temp_LibsDir,arduinoLibrariesDir) ){
-      throw CannotMoveTmpLibsException("Cannot move libraries to " + arduinoLibrariesDir);
+    if( !dir.rename(temp_LibsDir,__arduinoLibrariesDir) ){
+      throw CannotMoveTmpLibsException("Cannot move libraries to " + __arduinoLibrariesDir);
     }
 
-    qDebug() << "libraries saved to " << arduinoLibrariesDir;
+    qDebug() << "libraries saved to " << __arduinoLibrariesDir;
 
-
-#if (defined (Q_OS_LINUX))
-    QProcess proc;
-    QString command = "chmod -R 777 " + arduinoLibrariesDir;
-    qDebug() << "permissions command: "<< command;
-    proc.start(command);
-    proc.waitForFinished();
-    qDebug() << "changed premissions exit code: " << proc.exitCode();
-#endif
     //If no errors, the upgrade is done. update local version info
 
     __localVersionInfo.insert("version",__remoteVersionInfo["version"].toString());
     __localVersionInfo.insert("zipball_url",__remoteVersionInfo["zipball_url"].toString());
     __localVersionInfo.insert("tarball_url",__remoteVersionInfo["tarball_url"].toString());
 
-    QFile jsonFile;
-    jsonFile.setFileName(__jsonFilePath);
-    qDebug() << "Open " << __jsonFilePath;
+    QFile jsonFile{__jsonFilePath};
+
+    qDebug() << "Open " << jsonFile.fileName();
     jsonFile.open(QIODevice::WriteOnly | QIODevice::Text);
+    if(jsonFile.isOpen()){
+        qInfo() << "Opened";
+    }else{
+        qInfo() << "Not opened";
+    }
     qDebug() << "Delete contents...";
     jsonFile.resize(0); //clear all contents
     qDebug() << "Write version info: " << QJsonDocument(__localVersionInfo).toJson();
     jsonFile.write(QJsonDocument(__localVersionInfo).toJson());
     qDebug() << "Close versions file";
     jsonFile.close();
+
+
+#if (defined (Q_OS_LINUX))
+    QProcess proc;
+    QString command = "chmod -R 777 " + __arduinoLibrariesDir;
+    qDebug() << "permissions command: "<< command;
+    proc.start(command);
+    proc.waitForFinished();
+    qDebug() << "changed premissions exit code: " << proc.exitCode();
+#endif
+
 
     //REMOVE TMP FILES
     QFile(zipfilename).remove();
