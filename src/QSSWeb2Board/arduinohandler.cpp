@@ -50,11 +50,6 @@ ArduinoHandler::ArduinoHandler():
        QDir().mkdir(tmpDir);
    }
 
-
-
-    eraseExistingSketches();
-    //eraseExistingBuildFiles();
-
 }
 
 void ArduinoHandler::updateArduinoBoards(){
@@ -286,7 +281,7 @@ bool ArduinoHandler::setBoardPort(QString _boardPort){
 QString ArduinoHandler::getHex(){
 
     QString hexfilename = buildPath + sketchName + ".ino.hex";
-    qInfo() << "Hex filename: " << hexfilename;
+    qDebug() << "Hex filename: " << hexfilename;
 
     QFile f(hexfilename);
     if (!f.open(QFile::ReadOnly | QFile::Text)) throw HexFileException("HEX FILE NOT FOUND");
@@ -336,6 +331,7 @@ bool ArduinoHandler::autoDetectBoardPort(){
 
 int ArduinoHandler::verify(){
 
+    qInfo() << "Verifying sketch...";
     QString command = makeVerifyCommand();
 
     QProcess *proc = new QProcess();
@@ -372,9 +368,11 @@ int ArduinoHandler::verify(){
 
 int ArduinoHandler::asyncVerify(int buildPathCounter){
 
+    qInfo() << "Verifying sketch...";
+
     setBuildPath( tmpDir + "build" + QString::number(buildPathCounter) + "/");
 
-    qInfo()<< "buildPath (async): "  << buildPath;
+    qDebug()<< "buildPath (async): "  << buildPath;
     QString command = makeVerifyCommand();
 
     QProcess* proc = new QProcess;
@@ -411,6 +409,8 @@ int ArduinoHandler::asyncVerify(int buildPathCounter){
 
 int ArduinoHandler::upload()
 {
+
+    qInfo() << "Uploading sketch to board...";
 
     QProcess *proc = new QProcess();
     //makeUploadCommand creates the load command to execute
@@ -502,7 +502,7 @@ QString LinuxArduinoHandler::makeVerifyCommand(){
                                     "--board " +boardCommand + " " +
                                     sketchesBaseDir + sketchName + "/" + sketchName + ".ino");
 
-    qInfo() << "Verify command: " << verifyCommand;
+    qDebug() << "Verify command: " << verifyCommand;
 
     return verifyCommand;
 }

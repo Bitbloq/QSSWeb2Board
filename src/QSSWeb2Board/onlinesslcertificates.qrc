@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/star_bq_com.key</file>
+        <file>res/star_bq_com.crt</file>
+    </qresource>
+</RCC>

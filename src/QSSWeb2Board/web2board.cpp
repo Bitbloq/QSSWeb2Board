@@ -46,16 +46,14 @@ void Web2Board::sendUploading(QJsonObject msg){
 
 void Web2Board::sendSuccess(QJsonObject msg, QJsonValue const & replyValue){
     QJsonObject reply;
-
+    qInfo() << "Success: " << msg.value("function").toString();
     reply.insert("ID",msg.value("ID").toInt());
-    qInfo() << "Send success ID: " << msg.value("ID").toInt();
+    qDebug() << "Send success ID: " << msg.value("ID").toInt();
     reply.insert("hub",msg.value("hub").toString());
     reply.insert("function",msg.value("function").toString());
     reply.insert("reply",QJsonValue(replyValue));
     reply.insert("success",QJsonValue(true));
 
-
-    //qInfo() << reply ;
     m_pClient->sendTextMessage(QJsonDocument(reply).toJson());
     m_pClient->flush();
 }
@@ -63,6 +61,7 @@ void Web2Board::sendSuccess(QJsonObject msg, QJsonValue const & replyValue){
 void Web2Board::sendNotSuccess(QJsonObject msg, QJsonValue const & replyValue){
     QJsonObject reply;
 
+    qCritical() << "Failure: " << msg.value("function").toString();
     reply.insert("ID",msg.value("ID").toInt());
     reply.insert("hub",msg.value("hub").toString());
     reply.insert("function",msg.value("function").toString());
@@ -93,9 +92,9 @@ void Web2Board::handleMessage(QJsonObject msg){
         return; ///invalid message
     }
 
-    qInfo() << "received: " << QJsonDocument(msg).toJson();
+    qDebug() << "received: " << QJsonDocument(msg).toJson();
     __messageID = msg.value("ID").toInt();
-    qInfo() << "Message ID: " << __messageID;
+    qDebug() << "Message ID: " << __messageID;
 
     if(! msg.contains("function")){
         qCritical() << "Discarded message: No Function" ;
@@ -106,7 +105,7 @@ void Web2Board::handleMessage(QJsonObject msg){
 
     try{
         if(function == Literals::VERSION){
-            sendSuccess(msg, QJsonValue("18.08.14"));
+            sendSuccess(msg, QJsonValue(QString(APP_VERSION)));
 
         }else if(function == Literals::LIBVERSION){
 

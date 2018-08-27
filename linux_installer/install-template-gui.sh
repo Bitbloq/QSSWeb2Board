@@ -1,26 +1,15 @@
 #!/bin/sh
 # script for QSSWeb2Board
 
-echo "Vas a instalar Web2Board en tu sistema".
-echo "Has escogido realizar la instalación para ###OS### ###VERSION### ###ARCH### bits"
-while true; do
-    read -p "¿Es este tu sistema operativo? (SI/NO) " yn
-    case $yn in
-        [SI]* ) break;;
-        [NO]* ) exit;;
-        * ) echo "Por favor, contesta SI o NO ";;
-    esac
-done
-
-mydir="${0%/*}"
-
 #install dependencies
 sudo apt-get update
 
 sudo apt-get install gdebi
 
 mydir="${0%/*}"
+
 ###INSTALL_COMMAND###
+
 
 #CLEAR SCREEN
 #printf "\033c"

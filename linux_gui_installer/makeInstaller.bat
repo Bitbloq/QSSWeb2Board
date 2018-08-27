@@ -1,1 +1,0 @@
-C:\Qt\Tools\QtInstallerFramework\3.0\bin\binarycreator.exe -c config\config.xml -p packages QSSWeb2Board_Windows_Installer.exe

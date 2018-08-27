@@ -107,6 +107,9 @@ Component.prototype.installationFinished = function()
     //var isRunAppCheckBoxChecked = component.userInterface("RunAppCheckBoxForm").runAppCheckBox.checked;
     var isInstallDriversChecked = component.userInterface("RunAppCheckBoxForm").installDriversCheckBox.checked;
 
+    //component.addElevatedOperation("Execute", "cmd /C", "@TargetDir@/drivers/install_drivers_windows_64bits.bat")
+    
+    
     if (((installer.isInstaller() && installer.status == QInstaller.Success) || installer.isUpdater()) && isInstallDriversChecked)
     {
         console.log("Component.prototype.installationFinished(): installing drivers");

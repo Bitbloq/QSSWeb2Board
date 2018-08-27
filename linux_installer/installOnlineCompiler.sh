@@ -7,12 +7,15 @@ else
 	version=${1}
 fi
 
+
 #INSTALL dependencies
 
 echo "Instalando dependencias..."
-sudo apt-get update > /dev/null
-sudo apt-get upgrade 
-sudo apt-get install qt5-qmake qt5-default libqt5websockets5-dev libqt5serialport5-dev build-essential zip unzip
+apt update
+apt upgrade -y
+apt dist-upgrade -y
+apt autoremove -y
+apt install wget gdebi qt5-qmake qt5-default libqt5websockets5-dev libqt5serialport5-dev build-essential zip unzip -y
 
 #GET VERSION AND NAME OF OS
 if [ -f /etc/os-release ]; then
@@ -71,18 +74,9 @@ else
 	VER=${3}
 fi
 
-echo "Creando instalador para ${OS} ${VER} ${ARCH}"
-while true; do
-    read -p "¿Es este tu sistema operativo? (SI/NO)" yn
-    case $yn in
-        [SI]* ) break;;
-        [NO]* ) exit;;
-        * ) echo "Por favor, contesta SI o NO";;
-    esac
-done
 
-
-packageDir=qssweb2board_${version}${OS}${VER}_${ARCH}
+#packageDir=qssweb2board_${version}${OS}${VER}_${ARCH}
+packageDir=QSSWeb2BoardOnlineCompiler
 
 #create packageDir form template
 rm -fr ${packageDir}
@@ -108,7 +102,7 @@ mkdir build
 cd build > /dev/null
 
 echo "running qmake on ../../src/QSSWeb2Board/QSSWeb2Board.pro"
-qmake CONFIG+=release ../../src/QSSWeb2Board/QSSWeb2Board.pro
+qmake ../../src/QSSWeb2Board/QSSWeb2Board.pro "ONLINE_COMPILER=true" CONFIG+=debug
 echo "running make..."
 make 
 cd ${baseDir}
@@ -119,55 +113,20 @@ cp build/QSSWeb2Board ${packageDir}/opt/QSSWeb2Board/
 sed -i -e "s/###ARCH###/${ARCH}/g" ${packageDir}/DEBIAN/control
 sed -i -e "s/###VERSION###/${version}/g" ${packageDir}/DEBIAN/control
 
-cp ./config/config-template.xml ./config/config.xml
-sed -i -e "s/###VERSION###/${version}/g" ./config/config.xml
-
-
-echo "Creating script installer..."
 #build deb package
 dpkg --build ${packageDir}
 
-mkdir deb
-mv ${packageDir}.deb ./deb/
+echo "Installing Online Compiler".
 
-#create install script
+gdebi --non-interactive QSSWeb2BoardOnlineCompiler.deb
 
-cp install-template.sh installer-${packageDir}.sh
-sed -i -e "s/###OS###/${OS}/g" installer-${packageDir}.sh
-sed -i -e "s/###VERSION###/${VER}/g" installer-${packageDir}.sh
-sed -i -e "s/###ARCH###/${BITS}/g" installer-${packageDir}.sh
-
-sed -i -e "s/###INSTALL_COMMAND###/sudo gdebi --non-interactive \${mydir}\/deb\/${packageDir}.deb/g" installer-${packageDir}.sh
-
-cp install-template-gui.sh gui-installer-${packageDir}.sh
-sed -i -e "s/###OS###/${OS}/g" gui-installer-${packageDir}.sh
-sed -i -e "s/###VERSION###/${VER}/g" gui-installer-${packageDir}.sh
-sed -i -e "s/###ARCH###/${BITS}/g" gui-installer-${packageDir}.sh
-
-sed -i -e "s/###INSTALL_COMMAND###/sudo gdebi --non-interactive \${mydir}\/deb\/${packageDir}.deb/g" gui-installer-${packageDir}.sh
-
-cp ./packages/com.bq.qssweb2board/meta/installscript-template.js ./packages/com.bq.qssweb2board/meta/installscript.js
-sed -i -e "s/###GUI_INSTALLER###/gui-installer-${packageDir}.sh/g" ./packages/com.bq.qssweb2board/meta/installscript.js
-
-zip -r installer-${packageDir}.zip ./deb/${packageDir}.deb installer-${packageDir}.sh
-
-mv ./deb ./packages/com.bq.qssweb2board/data 
-mv gui-installer-${packageDir}.sh ./packages/com.bq.qssweb2board/data
-
-echo "Creating GUI installer..."
-binarycreator -c ./config/config.xml -p packages graphical-installer-${packageDir}
-chmod a+x graphical-installer-${packageDir}
-
-
+echo "Removing Temp files"
 #remove all temp files
 
-rm installer-${packageDir}.sh
 cd ${baseDir}
 cd build
 make clean
 cd ${baseDir}
 rm -fr build
 rm -fr ${packageDir}
-rm -fr ./packages/com.bq.qssweb2board/data/*
-rm ./packages/com.bq.qssweb2board/meta/installscript.js
-rm ./config/config.xml
+rm -fr ${packageDir}.deb

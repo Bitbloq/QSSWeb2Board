@@ -1,22 +1,45 @@
+VERSION_MAJOR=3
+VERSION_MINOR=0
+VERSION_REVISION=0
+
+message("QSSWeb2Board $${VERSION_MAJOR}.$${VERSION_MINOR}.$${VERSION_REVISION}")
+
 QT += core \
       serialport \
       websockets \
-      testlib \
       network \
-      widgets
-
-QT -= gui
 
 CONFIG += c++11
 CONFIG += console
-
-
 
 TARGET = QSSWeb2Board
 CONFIG += console
 CONFIG -= app_bundle
 
 TEMPLATE = app
+
+# The following define makes your compiler emit warnings if you use
+# any feature of Qt which as been marked deprecated (the exact warnings
+# depend on your compiler). Please consult the documentation of the
+# deprecated API in order to know how to port your code away from it.
+DEFINES += QT_DEPRECATED_WARNINGS
+
+# App Version
+DEFINES += APP_VERSION=\\\"$${VERSION_MAJOR}.$${VERSION_MINOR}.$${VERSION_REVISION}\\\"
+
+#Check wether is online or local compiler
+if(!isEmpty(ONLINE_COMPILER)){
+  message("Building for online compiler")
+  RESOURCES += onlinesslcertificates.qrc
+  DEFINES += ONLINE_COMPILER
+  QT -= gui
+} else {
+  message("Building for local compiler")
+  RESOURCES += localsslcertificates.qrc
+  QT += widgets
+}
+
+
 
 SOURCES += main.cpp \
     arduinohandler.cpp \
@@ -31,11 +54,6 @@ SOURCES += main.cpp \
     web2boardexceptions.cpp \
     literals.cpp
 
-# The following define makes your compiler emit warnings if you use
-# any feature of Qt which as been marked deprecated (the exact warnings
-# depend on your compiler). Please consult the documentation of the
-# deprecated API in order to know how to port your code away from it.
-DEFINES += QT_DEPRECATED_WARNINGS
 
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -61,5 +79,4 @@ HEADERS += \
 DISTFILES += \
     res/knownboards.json
 
-RESOURCES += \
-    sslcertificates.qrc
+
