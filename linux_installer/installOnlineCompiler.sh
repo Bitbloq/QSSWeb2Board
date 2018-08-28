@@ -11,7 +11,8 @@ fi
 #INSTALL dependencies
 
 echo "UPDATING THE SYSTEM..."
-if apt update && apt upgrade -y && apt dist-upgrade -y && apt autoremove -y; then 
+#if apt update && apt upgrade -y && apt dist-upgrade -y && apt autoremove -y; then 
+if apt update; then 
     echo "System succesfully Updated"
 else 
     exit $?
