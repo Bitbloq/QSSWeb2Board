@@ -10,16 +10,20 @@ fi
 
 #INSTALL dependencies
 
-echo "Updating the system..."
+echo "UPDATING THE SYSTEM..."
 if apt update && apt upgrade -y && apt dist-upgrade -y && apt autoremove -y; then 
     echo "System succesfully Updated"
 else 
     exit $?
 fi
 
- exit $?
+echo "INSTALLING DEPENDENCIES..."
+if apt install wget gdebi qt5-qmake qt5-default libqt5websockets5-dev libqt5serialport5-dev build-essential zip unzip -y ; then 
+    echo "Dependencies installed"
+else 
+    exit $?
+fi    
 
-apt install wget gdebi qt5-qmake qt5-default libqt5websockets5-dev libqt5serialport5-dev build-essential zip unzip -y
 
 #GET VERSION AND NAME OF OS
 if [ -f /etc/os-release ]; then
@@ -66,18 +70,6 @@ i*86)
     ;;
 esac
 
-if [ -z "${2}" ];then
-	echo "No OS introduced"
-else
-	OS=${2}
-fi
-
-if [ -z "${3}" ];then
-	echo "No VERSION introduced"
-else
-	VER=${3}
-fi
-
 
 #packageDir=qssweb2board_${version}${OS}${VER}_${ARCH}
 packageDir=QSSWeb2BoardOnlineCompiler
@@ -88,10 +80,22 @@ cp -fr qssweb2board_2.0-template ${packageDir}
 
 #Download arduino BQ version
 
-echo "Downloading arduino_BQ_Linux_${ARCH}.zip"
+echo "DOWNLOADING arduino_BQ_Linux_${ARCH}.zip"
 cd ${packageDir}/opt/QSSWeb2Board/res/
-wget https://github.com/bitbloq/QSSWeb2Board/releases/download/${version}/arduino1.8.5_BQ_Linux_${ARCH}.zip
-unzip arduino1.8.5_BQ_Linux_${ARCH}.zip > /dev/null
+if wget https://github.com/bitbloq/QSSWeb2Board/releases/download/${version}/arduino1.8.5_BQ_Linux_${ARCH}.zip; then
+    echo "Arduino Downloaded"
+else
+    exit $?
+fi
+
+
+echo "UNZIPPING ARDUINO..."
+if unzip arduino1.8.5_BQ_Linux_${ARCH}.zip > /dev/null ; then
+    echo "Arduino unzipped"
+else
+    exit $?
+fi
+
 rm arduino1.8.5_BQ_Linux_${ARCH}.zip > /dev/null
 cd -
 
@@ -105,10 +109,20 @@ fi
 mkdir build
 cd build > /dev/null
 
-echo "running qmake on ../../src/QSSWeb2Board/QSSWeb2Board.pro"
-qmake ../../src/QSSWeb2Board/QSSWeb2Board.pro "ONLINE_COMPILER=true" CONFIG+=debug
-echo "running make..."
-make 
+echo "RUNNING qmake on ../../src/QSSWeb2Board/QSSWeb2Board.pro"
+if qmake ../../src/QSSWeb2Board/QSSWeb2Board.pro "ONLINE_COMPILER=true" CONFIG+=release; then
+    echo "qmake OK"
+else
+    exit $?
+fi
+
+echo "RUNNING make..."
+if make; then
+    echo "QSSWeb2Board Built"
+else
+    exit $?
+fi
+
 cd ${baseDir}
 
 #copy application into packageDir
@@ -118,11 +132,20 @@ sed -i -e "s/###ARCH###/${ARCH}/g" ${packageDir}/DEBIAN/control
 sed -i -e "s/###VERSION###/${version}/g" ${packageDir}/DEBIAN/control
 
 #build deb package
-dpkg --build ${packageDir}
+echo "BUILD DEB PACKAGE..."
+if dpkg --build ${packageDir}; then
+    echo "Deb package built"
+else
+    exit $?
+fi
 
 echo "Installing Online Compiler".
 
-gdebi --non-interactive QSSWeb2BoardOnlineCompiler.deb
+if gdebi --non-interactive QSSWeb2BoardOnlineCompiler.deb; then
+    echo "QSSWeb2Board properly installed"
+else   
+    exit $?
+fi
 
 echo "Removing Temp files"
 #remove all temp files
