@@ -10,11 +10,13 @@ fi
 
 #INSTALL dependencies
 
-echo "Instalando dependencias..."
-apt update
-apt upgrade -y
-apt dist-upgrade -y
-apt autoremove -y
+echo "Updating the system..."
+if apt update && apt upgrade -y && apt dist-upgrade -y && apt autoremove -y; then 
+    echo "System succesfully Updated"
+else 
+    exit $?
+fi
+
 apt install wget gdebi qt5-qmake qt5-default libqt5websockets5-dev libqt5serialport5-dev build-essential zip unzip -y
 
 #GET VERSION AND NAME OF OS
