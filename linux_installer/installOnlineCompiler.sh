@@ -142,7 +142,7 @@ sed -i -e "s/###VERSION###/${version}/g" ${packageDir}/DEBIAN/control
 
 echo "Installing Online Compiler".
 
-if sh QSSWeb2BoardOnlineCompiler/DEBIAN/preinst >> /dev/null ; then
+if sh QSSWeb2BoardOnlineCompiler/DEBIAN/preinst ; then
     echo "Preinstall script OK"
 else
     echo "Preinstall script ERROR"
@@ -156,7 +156,7 @@ else
     exit $?
 fi
 
-if sh QSSWeb2BoardOnlineCompiler/DEBIAN/postinst >> /dev/null ; then
+if sh QSSWeb2BoardOnlineCompiler/DEBIAN/postinst ; then
     echo "Postinstall script OK"
 else
     echo "Postinstall script ERROR"
