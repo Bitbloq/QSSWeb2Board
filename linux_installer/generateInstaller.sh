@@ -154,10 +154,12 @@ zip -r installer-${packageDir}.zip ./deb/${packageDir}.deb installer-${packageDi
 mv ./deb ./packages/com.bq.qssweb2board/data 
 mv gui-installer-${packageDir}.sh ./packages/com.bq.qssweb2board/data
 
-echo "Creating GUI installer..."
-binarycreator -c ./config/config.xml -p packages graphical-installer-${packageDir}
-chmod a+x graphical-installer-${packageDir}
-
+#binarycreator only exists for 64 bits
+if [ $BITS == "64" ]; then
+    echo "Creating GUI installer..."
+    binarycreator -c ./config/config.xml -p packages graphical-installer-${packageDir}
+    chmod a+x graphical-installer-${packageDir}
+fi
 
 #remove all temp files
 

@@ -86,11 +86,18 @@ void SSLServer::onNewConnection()
 {
     Web2BoardSocket *pWeb2BoardSocket = new Web2BoardSocket(m_pWebSocketServer->nextPendingConnection(), __clientID++);
 
-    qDebug() << "Client connected:" << pWeb2BoardSocket->m_pWebSocket->peerName() << pWeb2BoardSocket->m_pWebSocket->origin();
+#ifdef ONLINE_COMPILER
+    // Allow only connections from  *.bq.com
+    if(!pWeb2BoardSocket->m_pWebSocket->origin().endsWith(".bq.com")){
+        qCritical() << "Unknown client connected. Rejected: " << pWeb2BoardSocket->m_pWebSocket->origin();
+        pWeb2BoardSocket->m_pWebSocket->close();
+        return;
+    }
+#endif
 
+    qDebug() << "Client connected:" << pWeb2BoardSocket->m_pWebSocket->peerName() << pWeb2BoardSocket->m_pWebSocket->origin();
     connect(pWeb2BoardSocket->m_pWebSocket, &QWebSocket::textMessageReceived, pWeb2BoardSocket->m_pWeb2Board, &Web2Board::handleTextMessage);
     connect(pWeb2BoardSocket->m_pWebSocket, &QWebSocket::disconnected, this, &SSLServer::socketDisconnected);
-
     m_web2BoardSocketClients << pWeb2BoardSocket;
 }
 //! [onNewConnection]
