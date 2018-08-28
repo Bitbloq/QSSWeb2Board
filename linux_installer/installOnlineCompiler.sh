@@ -17,6 +17,8 @@ else
     exit $?
 fi
 
+ exit $?
+
 apt install wget gdebi qt5-qmake qt5-default libqt5websockets5-dev libqt5serialport5-dev build-essential zip unzip -y
 
 #GET VERSION AND NAME OF OS
