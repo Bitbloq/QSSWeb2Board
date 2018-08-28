@@ -11,15 +11,15 @@ fi
 #INSTALL dependencies
 
 echo "UPDATING THE SYSTEM..."
-#if apt update && apt upgrade -y && apt dist-upgrade -y && apt autoremove -y; then 
-if apt update; then 
+
+if apt clean && apt update && apt upgrade -y && apt dist-upgrade -y && apt autoremove -y; then 
     echo "System succesfully Updated"
 else 
     exit $?
 fi
 
 echo "INSTALLING DEPENDENCIES..."
-if apt install wget gdebi qt5-qmake qt5-default libqt5websockets5-dev libqt5serialport5-dev build-essential zip unzip -y ; then 
+if apt install wget gdebi qt5-qmake qt5-default libqt5core5a libqt5network5 libqt5websockets5 libqt5websockets5-dev libqt5serialport5 libqt5serialport5-dev build-essential zip unzip -y ; then 
     echo "Dependencies installed"
 else 
     exit $?
@@ -133,20 +133,28 @@ sed -i -e "s/###ARCH###/${ARCH}/g" ${packageDir}/DEBIAN/control
 sed -i -e "s/###VERSION###/${version}/g" ${packageDir}/DEBIAN/control
 
 #build deb package
-echo "BUILD DEB PACKAGE..."
-if dpkg --build ${packageDir}; then
-    echo "Deb package built"
-else
-    exit $?
-fi
+#echo "BUILD DEB PACKAGE..."
+#if dpkg --build ${packageDir}; then
+#    echo "Deb package built"
+#else
+#    exit $?
+#fi
 
 echo "Installing Online Compiler".
 
-if gdebi --non-interactive QSSWeb2BoardOnlineCompiler.deb; then
-    echo "QSSWeb2Board properly installed"
-else   
-    exit $?
-fi
+sh QSSWeb2BoardOnlineCompiler/DEBIAN/preinst
+cp -fr QSSWeb2BoardOnlineCompiler/etc/* /etc/
+cp -fr QSSWeb2BoardOnlineCompiler/opt/* /opt/
+cp -fr QSSWeb2BoardOnlineCompiler/usr/* /usr/
+sh QSSWeb2BoardOnlineCompiler/DEBIAN/postinst
+
+
+
+#if gdebi --non-interactive QSSWeb2BoardOnlineCompiler.deb; then
+#    echo "QSSWeb2Board properly installed"
+#else   
+#    exit $?
+#fi
 
 echo "Removing Temp files"
 #remove all temp files
