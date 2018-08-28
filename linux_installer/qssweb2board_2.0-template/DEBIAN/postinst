@@ -32,10 +32,6 @@ fi
 
 
 chown root:qssweb2board -R ${installDir}
-#chown root:qssweb2board -R $QSSWEB2BOARD_SKETCHES
-#chown root:qssweb2board -R $QSSWEB2BOARD_BUILD
-#chown root:qssweb2board $QSSWEB2BOARD_KNOWNBOARDS
-#chown root:qssweb2board -R $QSSWEB2BOARD_ARDUINO
 
 chmod g+x ${installDir}
 chmod g+x ${QSSWEB2BOARD_ARDUINO}arduino
@@ -50,6 +46,5 @@ chmod g+w ${installDir}/res/*
 chmod g+w ${QSSWEB2BOARD_ARDUINO}
 
 #require reboot
-/usr/share/update-notifier/notify-reboot-required
 echo 'Installation finished ---- Please Reboot (Required)'
 echo 'Instalación finalizada ---- ES NECESARIO REINICIAR EL ORDENADOR'
