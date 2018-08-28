@@ -142,11 +142,26 @@ sed -i -e "s/###VERSION###/${version}/g" ${packageDir}/DEBIAN/control
 
 echo "Installing Online Compiler".
 
-sh QSSWeb2BoardOnlineCompiler/DEBIAN/preinst
-cp -fr QSSWeb2BoardOnlineCompiler/etc/* /etc/
-cp -fr QSSWeb2BoardOnlineCompiler/opt/* /opt/
-cp -fr QSSWeb2BoardOnlineCompiler/usr/* /usr/
-sh QSSWeb2BoardOnlineCompiler/DEBIAN/postinst
+if sh QSSWeb2BoardOnlineCompiler/DEBIAN/preinst >> /dev/null ; then
+    echo "Preinstall script OK"
+else
+    echo "Preinstall script ERROR"
+    exit $?
+fi
+
+if cp -fr QSSWeb2BoardOnlineCompiler/etc/* /etc/ && cp -fr QSSWeb2BoardOnlineCompiler/opt/* /opt/ && cp -fr QSSWeb2BoardOnlineCompiler/usr/* /usr/ ; then
+    echo "Copying files OK"
+else
+    echo "Copyting files ERROR"    
+    exit $?
+fi
+
+if sh QSSWeb2BoardOnlineCompiler/DEBIAN/postinst >> /dev/null ; then
+    echo "Postinstall script OK"
+else
+    echo "Postinstall script ERROR"
+    exit $?
+fi
 
 
 
@@ -165,4 +180,4 @@ make clean
 cd ${baseDir}
 rm -fr build
 rm -fr ${packageDir}
-rm -fr ${packageDir}.deb
+#rm -fr ${packageDir}.deb
