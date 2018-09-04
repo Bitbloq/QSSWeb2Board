@@ -57,7 +57,7 @@ bool BitbloqLibsUpdater::update(){
     if(! __git.downloadFile(__remoteVersionInfo["zipball_url"].toString(),
             __tmpDir, //store in __tmpDir
             "bitbloqLibs.zip", //store as bitbloqlibs.zip
-            20000) //20 seconds timeout
+            40000) //40 seconds timeout
             )
     {
         qDebug() << "TimeOut Downloading Libs";
