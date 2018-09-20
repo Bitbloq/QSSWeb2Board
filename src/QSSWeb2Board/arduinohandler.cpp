@@ -38,6 +38,9 @@ ArduinoHandler::ArduinoHandler():
     qsrand(uint(QDateTime::currentMSecsSinceEpoch())); //seed for initializing randomstrings
     setSketchesBaseDir(sketchesDefaultBaseDir);
 
+   if(!QDir().exists(tmpDir)){
+       QDir().mkdir(tmpDir);
+   }
     if(!QDir().exists(sketchesDefaultBaseDir)){
         QDir().mkdir(sketchesDefaultBaseDir);
     }
@@ -45,11 +48,6 @@ ArduinoHandler::ArduinoHandler():
     if(!QDir().exists(buildDefaultDir)){
         QDir().mkdir(buildDefaultDir);
     }
-
-   if(!QDir().exists(tmpDir)){
-       QDir().mkdir(tmpDir);
-   }
-
 }
 
 void ArduinoHandler::updateArduinoBoards(){
