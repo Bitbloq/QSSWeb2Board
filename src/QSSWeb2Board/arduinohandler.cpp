@@ -151,6 +151,11 @@ bool ArduinoHandler::writeSketch(QString _sketch, QString _sketchName){
     QString sketchPath= sketchesBaseDir + sketchName + "/";
     QString sketchWithPath = sketchPath + sketchFileName;
 
+    //ensures the sketches folder is created
+    if(!QDir().exists(sketchesBaseDir)){
+        if(!QDir().mkdir(sketchesBaseDir))
+            throw DirNotCreatedException("Cannot create sketches base dir in " + sketchesBaseDir);
+    }
 
     //if there is a sketch with the same name remove
     if(QFile().exists(sketchWithPath)){
