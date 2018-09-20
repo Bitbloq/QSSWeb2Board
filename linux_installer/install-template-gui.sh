@@ -4,7 +4,7 @@
 #install dependencies
 sudo apt-get update
 
-sudo apt-get install gdebi
+sudo apt-get install gdebi -y
 
 mydir="${0%/*}"
 
