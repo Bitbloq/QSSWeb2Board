@@ -42,7 +42,7 @@ QJsonDocument GitHubRestApiClient::get(const QUrl &url, const QString &header, i
         QJsonDocument json = QJsonDocument::fromJson(response_data);
         return json;
     }else{
-        qDebug() << "TTime to get data from " << url.toString()  << " exceeded";
+        qDebug() << "Time to get data from " << url.toString()  << " exceeded";
         throw GetTimeOutException("Time to get data from " +  url.toString()  + " exceeded");
     }
 }
@@ -50,7 +50,7 @@ QJsonDocument GitHubRestApiClient::get(const QUrl &url, const QString &header, i
 
 bool GitHubRestApiClient::saveToDisk(const QString & dir, QString &filename, QIODevice *data)
 {
-    qDebug() << QString ("Saving to " + dir + filename);
+    //qDebug() << QString ("Saving to " + dir + filename);
     if(!QDir().exists(dir)){
         QDir().mkdir(dir);
     }
@@ -71,7 +71,7 @@ bool GitHubRestApiClient::saveToDisk(const QString & dir, QString &filename, QIO
 
     filename = targetFileName;
 
-    qDebug()<< "Done";
+    //qDebug()<< "Done";
     return true;
 }
 
@@ -92,12 +92,12 @@ bool GitHubRestApiClient::downloadFile(QString url, QString path, QString filena
     //here is done automatically becaus of Ubuntu 16.04 Qt version (5.5)
 
     do{
-        qDebug() <<"Downloading " << qurl;
+        //qDebug() <<"Downloading " << qurl;
 
         QNetworkRequest request(qurl);
         reply = manager.get(request);
 
-        qDebug() << "waiting to finish...";
+        //qDebug() << "waiting to finish...";
 
         _timeout=false;
         _timer->start(timeout);
@@ -110,11 +110,11 @@ bool GitHubRestApiClient::downloadFile(QString url, QString path, QString filena
 
         _timeout = false;
 
-        qDebug() << "finished!";
+        //qDebug() << "finished!";
 
         possibleRedirectUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
         qurl = possibleRedirectUrl.toUrl();
-        qDebug() << qurl;
+        //qDebug() << qurl;
 
     }while(possibleRedirectUrl.isValid());
 
@@ -138,7 +138,7 @@ bool GitHubRestApiClient::downloadFile(QString url, QString path, QString filena
 QJsonObject GitHubRestApiClient::getLatestTagVersion(QString owner, QString project, int timeout)
 {
     QUrl url("https://api.github.com/repos/" + owner +"/" + project + "/tags");
-    qDebug() << url.toString();
+    //qDebug() << url.toString();
     QJsonDocument json = get(url, "application/json", timeout);
     if(json.isEmpty()){
         QJsonObject r_value;
@@ -157,7 +157,7 @@ QJsonObject GitHubRestApiClient::getLatestTagVersion(QString owner, QString proj
 QJsonObject GitHubRestApiClient::getLatestReleaseVersion(QString owner, QString project, int timeout)
 {
     QUrl url("https://api.github.com/repos/" + owner +"/" + project + "/releases/latest");
-    qDebug() << url.toString();
+    //qDebug() << url.toString();
     QJsonDocument json = get(url,"application/json", timeout);
     if(json.isEmpty()){
         QJsonObject r_value;

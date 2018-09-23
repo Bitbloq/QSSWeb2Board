@@ -38,7 +38,7 @@ ArduinoHandler::ArduinoHandler():
     qsrand(uint(QDateTime::currentMSecsSinceEpoch())); //seed for initializing randomstrings
     setSketchesBaseDir(sketchesDefaultBaseDir);
 
-   qDebug() << "ARDUINO HANDLER CONSTRUCTOR";
+   //qDebug() << "ARDUINO HANDLER CONSTRUCTOR";
    if(!QDir().exists(tmpDir)){
        QDir().mkdir(tmpDir);
        setPermissions(tmpDir, "777");
@@ -127,7 +127,7 @@ void ArduinoHandler::eraseExistingSketches() const {
             QFileInfo sketchInfo(sketchesDefaultBaseDir + subDir + "/" + subDir + ".ino");
             //remove sketches older than one day
             if(sketchInfo.created().addDays(1) <= QDateTime::currentDateTime()){
-                qDebug() << "erasing " + sketchesDefaultBaseDir + subDir + "/";
+                //qDebug() << "erasing " + sketchesDefaultBaseDir + subDir + "/";
                 QDir(sketchesDefaultBaseDir + subDir + "/").removeRecursively();
             }
         }
@@ -279,7 +279,7 @@ bool ArduinoHandler::setBoardPort(QString _boardPort){
 QString ArduinoHandler::getHex(){
 
     QString hexfilename = buildPath + sketchName + ".ino.hex";
-    qDebug() << "Hex filename: " << hexfilename;
+    //qDebug() << "Hex filename: " << hexfilename;
 
     QFile f(hexfilename);
     if (!f.open(QFile::ReadOnly | QFile::Text)) throw HexFileException("HEX FILE NOT FOUND");
@@ -449,7 +449,7 @@ QString ArduinoHandler::extractSingleError(QString s){
     if ( pos >= 0 )
     {
         QString leftOf = s.left(pos);
-        qDebug() << "leftOf: " << leftOf;
+        //qDebug() << "leftOf: " << leftOf;
         verifyErrorsList.append(leftOf.simplified());
         return (leftOf.simplified() + extractSingleError(s.mid (pos + match.length())));
     }else{

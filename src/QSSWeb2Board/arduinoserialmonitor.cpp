@@ -40,9 +40,9 @@ void ArduinoSerialMonitor::sendToArduino(QString msg){
 void ArduinoSerialMonitor::readArduino(){
 
     //this is called when readyRead() is emitted
-    qDebug() << "New data available: " << port.bytesAvailable();
+    //qDebug() << "New data available: " << port.bytesAvailable();
     const QByteArray datas{port.readAll()};
-    qDebug() << datas;
+    //qDebug() << datas;
     emit dataReceived(datas);
 
 

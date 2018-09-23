@@ -93,7 +93,7 @@ bool BitbloqLibsUpdater::update(){
     if(temp_LibsDir.isEmpty()){
         throw CannotMoveTmpLibsException("Cannot find unzipped dir");
     }else{
-        qDebug() << "TEMP DIR " << temp_LibsDir;
+        //qDebug() << "TEMP DIR " << temp_LibsDir;
     }
 
     //REMOVE FORMER BITBLOQLIBS
@@ -119,28 +119,28 @@ bool BitbloqLibsUpdater::update(){
 
     QFile jsonFile{__jsonFilePath};
 
-    qDebug() << "Open " << jsonFile.fileName();
+    //qDebug() << "Open " << jsonFile.fileName();
     jsonFile.open(QIODevice::WriteOnly | QIODevice::Text);
     if(jsonFile.isOpen()){
         qInfo() << "Opened";
     }else{
         qInfo() << "Not opened";
     }
-    qDebug() << "Delete contents...";
+    //qDebug() << "Delete contents...";
     jsonFile.resize(0); //clear all contents
-    qDebug() << "Write version info: " << QJsonDocument(__localVersionInfo).toJson();
+    //qDebug() << "Write version info: " << QJsonDocument(__localVersionInfo).toJson();
     jsonFile.write(QJsonDocument(__localVersionInfo).toJson());
-    qDebug() << "Close versions file";
+    //qDebug() << "Close versions file";
     jsonFile.close();
 
 
 #if (defined (Q_OS_LINUX))
     QProcess proc;
     QString command = "chmod -R 777 " + __arduinoLibrariesDir;
-    qDebug() << "permissions command: "<< command;
+    //qDebug() << "permissions command: "<< command;
     proc.start(command);
     proc.waitForFinished();
-    qDebug() << "changed premissions exit code: " << proc.exitCode();
+    //qDebug() << "changed premissions exit code: " << proc.exitCode();
 #endif
 
 

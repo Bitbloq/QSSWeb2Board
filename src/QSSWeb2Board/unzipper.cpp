@@ -17,12 +17,12 @@ int UnZipper::unzip(QString filename, QString targetdir){
 
 #endif
 
-    qDebug() << command;
+    //qDebug() << command;
     QProcess proc;
     proc.start(command);
     proc.waitForFinished();
     int exitCode = proc.exitCode();
-    qDebug() << "exit Code" << exitCode;
+    //qDebug() << "exit Code" << exitCode;
     proc.close();
     return exitCode;
 }
