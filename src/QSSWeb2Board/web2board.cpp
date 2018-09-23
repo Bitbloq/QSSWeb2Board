@@ -48,7 +48,7 @@ void Web2Board::sendSuccess(QJsonObject msg, QJsonValue const & replyValue){
     QJsonObject reply;
     qInfo() << "Success: " << msg.value("function").toString();
     reply.insert("ID",msg.value("ID").toInt());
-    qDebug() << "Send success ID: " << msg.value("ID").toInt();
+    //qDebug() << "Send success ID: " << msg.value("ID").toInt();
     reply.insert("hub",msg.value("hub").toString());
     reply.insert("function",msg.value("function").toString());
     reply.insert("reply",QJsonValue(replyValue));
@@ -92,9 +92,9 @@ void Web2Board::handleMessage(QJsonObject msg){
         return; ///invalid message
     }
 
-    qDebug() << "received: " << QJsonDocument(msg).toJson();
+    //qDebug() << "received: " << QJsonDocument(msg).toJson();
     __messageID = msg.value("ID").toInt();
-    qDebug() << "Message ID: " << __messageID;
+    //qDebug() << "Message ID: " << __messageID;
 
     if(! msg.contains("function")){
         qCritical() << "Discarded message: No Function" ;
@@ -204,7 +204,7 @@ void Web2Board::handleMessage(QJsonObject msg){
 
         }else if (function == Literals::SENDSERIAL){
             QString serial_msg = msg.value("args").toArray().at(1).toString();
-            qDebug() << "Sending to Arduino: " << serial_msg;
+            //qDebug() << "Sending to Arduino: " << serial_msg;
             arduino.serialMonitor->sendToArduino(serial_msg);
             sendSuccess(msg, QJsonValue());
 
@@ -308,7 +308,7 @@ void Web2Board::handleTextMessage(QString message)
 
     QJsonObject rmessage = rdocmessage.object();
 
-    qDebug() << "Received JSON: " << QJsonDocument(rmessage).toJson();
+    //qDebug() << "Received JSON: " << QJsonDocument(rmessage).toJson();
 
     handleMessage(rmessage);
 }

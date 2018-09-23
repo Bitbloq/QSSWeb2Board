@@ -38,15 +38,19 @@ ArduinoHandler::ArduinoHandler():
     qsrand(uint(QDateTime::currentMSecsSinceEpoch())); //seed for initializing randomstrings
     setSketchesBaseDir(sketchesDefaultBaseDir);
 
+   qDebug() << "ARDUINO HANDLER CONSTRUCTOR";
    if(!QDir().exists(tmpDir)){
        QDir().mkdir(tmpDir);
+       setPermissions(tmpDir, "777");
    }
     if(!QDir().exists(sketchesDefaultBaseDir)){
         QDir().mkdir(sketchesDefaultBaseDir);
+        setPermissions(sketchesDefaultBaseDir, "777");
     }
 
     if(!QDir().exists(buildDefaultDir)){
         QDir().mkdir(buildDefaultDir);
+        setPermissions(buildDefaultDir, "777");
     }
 }
 
@@ -72,10 +76,6 @@ bool ArduinoHandler::openSerialMonitor(int baudrate){
     serialMonitor = new ArduinoSerialMonitor(boardPort,baudrate);
 
     QObject::connect(&serialMonitor->port, SIGNAL(readyRead()), serialMonitor, SLOT(readArduino()));
-
-    //for debugging purporses
-    QObject::connect(serialMonitor,SIGNAL(lineReceived(QString)),serialMonitor,SLOT(writeString(QString)));
-
     return serialMonitor->open();
 
 
@@ -560,6 +560,15 @@ QString LinuxArduinoHandler::makeUploadCommand(){
                                     "--pref build.path=" + buildPath + " " +
                                     sketchesBaseDir + sketchName + "/" + sketchName + ".ino");
     return uploadCommand;
+}
+
+void LinuxArduinoHandler::setPermissions(QString dir, QString permissions){
+   QProcess proc;
+   QString command = "chmod -R " + permissions + " " + dir;
+   qDebug() << "permissions command: "<< command;
+   proc.start(command);
+   proc.waitForFinished();
+   qDebug() << "changed premissions exit code: " << proc.exitCode();
 }
 
 QString MacArduinoHandler::makeUploadCommand(){

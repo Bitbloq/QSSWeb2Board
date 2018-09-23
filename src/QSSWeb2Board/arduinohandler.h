@@ -22,10 +22,6 @@ class ArduinoHandler: public QObject
 
 public:
 
-    ///friend classes for unit testing
-    friend TestArduinoHandler;
-    friend TestBoards;
-
     /**
      * @brief Public default ArduinoHandler Constructor
      */
@@ -200,6 +196,8 @@ protected:
      */
     virtual QString makeVerifyCommand(){return "";}
 
+    virtual void setPermissions(QString, QString){return;}
+
 
     /**
      * @brief checkArduinoPath virtual function (implemented on children)
@@ -247,6 +245,7 @@ public:
     virtual QString makeUploadCommand();
     virtual QString makeVerifyCommand();
     virtual bool checkArduinoPath(QString arduinoPath);
+    virtual void setPermissions(QString dir, QString permissions);
 };
 
 /**
@@ -262,6 +261,9 @@ public:
     virtual QString makeUploadCommand();
     virtual QString makeVerifyCommand();
     virtual bool checkArduinoPath(QString arduinoPath);
+    virtual void setPermissions(QString, QString){
+        qDebug() << "No Need to set permissions";
+    }
 };
 
 /**
@@ -277,6 +279,9 @@ public:
     virtual QString makeUploadCommand();
     virtual QString makeVerifyCommand();
     virtual bool checkArduinoPath(QString arduinoPath);
+    virtual void setPermissions(QString, QString){
+        qDebug() << "No Need to set permissions";
+    }
 };
 
 #endif // ARDUINOHANDLER_H

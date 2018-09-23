@@ -30,6 +30,19 @@ else
   mkdir $QSSWEB2BOARD_TMP
 fi
 
+if [ -d $QSSWEB2BOARD_SKETCHES ]; then
+  rm -fr $QSSWEB2BOARD_SKETCHES
+  mkdir $QSSWEB2BOARD_SKETCHES
+else
+  mkdir $QSSWEB2BOARD_SKETCHES
+fi
+
+if [ -d $QSSWEB2BOARD_BUILD ]; then
+  rm -fr $QSSWEB2BOARD_BUILD
+  mkdir $QSSWEB2BOARD_BUILD
+else
+  mkdir $QSSWEB2BOARD_BUILD
+fi
 
 chown root:qssweb2board -R ${installDir}
 
