@@ -97,7 +97,7 @@ void Web2Board::handleMessage(QJsonObject msg){
     //qDebug() << "Message ID: " << __messageID;
 
     if(! msg.contains("function")){
-        qCritical() << "Discarded message: No Function" ;
+        //qCritical() << "Discarded message: No Function" ;
         return; ///invalid message
     }
 
