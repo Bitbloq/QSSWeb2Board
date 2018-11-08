@@ -5,7 +5,7 @@
 grep -q -F 'x-scheme-handler/qssweb2board=QSSWeb2Board-handler.desktop' /usr/share/applications/defaults.list || echo "x-scheme-handler/qssweb2board=QSSWeb2Board-handler.desktop" >> /usr/share/applications/defaults.list
 
 #Create app group and add user
-addgroup qssweb2board
+addgroup --system qssweb2board
 
 #Add all "non-system" users to groups dialout and qssweb2board
 awk -F: '($3>=1000)&&($1!="nobody"){system ("adduser " $1 " dialout")}' /etc/passwd 
