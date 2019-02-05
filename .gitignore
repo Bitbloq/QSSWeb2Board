@@ -1,7 +1,2 @@
-doc/html/
-src/QSSWeb2Board/res/www.web2board.es.key
-src/QSSWeb2Board/res/www.web2board.es.crt
 *.dll
 src/QSSWeb2Board/qssweb2board_plugin_import.cpp
-*.crt
-*.key
