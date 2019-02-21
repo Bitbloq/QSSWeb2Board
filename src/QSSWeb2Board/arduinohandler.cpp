@@ -41,16 +41,16 @@ ArduinoHandler::ArduinoHandler():
    //qDebug() << "ARDUINO HANDLER CONSTRUCTOR";
    if(!QDir().exists(tmpDir)){
        QDir().mkdir(tmpDir);
-       setPermissions(tmpDir, "777");
+
    }
     if(!QDir().exists(sketchesDefaultBaseDir)){
         QDir().mkdir(sketchesDefaultBaseDir);
-        setPermissions(sketchesDefaultBaseDir, "777");
+
     }
 
     if(!QDir().exists(buildDefaultDir)){
         QDir().mkdir(buildDefaultDir);
-        setPermissions(buildDefaultDir, "777");
+
     }
 }
 
@@ -132,6 +132,10 @@ void ArduinoHandler::eraseExistingSketches() const {
             }
         }
     }
+    setPermissions(tmpDir, "777");
+    setPermissions(sketchesDefaultBaseDir, "777");
+    setPermissions(buildDefaultDir, "777");
+
 }
 
 void ArduinoHandler::eraseExistingBuildFiles() const {
@@ -562,7 +566,7 @@ QString LinuxArduinoHandler::makeUploadCommand(){
     return uploadCommand;
 }
 
-void LinuxArduinoHandler::setPermissions(QString dir, QString permissions){
+void LinuxArduinoHandler::setPermissions(QString dir, QString permissions) const{
    QProcess proc;
    QString command = "chmod -R " + permissions + " " + dir;
    qDebug() << "permissions command: "<< command;

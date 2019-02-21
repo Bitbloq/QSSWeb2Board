@@ -189,14 +189,14 @@ protected:
      * @brief makeUploadCommand -> makes the upload command. OS dependant. Virtualized
      * @return upload command
      */
-    virtual QString makeUploadCommand(){return "";}
+    virtual QString makeUploadCommand()  = 0;
     /**
      * @brief makeVerifyCommand -> makes the verify command. OS dependant. Virtualized
      * @return verify command
      */
-    virtual QString makeVerifyCommand(){return "";}
+    virtual QString makeVerifyCommand()  = 0;
 
-    virtual void setPermissions(QString, QString){return;}
+    virtual void setPermissions(QString, QString) const = 0;
 
 
     /**
@@ -240,12 +240,16 @@ class LinuxArduinoHandler : public ArduinoHandler{
     Q_OBJECT
 
 public:
-    LinuxArduinoHandler():ArduinoHandler(){}
+    LinuxArduinoHandler():ArduinoHandler(){
+        setPermissions(tmpDir, "777");
+        setPermissions(sketchesDefaultBaseDir, "777");
+        setPermissions(buildDefaultDir, "777");
+    }
     virtual ~LinuxArduinoHandler(){}
-    virtual QString makeUploadCommand();
-    virtual QString makeVerifyCommand();
+    virtual QString makeUploadCommand() ;
+    virtual QString makeVerifyCommand() ;
     virtual bool checkArduinoPath(QString arduinoPath);
-    virtual void setPermissions(QString dir, QString permissions);
+    virtual void setPermissions(QString dir, QString permissions) const;
 };
 
 /**
@@ -256,12 +260,16 @@ class WindowsArduinoHandler : public ArduinoHandler{
     Q_OBJECT
 
 public:
-    WindowsArduinoHandler():ArduinoHandler(){}
+    WindowsArduinoHandler():ArduinoHandler(){
+        setPermissions(tmpDir, "777");
+        setPermissions(sketchesDefaultBaseDir, "777");
+        setPermissions(buildDefaultDir, "777");
+    }
     virtual ~WindowsArduinoHandler(){}
-    virtual QString makeUploadCommand();
-    virtual QString makeVerifyCommand();
+    virtual QString makeUploadCommand() ;
+    virtual QString makeVerifyCommand() ;
     virtual bool checkArduinoPath(QString arduinoPath);
-    virtual void setPermissions(QString, QString){
+    virtual void setPermissions(QString, QString) const{
         qDebug() << "No Need to set permissions";
     }
 };
@@ -274,12 +282,16 @@ class MacArduinoHandler : public ArduinoHandler{
     Q_OBJECT
 
 public:
-    MacArduinoHandler():ArduinoHandler(){}
+    MacArduinoHandler():ArduinoHandler(){
+        setPermissions(tmpDir, "777");
+        setPermissions(sketchesDefaultBaseDir, "777");
+        setPermissions(buildDefaultDir, "777");
+    }
     virtual ~MacArduinoHandler(){}
-    virtual QString makeUploadCommand();
-    virtual QString makeVerifyCommand();
+    virtual QString makeUploadCommand() ;
+    virtual QString makeVerifyCommand() ;
     virtual bool checkArduinoPath(QString arduinoPath);
-    virtual void setPermissions(QString, QString){
+    virtual void setPermissions(QString, QString) const{
         qDebug() << "No Need to set permissions";
     }
 };
