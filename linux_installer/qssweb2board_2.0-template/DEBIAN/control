@@ -1,4 +1,4 @@
-Package: QSSWeb2Board
+Package: qssweb2board
 Version: ###VERSION###
 Section: base
 Priority: optional
