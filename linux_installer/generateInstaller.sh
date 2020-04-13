@@ -10,9 +10,10 @@ fi
 #INSTALL dependencies
 
 echo "Instalando dependencias..."
-sudo apt-get update > /dev/null
-sudo apt-get upgrade 
-sudo apt-get install qt5-qmake qt5-default libqt5websockets5-dev libqt5serialport5-dev build-essential zip unzip
+ apt-get update > /dev/null
+ apt-get install -y
+ apt-get upgrade -y 
+ apt-get install wget qt5-qmake qt5-default libqt5websockets5-dev libqt5serialport5-dev build-essential zip unzip -y
 
 #GET VERSION AND NAME OF OS
 if [ -f /etc/os-release ]; then
@@ -71,15 +72,21 @@ else
 	VER=${3}
 fi
 
+if [ -z "${4}" ];then
+	echo "No ARCH introduced"
+else
+	ARCH=${4}
+fi
+
 echo "Creando instalador para ${OS} ${VER} ${ARCH}"
-while true; do
-    read -p "¿Es este tu sistema operativo? (SI/NO)" yn
-    case $yn in
-        [SI]* ) break;;
-        [NO]* ) exit;;
-        * ) echo "Por favor, contesta SI o NO";;
-    esac
-done
+# while true; do
+#     read -p "¿Es este tu sistema operativo? (SI/NO)" yn
+#     case $yn in
+#         [SI]* ) break;;
+#         [NO]* ) exit;;
+#         * ) echo "Por favor, contesta SI o NO";;
+#     esac
+# done
 
 
 packageDir=qssweb2board_${version}${OS}${VER}_${ARCH}
@@ -137,14 +144,14 @@ sed -i -e "s/###OS###/${OS}/g" installer-${packageDir}.sh
 sed -i -e "s/###VERSION###/${VER}/g" installer-${packageDir}.sh
 sed -i -e "s/###ARCH###/${BITS}/g" installer-${packageDir}.sh
 
-sed -i -e "s/###INSTALL_COMMAND###/sudo gdebi --non-interactive \${mydir}\/deb\/${packageDir}.deb/g" installer-${packageDir}.sh
+sed -i -e "s/###INSTALL_COMMAND###/ gdebi --non-interactive \${mydir}\/deb\/${packageDir}.deb/g" installer-${packageDir}.sh
 
 cp install-template-gui.sh gui-installer-${packageDir}.sh
 sed -i -e "s/###OS###/${OS}/g" gui-installer-${packageDir}.sh
 sed -i -e "s/###VERSION###/${VER}/g" gui-installer-${packageDir}.sh
 sed -i -e "s/###ARCH###/${BITS}/g" gui-installer-${packageDir}.sh
 
-sed -i -e "s/###INSTALL_COMMAND###/sudo gdebi --non-interactive \${mydir}\/deb\/${packageDir}.deb/g" gui-installer-${packageDir}.sh
+sed -i -e "s/###INSTALL_COMMAND###/ gdebi --non-interactive \${mydir}\/deb\/${packageDir}.deb/g" gui-installer-${packageDir}.sh
 
 cp ./packages/com.bq.qssweb2board/meta/installscript-template.js ./packages/com.bq.qssweb2board/meta/installscript.js
 sed -i -e "s/###GUI_INSTALLER###/gui-installer-${packageDir}.sh/g" ./packages/com.bq.qssweb2board/meta/installscript.js
@@ -155,9 +162,10 @@ mv ./deb ./packages/com.bq.qssweb2board/data
 mv gui-installer-${packageDir}.sh ./packages/com.bq.qssweb2board/data
 
 #binarycreator only exists for 64 bits
+
 if [ $BITS == "64" ]; then
     echo "Creating GUI installer..."
-    binarycreator -c ./config/config.xml -p packages graphical-installer-${packageDir}
+    ../QtIFW-3.2.2/bin/binarycreator -c ./config/config.xml -p packages graphical-installer-${packageDir}
     chmod a+x graphical-installer-${packageDir}
 fi
 

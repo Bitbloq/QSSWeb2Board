@@ -9,7 +9,7 @@ QT += core \
       websockets \
       network \
 
-CONFIG += c++17
+CONFIG += c++11
 CONFIG += console
 
 TARGET = QSSWeb2Board
