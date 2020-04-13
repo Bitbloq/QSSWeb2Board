@@ -569,10 +569,10 @@ QString LinuxArduinoHandler::makeUploadCommand(){
 void LinuxArduinoHandler::setPermissions(QString dir, QString permissions) const{
    QProcess proc;
    QString command = "chmod -R " + permissions + " " + dir;
-   qDebug() << "permissions command: "<< command;
+   // qDebug() << "permissions command: "<< command;
    proc.start(command);
    proc.waitForFinished();
-   qDebug() << "changed premissions exit code: " << proc.exitCode();
+   // qDebug() << "changed premissions exit code: " << proc.exitCode();
 }
 
 QString MacArduinoHandler::makeUploadCommand(){

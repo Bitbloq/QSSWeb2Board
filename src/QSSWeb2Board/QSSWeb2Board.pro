@@ -1,5 +1,5 @@
 VERSION_MAJOR=3
-VERSION_MINOR=0
+VERSION_MINOR=5
 VERSION_REVISION=0
 
 message("QSSWeb2Board $${VERSION_MAJOR}.$${VERSION_MINOR}.$${VERSION_REVISION}")
@@ -9,7 +9,7 @@ QT += core \
       websockets \
       network \
 
-CONFIG += c++11
+CONFIG += c++17
 CONFIG += console
 
 TARGET = QSSWeb2Board
