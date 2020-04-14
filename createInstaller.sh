@@ -25,7 +25,7 @@ if [ -z "${4}" ];then
 	echo "PLEASE INTRODUCE ARCHITECTURE (i386 or amd64)"
     exit
 else
-	arch=${3}
+	arch=${4}
 fi
 
 cd QSSWeb2Board/linux_installer
