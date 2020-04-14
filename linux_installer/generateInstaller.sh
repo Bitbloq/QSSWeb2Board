@@ -79,15 +79,6 @@ else
 fi
 
 echo "Creando instalador para ${OS} ${VER} ${ARCH}"
-# while true; do
-#     read -p "¿Es este tu sistema operativo? (SI/NO)" yn
-#     case $yn in
-#         [SI]* ) break;;
-#         [NO]* ) exit;;
-#         * ) echo "Por favor, contesta SI o NO";;
-#     esac
-# done
-
 
 packageDir=qssweb2board_${version}${OS}${VER}_${ARCH}
 
@@ -163,7 +154,7 @@ mv gui-installer-${packageDir}.sh ./packages/com.bq.qssweb2board/data
 
 #binarycreator only exists for 64 bits
 
-if [ $BITS == "64" ]; then
+if [ $ARCH == "amd64" ]; then
     echo "Creating GUI installer..."
     ../QtIFW-3.2.2/bin/binarycreator -c ./config/config.xml -p packages graphical-installer-${packageDir}
     chmod a+x graphical-installer-${packageDir}

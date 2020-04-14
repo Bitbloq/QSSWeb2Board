@@ -1,0 +1,27 @@
+************************************* Invoked: lun. abr. 13 18:24:01 2020
+[0] Arguments: ./QtInstallerFramework-linux-x64.run
+[0] Operations sanity check succeeded.
+[14285] Installation space required: "127.01 MB" Temporary space required: "0.00 bytes" Local repository size: "0.00 bytes"
+[14288] Tmp and install directories are on the same volume. Volume mount point: "/" Free space available: "652.76 GB"
+[16430] backup  operation: Mkdir
+[16430] 	- arguments: /home/avalero/Qt/QtIFW-3.2.2
+[16430] Done
+[16431] perform  operation: Mkdir
+[16431] 	- arguments: /home/avalero/Qt/QtIFW-3.2.2
+[16431] Done
+[16431] Install size: 2 components
+[16433] backup org.qtproject.ifw operation: License
+[16433] 	- arguments:
+[16433] Done
+[16434] perform org.qtproject.ifw operation: License
+[16434] 	- arguments:
+[16434] Done
+[16435] backup org.qtproject.ifw.binaries operation: Extract
+[16435] 	- arguments: installer://org.qtproject.ifw.binaries/3.2.2data.7z, /home/avalero/Qt/QtIFW-3.2.2
+[16435] Done
+[16435] perform org.qtproject.ifw.binaries operation: Extract
+[16435] 	- arguments: installer://org.qtproject.ifw.binaries/3.2.2data.7z, /home/avalero/Qt/QtIFW-3.2.2
+[20962] Done
+[20965] Writing maintenance tool: "/home/avalero/Qt/QtIFW-3.2.2/Uninstaller.new"
+[21037] Wrote permissions for maintenance tool.
+[21064] Maintenance tool restart: false.
