@@ -127,7 +127,12 @@ void Web2Board::handleMessage(QJsonObject msg){
             arduino.writeSketch(sketch);
             arduino.setBoardNameID(boardName);
             //non-blocking verify
+            #if (defined (Q_OS_WIN))
+            arduino.verify();
+            #elif (defined (Q_OS_LINUX))
             arduino.asyncVerify(__clientID);
+            #endif
+
             sendSuccess(msg,  QJsonValue(arduino.getHex()));
 
         }else if (function == Literals::UPLOAD){
